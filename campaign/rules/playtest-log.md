@@ -21,6 +21,28 @@
 
 ---
 
+## 单人纸面自测记录（阶段2，非桌测）
+
+### Solo 2026-08-15 — solo-kit v1（GM 一人跑任务0 全流程）
+
+**Build / Rules Version:** vertical-slice v0 + mechanics-fine v1（PROPOSAL）
+
+**Players / Characters:** 游隼（渗透者）＋静水（谈判专家）；seed=20260815 预生成骰，可复现
+
+**Primary Questions:**
+
+| Hypothesis | Observation | Pass Signal | Fail Signal | Result |
+|---|---|---|---|---|
+| 全流程按文档可跑通 | 8 步＋结算五段＋休整全部执行 | 跑通且无"无法继续"级卡点 | 流程断 | ✓ 跑通（0 阻断） |
+| 无需现场发明规则 | 文本缺口处的 GM 即时裁定数 | 0 裁定 | >0 | ✗ 9 处缺口需 GM 裁定 |
+| 卡点 ≤5 | 卡点清单（P1–P9） | ≤5 | >5 | ✗ 9 处（均非阻断级） |
+| 巡逻遭遇/值守处理可执行 | 步骤5 触发情况 | 触发且按规则裁决 | 0 触发 | △ 巡逻遭遇 0 触发（时钟推进不足）；值守用社交引开绕过菜单 |
+| 结算五段＋渗漏条目可跑 | 结算文本生成 | 五段齐全＋渗漏当场可察觉 | 缺段 | ✓（决策#42 验证通过） |
+
+**结论与最小改动（PROPOSAL，GM 已确认 A+B+C 全修）：** 阶段2 首轮**不通过**——流程跑通但 9 处卡点全为文本缺口/材料不对齐，非数值问题；数值零改动。按三组根因完成最小改动：A 测试材料层（intel-pack 菜单补社交引开、22:00 办公层预置巡逻遭遇、kit 卡组对齐+5 区路线）；B 规则澄清层（§1.5 双失败条款、D1 时钟归属、D7 休整语义+事件表单位、新建角色规则知识表单 `rule-knowledge-sheet-v1.md`）；C 参数补缺层（mechanics-fine D8 时间单位默认值、vertical-slice §1.2 缺训素质映射表）。**复测（同 seed=20260815）9 卡点清零、阶段2 通过**；双失败/巡逻遭遇/预案重试三个首轮未覆盖分支均被真实触发并按文裁决。规则澄清保持 PROPOSAL，随阶段3 转正。详见 `campaign/playtest/solo-report-v1.md`（§6–§8）。
+
+---
+
 ## Test Entry Template
 
 ### Playtest YYYY-MM-DD — Prototype N

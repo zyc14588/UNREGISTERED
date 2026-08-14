@@ -55,9 +55,13 @@
 |---|---|---|
 | 1 | 模拟脚本＋报告 | `campaign/playtest/scripts/sim_infiltration_v1.py` · `campaign/playtest/sim-report-v1.md` |
 | 2 | 单人纸面自测包 | `campaign/playtest/solo-kit-v1.md` |
+| 3 | 第一次原型桌测·全流程指南 | `campaign/playtest/prototype-table-test-guide-v1.md` |
+| 3 | 开局/运行指南 | `campaign/playtest/stage3-run-guide-v1.md` |
 | 3 | GM 速查表 | `campaign/playtest/gm-screen-v1.md` |
 | 3 | 任务0 情报包（GM） | `campaign/playtest/task0-intel-pack-v1.md` |
 | 3 | 任务0 玩家道具（守则文本） | `campaign/playtest/task0-handouts-v1.md` |
+| 3 | 角色规则知识记录页 | `campaign/playtest/rule-knowledge-sheet-v1.md` |
 | 3 | 观察表 | `campaign/playtest/observation-sheet-v1.md` |
+| 3 | 观察员小抄 | `campaign/playtest/observer-cheatsheet-v1.md` |
 | 4/5 | 校准轮＋高压局指引 | `campaign/playtest/stage4-5-guide-v1.md` |
 | 全程 | 测试记录入口 | `campaign/rules/playtest-log.md` |

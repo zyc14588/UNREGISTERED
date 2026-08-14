@@ -1,0 +1,33 @@
+campaign_time:
+  current_date: ""
+  current_time: ""
+  calendar: ""
+
+party:
+  current_location: ""
+  known_leads: []
+  obligations: []
+
+active_situations: []
+
+faction_clocks: []
+# Example:
+# - faction: "Faction Name"
+#   clock: "Control the North Gate"
+#   segments: 6
+#   filled: 1
+#   advance_when: "A specific trigger"
+#   visible_signal: "What players can observe now"
+
+changed_locations: []
+npc_status: []
+open_threads: []
+recent_world_events: []
+
+provisional_table_canon: []
+# - fact: ""
+#   introduced_in: "session-XX"
+#   used_by_players: true
+#   needs_detail: true
+
+continuity_flags: []

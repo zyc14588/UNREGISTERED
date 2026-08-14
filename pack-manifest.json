@@ -1,0 +1,32 @@
+{
+  "pack": "opencode-trpg-sandbox-skill-pack",
+  "version": "2.0.0",
+  "design_goal": "system-agnostic long-campaign open-world tabletop RPG creation plus custom TRPG rules-system design and playtesting",
+  "skills": [
+    "trpg-campaign-director",
+    "campaign-state-keeper",
+    "sandbox-world-engine",
+    "faction-simulator",
+    "npc-web",
+    "situation-designer",
+    "location-site-designer",
+    "mystery-clue-engine",
+    "quest-designer",
+    "encounter-situation-designer",
+    "improv-oracle",
+    "dialogue-voice",
+    "trpg-prose-writer",
+    "session-prep-recap",
+    "trpg-system-designer",
+    "core-resolution-designer",
+    "probability-balance-lab",
+    "character-progression-designer",
+    "conflict-engine-designer",
+    "resource-economy-designer",
+    "gm-procedure-designer",
+    "rules-content-forge",
+    "playtest-rules-auditor",
+    "rules-reference-writer",
+    "rules-system-adapter"
+  ]
+}

@@ -10,3 +10,8 @@
 人类可读的策略摘要见 [`../LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md`](../LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md)（POLICY SUMMARY / NOT FINAL LICENSE TEXT）。
 
 本目录中的元数据文件本身不构成任何许可证文本、不授予任何权利，也不改变仓库中任何现有文件的许可状态。
+
+## 校验（Validation）
+
+- 本地校验（Node.js 标准库，无依赖）：`node scripts/aipt/validate-p0-b000.mjs`
+- CI 校验：workflow [`AIPT Content Gate`](../.github/workflows/aipt-content-gate.yml)（push 与 pull_request 触发，固定 Node.js `v24.19.0`）

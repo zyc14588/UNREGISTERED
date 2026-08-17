@@ -20,6 +20,16 @@
     ],
     "rules": [
       {
+        "pattern": "scripts/aipt/**",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "AIPT validation tooling; excluded from the game-content policy; this classification assigns no alternate license."
+      },
+      {
+        "pattern": ".github/workflows/aipt-content-gate.yml",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "AIPT validation workflow; excluded from the game-content policy; this classification assigns no alternate license."
+      },
+      {
         "pattern": "campaign/playtest/scripts/**",
         "classification": "UNCLASSIFIED_PENDING_REVIEW",
         "reason": "Existing test/tool code; not silently relicensed under the game-content policy."

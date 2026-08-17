@@ -1,0 +1,18 @@
+{
+  "aipt_schema": "aipt.identity.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B000",
+  "formal_name_zh": "《未登记》",
+  "formal_name_en": "UNREGISTERED",
+  "formal_display_name": "《未登记》UNREGISTERED",
+  "old_codename": {
+    "value_zh": "《特工模拟》",
+    "status": "OLD_CODENAME_ONLY",
+    "usage_note": "Historical codename only; must never be used as the display name."
+  },
+  "package_id": {
+    "value": "zyc14588/agent-sim",
+    "unchanged": true,
+    "role": "TECHNICAL_IDENTIFIER_NOT_DISPLAY_IDENTITY",
+    "usage_note": "Existing package identifier; technical only, not a display identity."
+  }
+}

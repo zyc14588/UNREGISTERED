@@ -1,0 +1,88 @@
+{
+  "aipt_schema": "aipt.licensing.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B000",
+  "policy_name_zh": "《未登记》非商业相同方式共享内容许可证 1.0",
+  "license_ref": "LicenseRef-UNREGISTERED-NC-SA-1.0",
+  "policy_status": "POLICY_FROZEN_TEXT_NOT_DRAFTED",
+  "final_legal_text_published": false,
+  "legal_review_required": true,
+  "repo_wide_relicense": false,
+  "is_osi_open_source_license": false,
+  "future_adapter_execution_code_policy": "FUTURE_MIT_POLICY",
+  "future_adapter_execution_code_implemented": false,
+  "path_scope": {
+    "evaluation": "fail_closed_most_specific_first",
+    "default": "UNCLASSIFIED_PENDING_REVIEW",
+    "classifications": [
+      "CONTENT_POLICY_APPLIES",
+      "EXCLUDED_FROM_CONTENT_POLICY",
+      "UNCLASSIFIED_PENDING_REVIEW"
+    ],
+    "rules": [
+      {
+        "pattern": "campaign/playtest/scripts/**",
+        "classification": "UNCLASSIFIED_PENDING_REVIEW",
+        "reason": "Existing test/tool code; not silently relicensed under the game-content policy."
+      },
+      {
+        "pattern": "aipt/**",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "AIPT policy metadata directory; excluded from the game-content policy; this classification assigns no alternate license."
+      },
+      {
+        "pattern": "LICENSES/**",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "Policy metadata directory; excluded from the game-content policy; this classification assigns no alternate license."
+      },
+      {
+        "pattern": "SOURCES.md",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "Design sources and adaptation notes; not automatically covered by the game-content policy."
+      },
+      {
+        "pattern": "AGENTS.md",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "Root skill-pack adaptation file; not automatically covered by the game-content policy."
+      },
+      {
+        "pattern": "TRPG-ADAPTATION.md",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "Root skill-pack adaptation file; not automatically covered by the game-content policy."
+      },
+      {
+        "pattern": "VALIDATION.md",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "Root skill-pack adaptation file; not automatically covered by the game-content policy."
+      },
+      {
+        "pattern": "pack-manifest.json",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "Root skill-pack manifest; not automatically covered by the game-content policy."
+      },
+      {
+        "pattern": ".opencode/**",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "Skill pack / tooling directory; not automatically covered by the game-content policy."
+      },
+      {
+        "pattern": "knowledge/**",
+        "classification": "EXCLUDED_FROM_CONTENT_POLICY",
+        "reason": "Knowledge base; not automatically covered by the game-content policy."
+      },
+      {
+        "pattern": "README.md",
+        "classification": "UNCLASSIFIED_PENDING_REVIEW",
+        "reason": "Mixed-scope document."
+      },
+      {
+        "pattern": "campaign/**",
+        "classification": "CONTENT_POLICY_APPLIES",
+        "reason": "First-party game content."
+      }
+    ],
+    "unmatched_paths": {
+      "classification": "UNCLASSIFIED_PENDING_REVIEW",
+      "reason": "Fail-closed default: any path not matched by a rule is pending review."
+    }
+  }
+}

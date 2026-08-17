@@ -1,0 +1,8 @@
+{
+  "aipt_schema": "aipt.status.v1",
+  "current_batch": "UNREGISTERED-AIPT-P0-B000",
+  "status": "IN_PROGRESS",
+  "global_wip": 1,
+  "next_batch": "UNREGISTERED-AIPT-P0-B001",
+  "next_started": false
+}

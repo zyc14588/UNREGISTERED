@@ -36,11 +36,21 @@
  *   4. path policy for all 17 referenced paths: relative POSIX only (no
  *      absolute, no dot/dot-dot, no backslash, no NUL, no empty segment),
  *      regular file only, realpath inside the repository, no symlink;
- *   5. stable-ids: exact schema/policy/lifecycle; exactly four Character,
- *      four Secret, eight Scene IDs bound byte-exact to the eight stage3
- *      headings; globally unique IDs; unique (path, locator, kind) binding even
- *      if kind changes; retired disjoint/non-reusable; exact namespace counts;
- *      UNR-RULE / UNR-INVARIANT / UNR-MUTATION reserved with zero assignments;
+ *   5. stable-ids: exact schema/policy/lifecycle; the accepted twelve
+ *      namespaces with exact per-kind counts/states — CHARACTER 4, SECRET 4,
+ *      SCENE 8, CLUE 12, NPC 3, ITEM 1, SAFETY_EVENT 2 ASSIGNED;
+ *      RULE / INVARIANT / MUTATION RESERVED and STATE / ENDING
+ *      JUSTIFIED_ZERO, all at zero assignments (any active entity in those
+ *      namespaces is rejected); exactly 34 entities with globally unique IDs,
+ *      unique (path, locator, kind) binding even if kind changes, unique
+ *      path+locator pairs, and retired ids disjoint/non-reusable; Character /
+ *      Secret / Scene IDs bound byte-exact to their sources plus exact
+ *      hardcoded bindings for the accepted 18 CLUE / NPC / ITEM /
+ *      SAFETY_EVENT entries; longest-prefix namespace resolution with a
+ *      required "-" boundary (UNR-SAFETY-EVENT parses correctly); every
+ *      entity's locator resolved type-aware (json_path resolves;
+ *      markdown_heading / markdown_table_row / markdown_line is an exact
+ *      unique line; markdown_text_fragment occurs exactly once);
  *   6. visibility: semantically hardened despite the digest anchor — exactly
  *      the accepted 73 unique mapping IDs (sorted, hardcoded); exact six
  *      labels, exact remote_allowed key set, exact locator-type key set,
@@ -830,10 +840,30 @@ const NAMESPACES = {
   "UNR-CHAR": { entity_kind: "CHARACTER", state: "ASSIGNED", assigned_count: 4, reserved_count: 0 },
   "UNR-SECRET": { entity_kind: "SECRET", state: "ASSIGNED", assigned_count: 4, reserved_count: 0 },
   "UNR-SCENE": { entity_kind: "SCENE", state: "ASSIGNED", assigned_count: 8, reserved_count: 0 },
+  "UNR-CLUE": { entity_kind: "CLUE", state: "ASSIGNED", assigned_count: 12, reserved_count: 0 },
+  "UNR-NPC": { entity_kind: "NPC", state: "ASSIGNED", assigned_count: 3, reserved_count: 0 },
+  "UNR-ITEM": { entity_kind: "ITEM", state: "ASSIGNED", assigned_count: 1, reserved_count: 0 },
+  "UNR-SAFETY-EVENT": { entity_kind: "SAFETY_EVENT", state: "ASSIGNED", assigned_count: 2, reserved_count: 0 },
   "UNR-RULE": { entity_kind: "RULE", state: "RESERVED", assigned_count: 0, reserved_count: 0 },
   "UNR-INVARIANT": { entity_kind: "INVARIANT", state: "RESERVED", assigned_count: 0, reserved_count: 0 },
   "UNR-MUTATION": { entity_kind: "MUTATION", state: "RESERVED", assigned_count: 0, reserved_count: 0 },
+  "UNR-STATE": { entity_kind: "STATE", state: "JUSTIFIED_ZERO", assigned_count: 0, reserved_count: 0 },
+  "UNR-ENDING": { entity_kind: "ENDING", state: "JUSTIFIED_ZERO", assigned_count: 0, reserved_count: 0 },
 };
+
+/** Longest declared namespace prefix of a stable_id; the boundary right after
+ *  the namespace must be a "-" (or the end of the id), so UNR-SAFETY-EVENT
+ *  resolves as a whole and UNR-SAFETY-EVENT-0001 never mis-parses against a
+ *  shorter prefix. */
+function namespaceOf(id) {
+  let best = null;
+  for (const ns of Object.keys(NAMESPACES)) {
+    if (id.startsWith(ns) && (id.length === ns.length || id[ns.length] === "-")) {
+      if (best === null || ns.length > best.length) best = ns;
+    }
+  }
+  return best;
+}
 
 function resolveJsonPath(obj, locator) {
   let cur = obj;
@@ -843,6 +873,64 @@ function resolveJsonPath(obj, locator) {
   }
   return cur;
 }
+
+/** Type-aware locator resolver for stable-ids entities: every one of the 34
+ *  entities must resolve. json_path resolves to a non-null value;
+ *  markdown_heading / markdown_table_row / markdown_line locators must be an
+ *  exact line of the source file and that line must be unique;
+ *  markdown_text_fragment must occur exactly once in the file text. Returns
+ *  null when the locator does not resolve. */
+function resolveEntityLocator(src) {
+  const t = src.locator_type;
+  if (t === "json_path") return resolveJsonPath(loadJson(src.path), src.locator) ?? null;
+  const lines = readRel(src.path).split(/\r?\n/);
+  if (t === "markdown_heading" || t === "markdown_table_row" || t === "markdown_line") {
+    let hits = 0;
+    for (const l of lines) if (l === src.locator) hits += 1;
+    return hits === 1 ? lines : null;
+  }
+  if (t === "markdown_text_fragment") {
+    const text = lines.join("\n");
+    let hits = 0;
+    let at = text.indexOf(src.locator);
+    while (at !== -1) {
+      hits += 1;
+      at = text.indexOf(src.locator, at + src.locator.length);
+    }
+    return hits === 1 ? text : null;
+  }
+  return null;
+}
+
+/** Exact hardcoded bindings for the accepted 18 CLUE / NPC / ITEM /
+ *  SAFETY_EVENT entities (12 CLUE + 3 NPC + 1 ITEM + 2 SAFETY_EVENT). Each
+ *  entry pins ID, kind, display name, source path, locator, locator type and
+ *  lifecycle byte-exact; canonical=false is enforced generically for every
+ *  entity in the main loop. */
+const EXTRA_ENTITIES = [
+  // ---- 12 CLUE ----
+  { stable_id: "UNR-CLUE-0001", kind: "CLUE", display_name: "游隼侦破线索 1", path: "aipt/p0-b000/premades-v2.json", locator: "characters.游隼.discovery_clues.0", locator_type: "json_path", lifecycle: "PLAYTESTABLE_DRAFT" },
+  { stable_id: "UNR-CLUE-0002", kind: "CLUE", display_name: "游隼侦破线索 2", path: "aipt/p0-b000/premades-v2.json", locator: "characters.游隼.discovery_clues.1", locator_type: "json_path", lifecycle: "PLAYTESTABLE_DRAFT" },
+  { stable_id: "UNR-CLUE-0003", kind: "CLUE", display_name: "短波侦破线索 1", path: "aipt/p0-b000/premades-v2.json", locator: "characters.短波.discovery_clues.0", locator_type: "json_path", lifecycle: "PLAYTESTABLE_DRAFT" },
+  { stable_id: "UNR-CLUE-0004", kind: "CLUE", display_name: "短波侦破线索 2", path: "aipt/p0-b000/premades-v2.json", locator: "characters.短波.discovery_clues.1", locator_type: "json_path", lifecycle: "PLAYTESTABLE_DRAFT" },
+  { stable_id: "UNR-CLUE-0005", kind: "CLUE", display_name: "静水侦破线索 1", path: "aipt/p0-b000/premades-v2.json", locator: "characters.静水.discovery_clues.0", locator_type: "json_path", lifecycle: "PLAYTESTABLE_DRAFT" },
+  { stable_id: "UNR-CLUE-0006", kind: "CLUE", display_name: "静水侦破线索 2", path: "aipt/p0-b000/premades-v2.json", locator: "characters.静水.discovery_clues.1", locator_type: "json_path", lifecycle: "PLAYTESTABLE_DRAFT" },
+  { stable_id: "UNR-CLUE-0007", kind: "CLUE", display_name: "底片侦破线索 1", path: "aipt/p0-b000/premades-v2.json", locator: "characters.底片.discovery_clues.0", locator_type: "json_path", lifecycle: "PLAYTESTABLE_DRAFT" },
+  { stable_id: "UNR-CLUE-0008", kind: "CLUE", display_name: "底片侦破线索 2", path: "aipt/p0-b000/premades-v2.json", locator: "characters.底片.discovery_clues.1", locator_type: "json_path", lifecycle: "PLAYTESTABLE_DRAFT" },
+  { stable_id: "UNR-CLUE-T000-01", kind: "CLUE", display_name: "派单背面空白", path: "campaign/playtest/stage3-run-guide-v1.md", locator: "| 接单 | 派单小字\"须知见背面·背面空白\" | 是 | 三层模型：文本可以空 |", locator_type: "markdown_table_row", lifecycle: "PROPOSAL" },
+  { stable_id: "UNR-CLUE-T000-02", kind: "CLUE", display_name: "未标注夹层门", path: "campaign/playtest/stage3-run-guide-v1.md", locator: "| 侦查卓越 | 夹层门（未标注，锁死） | 是（暗层） | 情报卡三层 |", locator_type: "markdown_table_row", lifecycle: "PROPOSAL" },
+  { stable_id: "UNR-CLUE-T000-03", kind: "CLUE", display_name: "监控 23:14 上一批测试员背影", path: "campaign/playtest/stage3-run-guide-v1.md", locator: "| 侦查卓越收益 | 监控 23:14 帧\"上一批测试员\"背影 | 是（GM 暗线，赛后回收） | 再访变化伏笔 |", locator_type: "markdown_table_row", lifecycle: "PROPOSAL" },
+  { stable_id: "UNR-CLUE-T000-04", kind: "CLUE", display_name: "回收条目：测试员 1 名", path: "campaign/playtest/stage3-run-guide-v1.md", locator: "| 结算 | 「已回收：编号 000 —— 测试员 1 名」 | 是（决策 #42） | 长线钩子 |", locator_type: "markdown_table_row", lifecycle: "PROPOSAL" },
+  // ---- 3 NPC ----
+  { stable_id: "UNR-NPC-T000-01", kind: "NPC", display_name: "任务0 保安（2人组）", path: "campaign/playtest/task0-intel-pack-v1.md", locator: "保安×2（观察 45／手枪 30／近身格斗 30）", locator_type: "markdown_text_fragment", lifecycle: "PROPOSAL" },
+  { stable_id: "UNR-NPC-T000-02", kind: "NPC", display_name: "任务0 机房值守", path: "campaign/playtest/task0-intel-pack-v1.md", locator: "机房值守×1（观察 40）", locator_type: "markdown_text_fragment", lifecycle: "PROPOSAL" },
+  { stable_id: "UNR-NPC-T000-03", kind: "NPC", display_name: "任务0 监控员", path: "campaign/playtest/task0-intel-pack-v1.md", locator: "监控员×1（观察 45）", locator_type: "markdown_text_fragment", lifecycle: "PROPOSAL" },
+  // ---- 1 ITEM ----
+  { stable_id: "UNR-ITEM-T000-01", kind: "ITEM", display_name: "测试档案盒", path: "campaign/playtest/task0-intel-pack-v1.md", locator: "- 机房(3)内保险箱（开锁 60，可电子干扰减难度）：内含\"测试档案盒\"（空盒+一张测试合格单）。", locator_type: "markdown_line", lifecycle: "PROPOSAL" },
+  // ---- 2 SAFETY_EVENT ----
+  { stable_id: "UNR-SAFETY-EVENT-0001", kind: "SAFETY_EVENT", display_name: "X 卡／平台安全暂停", path: "campaign/session0-redlines.md", locator: "- X 卡（或平台安全暂停）：随时暂停/跳过，无需解释", locator_type: "markdown_line", lifecycle: "PROPOSAL" },
+  { stable_id: "UNR-SAFETY-EVENT-0002", kind: "SAFETY_EVENT", display_name: "结束后解压检查", path: "campaign/session0-redlines.md", locator: "- 结束后的\"解压检查\"：一句话确认状态；高压恐怖局必做", locator_type: "markdown_line", lifecycle: "PROPOSAL" },
+];
 
 function checkStableIdsObj(s) {
   if (!s || typeof s !== "object") throw new Error("stable-ids.json: missing object");
@@ -859,7 +947,7 @@ function checkStableIdsObj(s) {
 
   if (!s.namespaces || typeof s.namespaces !== "object") throw new Error("stable-ids.namespaces missing");
   if (JSON.stringify(Object.keys(s.namespaces).sort()) !== JSON.stringify(Object.keys(NAMESPACES).sort())) {
-    throw new Error("stable-ids.namespaces must be exactly the six namespaces");
+    throw new Error("stable-ids.namespaces must be exactly the twelve accepted namespaces");
   }
   for (const [ns, exp] of Object.entries(NAMESPACES)) {
     const got = s.namespaces[ns];
@@ -870,15 +958,15 @@ function checkStableIdsObj(s) {
   }
 
   const ents = s.entities;
-  if (!Array.isArray(ents) || ents.length !== 16) {
-    throw new Error(`stable-ids.entities must have exactly 16 entries, got ${ents ? ents.length : "missing"}`);
+  if (!Array.isArray(ents) || ents.length !== 34) {
+    throw new Error(`stable-ids.entities must have exactly 34 entries, got ${ents ? ents.length : "missing"}`);
   }
   const premades = loadJson("aipt/p0-b000/premades-v2.json");
   const stage3Lines = readRel("campaign/playtest/stage3-run-guide-v1.md").split(/\r?\n/);
   const seenIds = new Set();
   const seenTriples = new Set();
   const seenPairs = new Set();
-  const counts = { "UNR-CHAR": 0, "UNR-SECRET": 0, "UNR-SCENE": 0, "UNR-RULE": 0, "UNR-INVARIANT": 0, "UNR-MUTATION": 0 };
+  const counts = Object.fromEntries(Object.keys(NAMESPACES).map((ns) => [ns, 0]));
 
   for (const ent of ents) {
     const id = ent && ent.stable_id;
@@ -887,10 +975,12 @@ function checkStableIdsObj(s) {
     }
     if (seenIds.has(id)) throw new Error(`duplicate stable_id ${id} (one ID cannot bind two entities)`);
     seenIds.add(id);
-    const ns = id.slice(0, id.indexOf("-", 4));
-    if (!NAMESPACES[ns]) throw new Error(`stable_id ${id} has an undeclared namespace prefix`);
-    if (ns === "UNR-RULE" || ns === "UNR-INVARIANT" || ns === "UNR-MUTATION") {
-      throw new Error(`stable_id ${id} assigns the reserved namespace ${ns}; RULE/INVARIANT/MUTATION must stay reserved with zero assignments`);
+    const ns = namespaceOf(id);
+    if (!ns) throw new Error(`stable_id ${id} has an undeclared namespace prefix`);
+    if (NAMESPACES[ns].state !== "ASSIGNED") {
+      throw new Error(
+        `stable_id ${id} assigns namespace ${ns} (${NAMESPACES[ns].entity_kind}, state ${NAMESPACES[ns].state}); ${NAMESPACES[ns].entity_kind} entities must stay at zero assignments`,
+      );
     }
     counts[ns] += 1;
     if (ent.kind !== NAMESPACES[ns].entity_kind) throw new Error(`entity ${id}: kind ${JSON.stringify(ent.kind)} must match namespace ${ns}`);
@@ -912,6 +1002,11 @@ function checkStableIdsObj(s) {
       throw new Error(`two stable IDs bind the same source path+locator even if the kind changed: ${src.path} @ ${src.locator}`);
     }
     seenPairs.add(pair);
+    if (resolveEntityLocator(src) === null) {
+      throw new Error(
+        `entity ${id}: source locator does not resolve (locator_type ${src.locator_type}, locator ${JSON.stringify(src.locator)} in ${src.path})`,
+      );
+    }
   }
 
   for (const [cid, name] of Object.entries(CHARS)) {
@@ -953,6 +1048,16 @@ function checkStableIdsObj(s) {
       throw new Error(`scene ${id} must bind byte-exact to the stage3 heading line "${heading}" (heading missing from the source file)`);
     }
   }
+  for (const exp of EXTRA_ENTITIES) {
+    const ent = ents.find((e) => e.stable_id === exp.stable_id);
+    if (!ent) throw new Error(`entity ${exp.stable_id} (${exp.display_name}) must be registered`);
+    assertExact(ent.kind, exp.kind, `${exp.stable_id}.kind`);
+    assertExact(ent.display_name, exp.display_name, `${exp.stable_id}.display_name`);
+    assertExact(ent.source.path, exp.path, `${exp.stable_id}.source.path`);
+    assertExact(ent.source.locator, exp.locator, `${exp.stable_id}.source.locator`);
+    assertExact(ent.source.locator_type, exp.locator_type, `${exp.stable_id}.source.locator_type`);
+    assertExact(ent.lifecycle_status, exp.lifecycle, `${exp.stable_id}.lifecycle_status`);
+  }
 
   const retired = s.retired;
   if (!Array.isArray(retired)) throw new Error("stable-ids.retired must be an array");
@@ -975,7 +1080,7 @@ function checkStableIdsObj(s) {
 
 function checkStableIds() {
   checkStableIdsObj(loadJson("aipt/p0-b001/stable-ids.json"));
-  pass("stable-ids: exact schema/policy/lifecycle; 4 Character + 4 Secret + 8 Scene byte-exact bindings; unique IDs and entity bindings; reserved namespaces with zero assignments");
+  pass("stable-ids: exact schema/policy/lifecycle; 12 namespaces with exact per-kind counts/states (4 CHARACTER + 4 SECRET + 8 SCENE + 12 CLUE + 3 NPC + 1 ITEM + 2 SAFETY_EVENT ASSIGNED; RULE/INVARIANT/MUTATION RESERVED, STATE/ENDING JUSTIFIED_ZERO); 34 entities with type-aware locators resolved; Character/Secret/Scene + 18 CLUE/NPC/ITEM/SAFETY_EVENT byte-exact bindings; unique IDs and entity bindings; any active RULE/INVARIANT/MUTATION/STATE/ENDING entity rejected");
 }
 
 // ---------------------------------------------------------------------------

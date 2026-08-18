@@ -24,7 +24,8 @@
     "UNR-NPC": { "entity_kind": "NPC", "state": "ASSIGNED", "assigned_count": 3, "reserved_count": 0 },
     "UNR-ITEM": { "entity_kind": "ITEM", "state": "ASSIGNED", "assigned_count": 1, "reserved_count": 0 },
     "UNR-SAFETY-EVENT": { "entity_kind": "SAFETY_EVENT", "state": "ASSIGNED", "assigned_count": 2, "reserved_count": 0 },
-    "UNR-STATE": { "entity_kind": "STATE", "state": "JUSTIFIED_ZERO", "assigned_count": 0, "reserved_count": 0 }
+    "UNR-STATE": { "entity_kind": "STATE", "state": "JUSTIFIED_ZERO", "assigned_count": 0, "reserved_count": 0 },
+    "UNR-ENDING": { "entity_kind": "ENDING", "state": "JUSTIFIED_ZERO", "assigned_count": 0, "reserved_count": 0 }
   },
   "zero_assignment_justifications": [
     {
@@ -69,6 +70,49 @@
         }
       ],
       "conclusion": "Zero source-backed STATE assignments: no audited source within the frozen first-roster/Task-0 vertical-slice scope contains a standalone identity-bearing STATE record, so namespace UNR-STATE registers no entity."
+    },
+    {
+      "namespace": "UNR-ENDING",
+      "kind": "ENDING",
+      "assigned_count": 0,
+      "audited_sources": [
+        "aipt/p0-b000/identity.json",
+        "aipt/p0-b000/licensing.json",
+        "aipt/p0-b000/premades-v2.json",
+        "campaign/proposals/tasks-v1.md",
+        "campaign/playtest/stage3-run-guide-v1.md",
+        "campaign/playtest/task0-handouts-v1.md",
+        "campaign/playtest/task0-intel-pack-v1.md",
+        "campaign/playtest/gm-screen-v1.md",
+        "campaign/playtest/rule-knowledge-sheet-v1.md",
+        "campaign/session0-redlines.md",
+        "campaign/rules/vertical-slice-v0.md",
+        "campaign/rules/mechanics-fine-v1.md",
+        "campaign/rules/logic-map-v1.md",
+        "LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md"
+      ],
+      "qualification_rule": "An explicit standalone identity-bearing ENDING record must exist within the first-roster/Task-0 vertical-slice scope for a stable ID; mechanics values, worksheet values, scenes (including S8's wrap-up), future finale prose, and headings/incidental nouns are excluded and do not qualify.",
+      "evidence": [
+        {
+          "source": {
+            "path": "campaign/playtest/stage3-run-guide-v1.md",
+            "locator": "### S8 结算＋休整",
+            "locator_type": "markdown_heading"
+          },
+          "classification": "EXISTING_SCENE_NOT_ENDING",
+          "reason": "S8 already has a SCENE stable ID (UNR-SCENE-T000-08); its wrap-up is scene content, not a standalone identity-bearing ENDING record."
+        },
+        {
+          "source": {
+            "path": "campaign/proposals/tasks-v1.md",
+            "locator": "## 5. 终局《清零》（元层 · 盗「概念」· 2 场）",
+            "locator_type": "markdown_heading"
+          },
+          "classification": "OUTSIDE_TASK0_PROPOSAL_NOT_ENDING",
+          "reason": "The future finale proposal is outside the first-roster/Task-0 vertical-slice scope and is proposal prose, not a standalone identity-bearing ENDING record."
+        }
+      ],
+      "conclusion": "Zero source-backed ENDING assignments: no audited source within the frozen first-roster/Task-0 vertical-slice scope contains a standalone identity-bearing ENDING record, so namespace UNR-ENDING registers no entity."
     }
   ],
   "entities": [

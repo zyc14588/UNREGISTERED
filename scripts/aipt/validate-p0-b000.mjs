@@ -48,13 +48,14 @@
  *      no-token/no-remote-call rules are unchanged;
  *   9. eight in-memory negative probes, all of which must be rejected; plus an
  *      in-memory status-mutation probe set proving the status.json B001
- *      IN_PROGRESS shape (with B000 recorded as previous_batch MERGED_CLOSED)
- *      rejects every stale/legacy/contradictory mutation (9b).
+ *      MERGED_CLOSED closeout shape (with B000 recorded as previous_batch
+ *      MERGED_CLOSED) rejects every stale/legacy/contradictory mutation (9b).
  *
  * B000 is historical MERGED_CLOSED; the current batch is the legal B001
- * IN_PROGRESS state (global_wip 1, previous_batch B000 MERGED_CLOSED, next
- * AIPT-M0-B003 NOT_AUTHORIZED, next_batch_authorized false, next_batch_started
- * false). The required B001 artifacts are expected and no longer rejected.
+ * closeout state (status MERGED_CLOSED, global_wip 0, previous_batch B000
+ * MERGED_CLOSED, next AIPT-M0-B003 AUTHORIZED_TO_PREPARE,
+ * next_batch_authorized true, next_batch_started false). The required B001
+ * artifacts are expected and no longer rejected.
  *
  * Output is concise and deterministic; exits non-zero with actionable errors
  * on any failure.
@@ -537,14 +538,15 @@ function checkForbiddenKeys(obj, fileLabel) {
   }
 }
 
-/** Legal B001 IN_PROGRESS status for aipt/status.json: exactly these keys,
- *  exactly these values. B000 is historical and recorded inside
+/** Legal B001 MERGED_CLOSED closeout status for aipt/status.json: exactly
+ *  these keys, exactly these values. B000 is historical and recorded inside
  *  previous_batch as MERGED_CLOSED. The exact key set fails any extra or
  *  contradictory lifecycle field (including the legacy abbreviated
- *  next_started key), and the exact value map fails a stale current status,
- *  global_wip drift, previous_batch drift (B000 must stay MERGED_CLOSED), any
- *  next batch other than AIPT-M0-B003, any next state other than
- *  NOT_AUTHORIZED, authorization true, and next_batch_started=true. */
+ *  next_started key), and the exact value map fails a stale current status
+ *  (IN_PROGRESS or any other non-closeout value), global_wip drift,
+ *  previous_batch drift (B000 must stay MERGED_CLOSED), any next batch other
+ *  than AIPT-M0-B003, any next state other than AUTHORIZED_TO_PREPARE,
+ *  authorization false, and next_batch_started=true. */
 const STATUS_KEYS_B001 = [
   "aipt_schema",
   "current_batch",
@@ -560,12 +562,12 @@ const STATUS_KEYS_B001 = [
 const EXPECTED_STATUS_B001 = {
   aipt_schema: "aipt.status.v1",
   current_batch: NEXT_BATCH,
-  status: "IN_PROGRESS",
-  global_wip: 1,
+  status: "MERGED_CLOSED",
+  global_wip: 0,
   previous_batch: { batch_id: BATCH, status: "MERGED_CLOSED" },
   next_batch: "AIPT-M0-B003",
-  next_batch_state: "NOT_AUTHORIZED",
-  next_batch_authorized: false,
+  next_batch_state: "AUTHORIZED_TO_PREPARE",
+  next_batch_authorized: true,
   next_batch_started: false,
 };
 
@@ -612,9 +614,9 @@ function checkStatusAndArtifacts() {
   for (const f of walk(path.join(ROOT, "aipt"))) {
     const r = relPath(f);
     if (/p0-?b00[2-9]/i.test(r)) throw new Error(`unexpected later-batch artifact present: ${r}`);
-    if (/run[-_]?manifest/i.test(path.basename(f))) throw new Error(`AIPT run manifest present: ${r} (not allowed while ${NEXT_BATCH} is IN_PROGRESS)`);
+    if (/run[-_]?manifest/i.test(path.basename(f))) throw new Error(`AIPT run manifest present: ${r} (not allowed: ${NEXT_BATCH} is MERGED_CLOSED and AIPT-M0-B003 is authorized to prepare but not started)`);
   }
-  pass(`status: ${NEXT_BATCH} IN_PROGRESS; previous ${BATCH} MERGED_CLOSED; global_wip=1; next AIPT-M0-B003 NOT_AUTHORIZED, not started; required B001 artifacts present`);
+  pass(`status: ${NEXT_BATCH} MERGED_CLOSED (closeout); previous ${BATCH} MERGED_CLOSED; global_wip=0; next AIPT-M0-B003 AUTHORIZED_TO_PREPARE, not started; required B001 artifacts present`);
 }
 
 // ---------------------------------------------------------------------------
@@ -1290,23 +1292,24 @@ function runProbes() {
 
 // ---------------------------------------------------------------------------
 // 9b. In-memory status-mutation probe set — every stale/legacy/contradictory
-//     mutation of the legal B001 IN_PROGRESS status.json must be rejected by
-//     checkBatchStatus (and the B000 historical invariant must hold)
+//     mutation of the legal B001 MERGED_CLOSED closeout status.json must be
+//     rejected by checkBatchStatus (and the B000 historical invariant must
+//     hold)
 // ---------------------------------------------------------------------------
 
 function runStatusProbes() {
   const base = loadJson("aipt/status.json");
   const probes = [
-    ["current status drift (MERGED_CLOSED)", () => checkBatchStatus({ ...base, status: "MERGED_CLOSED" })],
-    ["global_wip=0", () => checkBatchStatus({ ...base, global_wip: 0 })],
+    ["current status drift (IN_PROGRESS)", () => checkBatchStatus({ ...base, status: "IN_PROGRESS" })],
+    ["global_wip=1", () => checkBatchStatus({ ...base, global_wip: 1 })],
     ["previous_batch.status drift (IN_PROGRESS)", () =>
       checkBatchStatus({ ...base, previous_batch: { batch_id: "UNREGISTERED-AIPT-P0-B000", status: "IN_PROGRESS" } })],
     ["previous_batch.batch_id drift", () =>
       checkBatchStatus({ ...base, previous_batch: { batch_id: "UNREGISTERED-AIPT-P0-B002", status: "MERGED_CLOSED" } })],
     ["next_batch drift", () => checkBatchStatus({ ...base, next_batch: "AIPT-M0-B004" })],
-    ["next_batch_state drift (AUTHORIZED_TO_PREPARE)", () =>
-      checkBatchStatus({ ...base, next_batch_state: "AUTHORIZED_TO_PREPARE" })],
-    ["next_batch_authorized=true", () => checkBatchStatus({ ...base, next_batch_authorized: true })],
+    ["next_batch_state drift (NOT_AUTHORIZED)", () =>
+      checkBatchStatus({ ...base, next_batch_state: "NOT_AUTHORIZED" })],
+    ["next_batch_authorized=false", () => checkBatchStatus({ ...base, next_batch_authorized: false })],
     ["next_batch_started=true", () => checkBatchStatus({ ...base, next_batch_started: true })],
     ["legacy next_started key", () => checkBatchStatus({ ...base, next_started: false })],
     ["extra lifecycle key", () => checkBatchStatus({ ...base, next_batch_active: true })],

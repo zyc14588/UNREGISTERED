@@ -23,8 +23,54 @@
     "UNR-CLUE": { "entity_kind": "CLUE", "state": "ASSIGNED", "assigned_count": 12, "reserved_count": 0 },
     "UNR-NPC": { "entity_kind": "NPC", "state": "ASSIGNED", "assigned_count": 3, "reserved_count": 0 },
     "UNR-ITEM": { "entity_kind": "ITEM", "state": "ASSIGNED", "assigned_count": 1, "reserved_count": 0 },
-    "UNR-SAFETY-EVENT": { "entity_kind": "SAFETY_EVENT", "state": "ASSIGNED", "assigned_count": 2, "reserved_count": 0 }
+    "UNR-SAFETY-EVENT": { "entity_kind": "SAFETY_EVENT", "state": "ASSIGNED", "assigned_count": 2, "reserved_count": 0 },
+    "UNR-STATE": { "entity_kind": "STATE", "state": "JUSTIFIED_ZERO", "assigned_count": 0, "reserved_count": 0 }
   },
+  "zero_assignment_justifications": [
+    {
+      "namespace": "UNR-STATE",
+      "kind": "STATE",
+      "assigned_count": 0,
+      "audited_sources": [
+        "aipt/p0-b000/identity.json",
+        "aipt/p0-b000/licensing.json",
+        "aipt/p0-b000/premades-v2.json",
+        "campaign/proposals/tasks-v1.md",
+        "campaign/playtest/stage3-run-guide-v1.md",
+        "campaign/playtest/task0-handouts-v1.md",
+        "campaign/playtest/task0-intel-pack-v1.md",
+        "campaign/playtest/gm-screen-v1.md",
+        "campaign/playtest/rule-knowledge-sheet-v1.md",
+        "campaign/session0-redlines.md",
+        "campaign/rules/vertical-slice-v0.md",
+        "campaign/rules/mechanics-fine-v1.md",
+        "campaign/rules/logic-map-v1.md",
+        "LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md"
+      ],
+      "qualification_rule": "An explicit standalone identity-bearing STATE record must exist within the first-roster/Task-0 vertical-slice scope for a stable ID; mechanics state values, worksheet column values, scenes, future finale prose, and headings/incidental nouns are excluded and do not qualify.",
+      "evidence": [
+        {
+          "source": {
+            "path": "campaign/playtest/gm-screen-v1.md",
+            "locator": "## 面 B：状态与流程",
+            "locator_type": "markdown_heading"
+          },
+          "classification": "RULE_STATE_VALUES_NOT_ENTITY",
+          "reason": "The state values under this heading are mechanics/record field values (statuses a record may carry), not standalone identity-bearing STATE records."
+        },
+        {
+          "source": {
+            "path": "campaign/playtest/rule-knowledge-sheet-v1.md",
+            "locator": "## 五列状态",
+            "locator_type": "markdown_heading"
+          },
+          "classification": "WORKSHEET_COLUMN_VALUES_NOT_ENTITY",
+          "reason": "The five column states are worksheet/record field values describing how records are tracked, not standalone identity-bearing STATE records."
+        }
+      ],
+      "conclusion": "Zero source-backed STATE assignments: no audited source within the frozen first-roster/Task-0 vertical-slice scope contains a standalone identity-bearing STATE record, so namespace UNR-STATE registers no entity."
+    }
+  ],
   "entities": [
     {
       "stable_id": "UNR-CHAR-0001",

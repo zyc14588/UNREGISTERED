@@ -638,6 +638,74 @@ function checkManifestObj(m) {
   if (scope.task0.source !== "campaign/playtest/stage3-run-guide-v1.md") {
     throw new Error("manifest.scope.task0.source must be campaign/playtest/stage3-run-guide-v1.md");
   }
+  // Manifest stable_id_coverage: the exact manifest summary of the frozen
+  // first-roster/Task-0 registry + visibility. Fail closed on schema shape,
+  // registry-order sequences (never sorted), the flattened 34-ID count with
+  // global uniqueness, and cross-file visibility coverage.
+  const sic = scope.stable_id_coverage;
+  assertExactKeys(sic, STABLE_ID_COVERAGE_KEYS, "manifest.scope.stable_id_coverage");
+  assertExact(sic.registry_source, "aipt/p0-b001/stable-ids.json", "manifest.scope.stable_id_coverage.registry_source");
+  assertExact(sic.visibility_source, "aipt/p0-b001/visibility.json", "manifest.scope.stable_id_coverage.visibility_source");
+  assertExactKeys(sic.assigned_ids, STABLE_ASSIGNED_KIND_KEYS, "manifest.scope.stable_id_coverage.assigned_ids");
+  const sicRegistry = loadJson("aipt/p0-b001/stable-ids.json");
+  for (const kind of STABLE_ASSIGNED_KIND_KEYS) {
+    const registryOrder = sicRegistry.entities.filter((e) => e.kind === kind).map((e) => e.stable_id);
+    assertExact(
+      sic.assigned_ids[kind],
+      registryOrder,
+      `manifest.scope.stable_id_coverage.assigned_ids.${kind} (must equal the registry ${kind} entities in registry order)`,
+    );
+  }
+  const sicFlat = Object.values(sic.assigned_ids).flat();
+  if (sicFlat.length !== 34) {
+    throw new Error(`manifest.scope.stable_id_coverage must cover exactly 34 assigned IDs, got ${sicFlat.length}`);
+  }
+  if (new Set(sicFlat).size !== sicFlat.length) {
+    throw new Error("manifest.scope.stable_id_coverage assigned IDs must be globally unique (no ID listed under two kinds)");
+  }
+  const zeroSeq = (state) => Object.values(sicRegistry.namespaces).filter((ns) => ns.state === state).map((ns) => ns.entity_kind);
+  assertExact(sic.justified_zero_kinds, ["STATE", "ENDING"], "manifest.scope.stable_id_coverage.justified_zero_kinds");
+  assertExact(
+    sic.justified_zero_kinds,
+    zeroSeq("JUSTIFIED_ZERO"),
+    "manifest.scope.stable_id_coverage.justified_zero_kinds must equal the registry JUSTIFIED_ZERO entity_kind sequence (unsorted, registry order)",
+  );
+  assertExact(sic.reserved_zero_kinds, ["RULE", "INVARIANT", "MUTATION"], "manifest.scope.stable_id_coverage.reserved_zero_kinds");
+  assertExact(
+    sic.reserved_zero_kinds,
+    zeroSeq("RESERVED"),
+    "manifest.scope.stable_id_coverage.reserved_zero_kinds must equal the registry RESERVED entity_kind sequence (unsorted, registry order)",
+  );
+  if (sic.synthetic_entities_added !== false) {
+    throw new Error("manifest.scope.stable_id_coverage.synthetic_entities_added must be false");
+  }
+  assertExact(
+    sic.note,
+    "Assigned IDs are an exact manifest summary of source-backed entities in the frozen first-roster/Task-0 vertical slice; STATE and ENDING have machine-checked zero-assignment justifications in the registry; RULE, INVARIANT, and MUTATION remain reserved with zero assignments.",
+    "manifest.scope.stable_id_coverage.note",
+  );
+  // Every assigned ID must be visible in some aipt/p0-b001/visibility.json mapping.
+  const sicVisibility = loadJson("aipt/p0-b001/visibility.json");
+  const sicMappedIds = new Set((sicVisibility.mappings || []).flatMap((mp) => (Array.isArray(mp.entity_ids) ? mp.entity_ids : [])));
+  for (const id of sicFlat) {
+    if (!sicMappedIds.has(id)) {
+      throw new Error(`assigned stable id ${id} is not visible in any aipt/p0-b001/visibility.json mapping entity_ids`);
+    }
+  }
+  // Exact current stable registry-ref role/lifecycle/lifecycle_note.
+  const sicRef = (m.registry_refs || []).find((e) => e.path === "aipt/p0-b001/stable-ids.json");
+  if (!sicRef) throw new Error("manifest.registry_refs must include aipt/p0-b001/stable-ids.json");
+  assertExact(
+    sicRef.role,
+    "stable entity ID registry (source-backed CHARACTER/SECRET/SCENE/CLUE/NPC/ITEM/SAFETY_EVENT assignments; justified-zero STATE/ENDING; reserved-zero RULE/INVARIANT/MUTATION)",
+    "manifest.registry_refs aipt/p0-b001/stable-ids.json role",
+  );
+  assertExact(sicRef.lifecycle, "PROPOSAL", "manifest.registry_refs aipt/p0-b001/stable-ids.json lifecycle");
+  assertExact(
+    sicRef.lifecycle_note,
+    "B001 registry metadata; ID assignment does not promote source lifecycles (sources stay PROPOSAL/PLAYTESTABLE_DRAFT), nothing is promoted to CANON, and STATE/ENDING zero assignments are source-audited justifications rather than invented entities.",
+    "manifest.registry_refs aipt/p0-b001/stable-ids.json lifecycle_note",
+  );
   const ri = scope.rules_inputs;
   assertExactKeys(ri, RULES_INPUTS_KEYS, "manifest.scope.rules_inputs");
   for (const k of [
@@ -661,7 +729,7 @@ function checkManifestObj(m) {
 
 function checkManifest() {
   checkManifestObj(loadJson(MANIFEST_REL));
-  pass("manifest: exact schema shape (fail-closed key sets for every object incl. notes/statements), game-owned metadata, exact lifecycles for all 14 sources + 3 registry refs, no CANON, no circular game revision key, no self-hash");
+  pass("manifest: exact schema shape (fail-closed key sets for every object incl. notes/statements), game-owned metadata, exact lifecycles for all 14 sources + 3 registry refs, no CANON, no circular game revision key, no self-hash; exact stable_id_coverage: 34 assigned IDs (4 CHARACTER + 4 SECRET + 8 SCENE + 12 CLUE + 3 NPC + 1 ITEM + 2 SAFETY_EVENT) in registry order, globally unique, all visible in visibility mappings, zero kinds in unsorted registry order, exact registry-ref role/lifecycle/lifecycle_note");
 }
 
 // ---------------------------------------------------------------------------

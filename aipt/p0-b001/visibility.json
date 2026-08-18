@@ -159,7 +159,7 @@
       "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
       "remote_allowed": true,
       "principals": ["GM"],
-      "entity_ids": ["UNR-CHAR-0001"],
+      "entity_ids": ["UNR-CHAR-0001","UNR-CLUE-0001","UNR-CLUE-0002"],
       "note": "游隼's discovery clues are GM-run procedure, not pre-authorized owner content: the GM decides when and how a clue becomes discoverable in play. The owning character is not pre-authorized to this source object; clues reach them only as in-game findings at the GM's discretion."
     },
     {
@@ -195,7 +195,7 @@
       "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
       "remote_allowed": true,
       "principals": ["GM"],
-      "entity_ids": ["UNR-CHAR-0002"],
+      "entity_ids": ["UNR-CHAR-0002","UNR-CLUE-0003","UNR-CLUE-0004"],
       "note": "短波's discovery clues are GM-run procedure; the owning character is not pre-authorized to this source object — clues reach them only as in-game findings at the GM's discretion."
     },
     {
@@ -231,7 +231,7 @@
       "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
       "remote_allowed": true,
       "principals": ["GM"],
-      "entity_ids": ["UNR-CHAR-0003"],
+      "entity_ids": ["UNR-CHAR-0003","UNR-CLUE-0005","UNR-CLUE-0006"],
       "note": "静水's discovery clues are GM-run procedure; the owning character is not pre-authorized to this source object — clues reach them only as in-game findings at the GM's discretion."
     },
     {
@@ -267,7 +267,7 @@
       "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
       "remote_allowed": true,
       "principals": ["GM"],
-      "entity_ids": ["UNR-CHAR-0004"],
+      "entity_ids": ["UNR-CHAR-0004","UNR-CLUE-0007","UNR-CLUE-0008"],
       "note": "底片's discovery clues are GM-run procedure; the owning character is not pre-authorized to this source object — clues reach them only as in-game findings at the GM's discretion."
     },
     {
@@ -328,6 +328,7 @@
       "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
       "remote_allowed": true,
       "principals": ["GM"],
+      "entity_ids": ["UNR-NPC-T000-01","UNR-NPC-T000-02","UNR-NPC-T000-03","UNR-ITEM-T000-01"],
       "note": "GM truth for task0: area map, patrol schedule, surveillance/monitoring facts, leaks (夹层门 / 23:14 帧 / 回收条目), target and guard stats. Never player-facing."
     },
     {
@@ -456,6 +457,7 @@
       "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
       "remote_allowed": true,
       "principals": ["GM"],
+      "entity_ids": ["UNR-CLUE-T000-01","UNR-CLUE-T000-02","UNR-CLUE-T000-03","UNR-CLUE-T000-04"],
       "note": "GM-only leak timeline."
     },
     {
@@ -553,6 +555,7 @@
       "label": "PUBLIC",
       "remote_allowed": true,
       "principals": ["GM", "ALL_PLAYERS"],
+      "entity_ids": ["UNR-SAFETY-EVENT-0001","UNR-SAFETY-EVENT-0002"],
       "release": { "point": "Session 0 安全预热（3 分钟）", "timing": "session0_disclosure" },
       "note": "Table tools (X 卡/平台安全暂停, 红灯词清单, 解压检查) that all participants use and must know."
     },

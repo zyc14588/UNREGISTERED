@@ -11,7 +11,7 @@
   "lifecycle": {
     "assigned_source_statuses": ["PROPOSAL", "PLAYTESTABLE_DRAFT"],
     "promotes_to_canon": false,
-    "note": "Stable-ID registration does not change source lifecycle status. Characters and secrets are PLAYTESTABLE_DRAFT (aipt/p0-b000/premades-v2.json declares status PLAYTESTABLE_DRAFT); scenes are PROPOSAL (campaign/playtest/stage3-run-guide-v1.md declares 状态：PROPOSAL). Nothing in this file promotes any entity to CANON."
+    "note": "Stable-ID registration does not change source lifecycle status. PLAYTESTABLE_DRAFT: characters, secrets, and premade clues (aipt/p0-b000/premades-v2.json declares status PLAYTESTABLE_DRAFT). PROPOSAL: scenes, Task-0 clues, NPCs, item, and safety events (campaign/playtest Task-0 sources and campaign/session0-redlines.md declare 状态：PROPOSAL). Nothing in this file promotes any entity to CANON. STATE and ENDING are justified zero-assignment namespaces (see zero_assignment_justifications): no audited source yields a standalone identity-bearing STATE or ENDING record."
   },
   "namespaces": {
     "UNR-CHAR": { "entity_kind": "CHARACTER", "state": "ASSIGNED", "assigned_count": 4, "reserved_count": 0 },
@@ -542,6 +542,10 @@
     "retired_id_reuse": {
       "rule": "entities[].stable_id must be disjoint from retired[]; an id moved to retired[] is never reassigned to a different entity",
       "fields": ["entities[].stable_id", "retired[]"]
+    },
+    "zero_assignment": {
+      "rule": "every namespace with state JUSTIFIED_ZERO must have exactly one zero_assignment_justifications[] entry matching the same namespace and kind, with assigned_count 0 and an audited_sources array covering the full frozen first-roster/Task-0 scope; each evidence entry must cite an exact source locator and classify why it is not a standalone identity-bearing entity; the conclusion must explicitly state zero source-backed assignments",
+      "fields": ["namespaces[].state", "zero_assignment_justifications[]"]
     }
   }
 }

@@ -351,7 +351,9 @@ const SOURCE_PATH_POLICY_KEYS = [
 ];
 const SOURCE_ENTRY_KEYS = ["path", "role", "lifecycle", "lifecycle_note", "sha256"];
 const REGISTRY_ENTRY_KEYS = ["path", "role", "lifecycle", "lifecycle_note", "sha256"];
-const SCOPE_KEYS = ["first_roster", "task0", "rules_inputs"];
+const SCOPE_KEYS = ["first_roster", "task0", "stable_id_coverage", "rules_inputs"];
+const STABLE_ID_COVERAGE_KEYS = ["registry_source", "visibility_source", "assigned_ids", "justified_zero_kinds", "reserved_zero_kinds", "synthetic_entities_added", "note"];
+const STABLE_ASSIGNED_KIND_KEYS = ["CHARACTER", "SECRET", "SCENE", "CLUE", "NPC", "ITEM", "SAFETY_EVENT"];
 const FIRST_ROSTER_KEYS = ["character_ids", "note"];
 const TASK0_KEYS = ["id", "scope", "scene_ids", "source"];
 const RULES_INPUTS_KEYS = [
@@ -438,8 +440,8 @@ const ACCEPTED_DIGESTS = {
   "campaign/rules/mechanics-fine-v1.md": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
   "campaign/rules/logic-map-v1.md": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
   "LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md": "2aab086afd0fc6a0d9455a56ae9052039b4af3d098e5fd2fc4cc22551972bc11",
-  "aipt/p0-b001/stable-ids.json": "e614ce46bf5f2bf9278d6d05600d3482a3cd6e800ab326ef13828bf08c3cf0a6",
-  "aipt/p0-b001/visibility.json": "59f7e1d87179182dd3fc0a26621c6c6c9d9a14f117e8d6a38ba23af3ce4681fb",
+  "aipt/p0-b001/stable-ids.json": "c7e296bf7f7595ec17e67e44fef60ac38e979d4906ab31d1d9081e6bed53dba6",
+  "aipt/p0-b001/visibility.json": "e232a2f95c6359cf54dd5f4147c72e0c3433614e00555226cd2993716f7bbb70",
   "aipt/p0-b001/safety-profile.json": "dea0b7a62ba8ac81cb9314546afebca400642d9923f9ae928d97c9a40a29304f",
 };
 

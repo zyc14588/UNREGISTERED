@@ -1,8 +1,10 @@
 {
   "aipt_schema": "aipt.status.v1",
   "current_batch": "UNREGISTERED-AIPT-P0-B000",
-  "status": "IN_PROGRESS",
-  "global_wip": 1,
+  "status": "MERGED_CLOSED",
+  "global_wip": 0,
   "next_batch": "UNREGISTERED-AIPT-P0-B001",
-  "next_started": false
+  "next_batch_state": "AUTHORIZED_TO_PREPARE",
+  "next_batch_authorized": true,
+  "next_batch_started": false
 }

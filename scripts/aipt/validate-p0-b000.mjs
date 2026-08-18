@@ -36,7 +36,9 @@
  *   8. static check of the AIPT Content Gate workflow, including a hardened
  *      top-level permissions block parse (blank/comment-safe, runs until the
  *      next top-level key) and rejection of any permission entry valued write;
- *   9. eight in-memory negative probes, all of which must be rejected.
+ *   9. eight in-memory negative probes, all of which must be rejected; plus a
+ *      small in-memory closeout-state probe set proving the status.json
+ *      merged/closed transition checks (9b).
  *
  * Output is concise and deterministic; exits non-zero with actionable errors
  * on any failure.
@@ -519,18 +521,54 @@ function checkForbiddenKeys(obj, fileLabel) {
   }
 }
 
+/** Post-merge closeout state for P0-B000: exactly these keys, exactly these
+ *  values. The exact key set fails any extra or contradictory lifecycle field
+ *  (including the legacy abbreviated next_started key), and the exact value
+ *  map fails stale IN_PROGRESS, global_wip=1, missing/false authorization,
+ *  any next state other than AUTHORIZED_TO_PREPARE, and
+ *  next_batch_started=true. */
+const STATUS_KEYS = [
+  "aipt_schema",
+  "current_batch",
+  "status",
+  "global_wip",
+  "next_batch",
+  "next_batch_state",
+  "next_batch_authorized",
+  "next_batch_started",
+];
+
+const CLOSEOUT_STATUS = {
+  aipt_schema: "aipt.status.v1",
+  current_batch: BATCH,
+  status: "MERGED_CLOSED",
+  global_wip: 0,
+  next_batch: NEXT_BATCH,
+  next_batch_state: "AUTHORIZED_TO_PREPARE",
+  next_batch_authorized: true,
+  next_batch_started: false,
+};
+
+function checkCloseoutState(s) {
+  if (!s || typeof s !== "object") throw new Error("status.json: missing status object");
+  const keys = Object.keys(s).sort();
+  const expectedKeys = [...STATUS_KEYS].sort();
+  if (JSON.stringify(keys) !== JSON.stringify(expectedKeys)) {
+    throw new Error(`status.json keys must be exactly ${JSON.stringify(expectedKeys)}, got ${JSON.stringify(keys)}`);
+  }
+  for (const [k, v] of Object.entries(CLOSEOUT_STATUS)) {
+    if (s[k] !== v) throw new Error(`status.${k} must be exactly ${JSON.stringify(v)}, got ${JSON.stringify(s[k])}`);
+  }
+}
+
 function checkStatusAndArtifacts() {
-  const s = loadJson("aipt/status.json");
-  if (s.aipt_schema !== "aipt.status.v1") throw new Error("status.aipt_schema must be exactly aipt.status.v1");
-  if (s.current_batch !== BATCH) throw new Error(`status.current_batch must be exactly ${BATCH}`);
-  if (s.next_batch !== NEXT_BATCH) throw new Error(`status.next_batch must be exactly ${NEXT_BATCH}`);
-  if (s.next_started !== false) throw new Error("status.next_started must be false: P0-B001 must not be started");
+  checkCloseoutState(loadJson("aipt/status.json"));
   for (const f of walk(path.join(ROOT, "aipt"))) {
     const r = relPath(f);
-    if (/p0-?b001/i.test(r)) throw new Error(`P0-B001 artifact present: ${r} (must not exist while next_started=false)`);
+    if (/p0-?b001/i.test(r)) throw new Error(`P0-B001 artifact present: ${r} (must not exist while next_batch_started=false)`);
     if (/manifest/i.test(path.basename(f))) throw new Error(`AIPT input manifest present: ${r} (not allowed for this batch)`);
   }
-  pass(`status: batch ${BATCH}; next ${NEXT_BATCH} not started; no manifest/P0-B001 artifacts`);
+  pass(`status: ${BATCH} merged/closed; global_wip=0; next ${NEXT_BATCH} authorized-to-prepare, not started; no manifest/P0-B001 artifacts`);
 }
 
 // ---------------------------------------------------------------------------
@@ -1176,6 +1214,44 @@ function runProbes() {
 }
 
 // ---------------------------------------------------------------------------
+// 9b. In-memory closeout-state probe set — every stale/legacy/contradictory
+//     status.json mutation must be rejected by checkCloseoutState
+// ---------------------------------------------------------------------------
+
+function runCloseoutProbes() {
+  const base = loadJson("aipt/status.json");
+  const probes = [
+    ["stale status IN_PROGRESS", () => checkCloseoutState({ ...base, status: "IN_PROGRESS" })],
+    ["global_wip=1", () => checkCloseoutState({ ...base, global_wip: 1 })],
+    ["next_batch_state drift (IN_PROGRESS)", () => checkCloseoutState({ ...base, next_batch_state: "IN_PROGRESS" })],
+    ["authorization false", () => checkCloseoutState({ ...base, next_batch_authorized: false })],
+    ["authorization missing", () => {
+      const m = { ...base };
+      delete m.next_batch_authorized;
+      checkCloseoutState(m);
+    }],
+    ["next_batch_started=true", () => checkCloseoutState({ ...base, next_batch_started: true })],
+    ["legacy next_started key", () => checkCloseoutState({ ...base, next_started: false })],
+    ["extra lifecycle key", () => checkCloseoutState({ ...base, next_batch_active: true })],
+  ];
+  let rejected = 0;
+  probes.forEach(([label, fn], i) => {
+    try {
+      fn();
+      fail(`closeout-state probe must reject but did not: ${label}`);
+    } catch {
+      rejected += 1;
+      console.log(`PASS closeout-state probe ${i + 1}/${probes.length} (${label}): rejected`);
+    }
+  });
+  if (rejected === probes.length) {
+    console.log(`PASS closeout-state probes: ${probes.length}/${probes.length} rejected as expected`);
+  } else {
+    console.error(`FAIL closeout-state probes: only ${rejected}/${probes.length} rejected as expected`);
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -1225,6 +1301,7 @@ function main() {
   runCheck("delivery-surface scan", checkScan);
   runCheck("workflow", checkWorkflow);
   runProbes();
+  runCloseoutProbes();
 
   if (errors.length > 0) {
     for (const e of errors) console.error("FAIL " + e);

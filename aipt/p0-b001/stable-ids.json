@@ -19,7 +19,8 @@
     "UNR-SCENE": { "entity_kind": "SCENE", "state": "ASSIGNED", "assigned_count": 8, "reserved_count": 0 },
     "UNR-RULE": { "entity_kind": "RULE", "state": "RESERVED", "assigned_count": 0, "reserved_count": 0 },
     "UNR-INVARIANT": { "entity_kind": "INVARIANT", "state": "RESERVED", "assigned_count": 0, "reserved_count": 0 },
-    "UNR-MUTATION": { "entity_kind": "MUTATION", "state": "RESERVED", "assigned_count": 0, "reserved_count": 0 }
+    "UNR-MUTATION": { "entity_kind": "MUTATION", "state": "RESERVED", "assigned_count": 0, "reserved_count": 0 },
+    "UNR-CLUE": { "entity_kind": "CLUE", "state": "ASSIGNED", "assigned_count": 12, "reserved_count": 0 }
   },
   "entities": [
     {
@@ -210,6 +211,150 @@
         "path": "campaign/playtest/stage3-run-guide-v1.md",
         "locator": "### S8 结算＋休整",
         "locator_type": "markdown_heading"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0001",
+      "kind": "CLUE",
+      "display_name": "游隼侦破线索 1",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.游隼.discovery_clues.0",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0002",
+      "kind": "CLUE",
+      "display_name": "游隼侦破线索 2",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.游隼.discovery_clues.1",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0003",
+      "kind": "CLUE",
+      "display_name": "短波侦破线索 1",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.短波.discovery_clues.0",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0004",
+      "kind": "CLUE",
+      "display_name": "短波侦破线索 2",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.短波.discovery_clues.1",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0005",
+      "kind": "CLUE",
+      "display_name": "静水侦破线索 1",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.静水.discovery_clues.0",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0006",
+      "kind": "CLUE",
+      "display_name": "静水侦破线索 2",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.静水.discovery_clues.1",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0007",
+      "kind": "CLUE",
+      "display_name": "底片侦破线索 1",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.底片.discovery_clues.0",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0008",
+      "kind": "CLUE",
+      "display_name": "底片侦破线索 2",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.底片.discovery_clues.1",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-T000-01",
+      "kind": "CLUE",
+      "display_name": "派单背面空白",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "| 接单 | 派单小字\"须知见背面·背面空白\" | 是 | 三层模型：文本可以空 |",
+        "locator_type": "markdown_table_row"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-T000-02",
+      "kind": "CLUE",
+      "display_name": "未标注夹层门",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "| 侦查卓越 | 夹层门（未标注，锁死） | 是（暗层） | 情报卡三层 |",
+        "locator_type": "markdown_table_row"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-T000-03",
+      "kind": "CLUE",
+      "display_name": "监控 23:14 上一批测试员背影",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "| 侦查卓越收益 | 监控 23:14 帧\"上一批测试员\"背影 | 是（GM 暗线，赛后回收） | 再访变化伏笔 |",
+        "locator_type": "markdown_table_row"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-T000-04",
+      "kind": "CLUE",
+      "display_name": "回收条目：测试员 1 名",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "| 结算 | 「已回收：编号 000 —— 测试员 1 名」 | 是（决策 #42） | 长线钩子 |",
+        "locator_type": "markdown_table_row"
       },
       "lifecycle_status": "PROPOSAL",
       "canonical": false

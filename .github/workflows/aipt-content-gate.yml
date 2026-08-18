@@ -28,3 +28,6 @@ jobs:
 
       - name: Validate AIPT P0-B000 delivery
         run: node scripts/aipt/validate-p0-b000.mjs
+
+      - name: Validate AIPT P0-B001 delivery
+        run: node scripts/aipt/validate-p0-b001.mjs

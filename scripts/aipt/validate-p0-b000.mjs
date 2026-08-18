@@ -8,7 +8,7 @@
  * no subprocess, no git, no model calls. It works by reading the checkout
  * filesystem; it never writes anything.
  *
- * Checks (iteration 3 contract):
+ * Checks (iteration 4 contract — B000 gate evolved only where B001 requires it):
  *   1. every repository JSON file parses (recursive checkout walk with .git,
  *      node_modules, .sessions excluded; symlinks and non-files ignored) and
  *      every ordinary relative inline Markdown link in all repository Markdown
@@ -28,17 +28,33 @@
  *      premades-v2.md, mechanics-fine-v1.md §A6), with exact attribute/skill/
  *      clue/trigger/tier/bond values and normalized source extraction;
  *   6. recursive rejection of forbidden schema concepts (stable IDs,
- *      visibility, audience, SafetyProfile) scoped to AIPT delivery JSON, and
- *      of actual AIPT input manifest / P0-B001 artifacts;
+ *      visibility, audience, SafetyProfile) scoped to the B000 delivery JSON
+ *      (aipt/p0-b000/**) only — the new B001 artifacts and the B001 input
+ *      manifest are out of B000 schema-key scope (they are deeply validated by
+ *      validate-p0-b001.mjs);
  *   7. credential / private-path / private prompt- and package-marker scan of
  *      the generated delivery surfaces (needles are assembled from fragments
- *      so this file does not flag itself);
+ *      so this file does not flag itself); the required participant-data
+ *      classification token (HUMAN/PRIVATE/DATA) is allowed only inside the
+ *      B001 metadata files
+ *      (aipt/p0-b001/**), while actual participant data and credentials stay
+ *      rejected;
  *   8. static check of the AIPT Content Gate workflow, including a hardened
  *      top-level permissions block parse (blank/comment-safe, runs until the
- *      next top-level key) and rejection of any permission entry valued write;
- *   9. eight in-memory negative probes, all of which must be rejected; plus a
- *      small in-memory closeout-state probe set proving the status.json
- *      merged/closed transition checks (9b).
+ *      next top-level key), rejection of any permission entry valued write,
+ *      and the requirement that both validator commands run as separate
+ *      steps — immutable action pins, Node.js 24.19.0, contents:read,
+ *      persist-credentials:false, ubuntu-24.04 and the no-install/no-cache/
+ *      no-token/no-remote-call rules are unchanged;
+ *   9. eight in-memory negative probes, all of which must be rejected; plus an
+ *      in-memory status-mutation probe set proving the status.json B001
+ *      IN_PROGRESS shape (with B000 recorded as previous_batch MERGED_CLOSED)
+ *      rejects every stale/legacy/contradictory mutation (9b).
+ *
+ * B000 is historical MERGED_CLOSED; the current batch is the legal B001
+ * IN_PROGRESS state (global_wip 1, previous_batch B000 MERGED_CLOSED, next
+ * AIPT-M0-B003 NOT_AUTHORIZED, next_batch_authorized false, next_batch_started
+ * false). The required B001 artifacts are expected and no longer rejected.
  *
  * Output is concise and deterministic; exits non-zero with actionable errors
  * on any failure.
@@ -521,54 +537,84 @@ function checkForbiddenKeys(obj, fileLabel) {
   }
 }
 
-/** Post-merge closeout state for P0-B000: exactly these keys, exactly these
- *  values. The exact key set fails any extra or contradictory lifecycle field
- *  (including the legacy abbreviated next_started key), and the exact value
- *  map fails stale IN_PROGRESS, global_wip=1, missing/false authorization,
- *  any next state other than AUTHORIZED_TO_PREPARE, and
- *  next_batch_started=true. */
-const STATUS_KEYS = [
+/** Legal B001 IN_PROGRESS status for aipt/status.json: exactly these keys,
+ *  exactly these values. B000 is historical and recorded inside
+ *  previous_batch as MERGED_CLOSED. The exact key set fails any extra or
+ *  contradictory lifecycle field (including the legacy abbreviated
+ *  next_started key), and the exact value map fails a stale current status,
+ *  global_wip drift, previous_batch drift (B000 must stay MERGED_CLOSED), any
+ *  next batch other than AIPT-M0-B003, any next state other than
+ *  NOT_AUTHORIZED, authorization true, and next_batch_started=true. */
+const STATUS_KEYS_B001 = [
   "aipt_schema",
   "current_batch",
   "status",
   "global_wip",
+  "previous_batch",
   "next_batch",
   "next_batch_state",
   "next_batch_authorized",
   "next_batch_started",
 ];
 
-const CLOSEOUT_STATUS = {
+const EXPECTED_STATUS_B001 = {
   aipt_schema: "aipt.status.v1",
-  current_batch: BATCH,
-  status: "MERGED_CLOSED",
-  global_wip: 0,
-  next_batch: NEXT_BATCH,
-  next_batch_state: "AUTHORIZED_TO_PREPARE",
-  next_batch_authorized: true,
+  current_batch: NEXT_BATCH,
+  status: "IN_PROGRESS",
+  global_wip: 1,
+  previous_batch: { batch_id: BATCH, status: "MERGED_CLOSED" },
+  next_batch: "AIPT-M0-B003",
+  next_batch_state: "NOT_AUTHORIZED",
+  next_batch_authorized: false,
   next_batch_started: false,
 };
 
-function checkCloseoutState(s) {
+/** The B001 artifacts that must now exist (they are the accepted baseline);
+ *  validate-p0-b001.mjs performs the deep validation. */
+const REQUIRED_B001_ARTIFACTS = [
+  "aipt/input-manifest.json",
+  "aipt/p0-b001/stable-ids.json",
+  "aipt/p0-b001/visibility.json",
+  "aipt/p0-b001/safety-profile.json",
+];
+
+function checkBatchStatus(s) {
   if (!s || typeof s !== "object") throw new Error("status.json: missing status object");
   const keys = Object.keys(s).sort();
-  const expectedKeys = [...STATUS_KEYS].sort();
+  const expectedKeys = [...STATUS_KEYS_B001].sort();
   if (JSON.stringify(keys) !== JSON.stringify(expectedKeys)) {
     throw new Error(`status.json keys must be exactly ${JSON.stringify(expectedKeys)}, got ${JSON.stringify(keys)}`);
   }
-  for (const [k, v] of Object.entries(CLOSEOUT_STATUS)) {
-    if (s[k] !== v) throw new Error(`status.${k} must be exactly ${JSON.stringify(v)}, got ${JSON.stringify(s[k])}`);
+  for (const [k, v] of Object.entries(EXPECTED_STATUS_B001)) {
+    if (JSON.stringify(s[k]) !== JSON.stringify(v)) {
+      throw new Error(`status.${k} must be exactly ${JSON.stringify(v)}, got ${JSON.stringify(s[k])}`);
+    }
   }
 }
 
 function checkStatusAndArtifacts() {
-  checkCloseoutState(loadJson("aipt/status.json"));
+  const status = loadJson("aipt/status.json");
+  checkBatchStatus(status);
+  // B000 historical invariant: the previous batch is this validator's batch
+  // and it is MERGED_CLOSED — never IN_PROGRESS, never anything else.
+  if (status.previous_batch.batch_id !== BATCH || status.previous_batch.status !== "MERGED_CLOSED") {
+    throw new Error(`status.previous_batch must record ${BATCH} MERGED_CLOSED`);
+  }
+  // B001 artifacts are required now (accepted baseline), not rejected.
+  for (const r of REQUIRED_B001_ARTIFACTS) {
+    const abs = path.join(ROOT, r);
+    if (!existsSync(abs) || !statSync(abs).isFile()) {
+      throw new Error(`required B001 artifact missing: ${r}`);
+    }
+  }
+  // Unexpected artifacts remain rejected: later-batch paths and any AIPT run
+  // manifest (the B001 input manifest is the one sanctioned manifest file).
   for (const f of walk(path.join(ROOT, "aipt"))) {
     const r = relPath(f);
-    if (/p0-?b001/i.test(r)) throw new Error(`P0-B001 artifact present: ${r} (must not exist while next_batch_started=false)`);
-    if (/manifest/i.test(path.basename(f))) throw new Error(`AIPT input manifest present: ${r} (not allowed for this batch)`);
+    if (/p0-?b00[2-9]/i.test(r)) throw new Error(`unexpected later-batch artifact present: ${r}`);
+    if (/run[-_]?manifest/i.test(path.basename(f))) throw new Error(`AIPT run manifest present: ${r} (not allowed while ${NEXT_BATCH} is IN_PROGRESS)`);
   }
-  pass(`status: ${BATCH} merged/closed; global_wip=0; next ${NEXT_BATCH} authorized-to-prepare, not started; no manifest/P0-B001 artifacts`);
+  pass(`status: ${NEXT_BATCH} IN_PROGRESS; previous ${BATCH} MERGED_CLOSED; global_wip=1; next AIPT-M0-B003 NOT_AUTHORIZED, not started; required B001 artifacts present`);
 }
 
 // ---------------------------------------------------------------------------
@@ -1017,6 +1063,19 @@ function buildNeedles() {
     {
       label: "private data marker " + ["HUMAN", "PRIVATE", "DATA"].join("_"),
       re: new RegExp("HUMAN_" + "PRIVATE_" + "DATA"),
+      // The B001 metadata files (aipt/p0-b001/**) legitimately carry the
+      // required participant-data classification token; every other surface
+      // keeps rejecting it. Actual participant data (see the two needles
+      // below) stays rejected everywhere, including inside p0-b001.
+      b001MetadataAllowed: true,
+    },
+    {
+      label: "participant data flag",
+      re: new RegExp('"(participant_' + "answers|names|responses|feedback|mental_health_data" + ')"\\s*:\\s*true'),
+    },
+    {
+      label: "participant payload value",
+      re: new RegExp('"(participant_' + "answers|names|responses|feedback|mental_health_data" + ')"\\s*:\\s*("|\\[|\\{)'),
     },
   ];
 }
@@ -1038,6 +1097,10 @@ function checkScan() {
     const lines = readRel(r).split(/\r?\n/);
     scanned += 1;
     for (const n of needles) {
+      // Classification metadata in B001 metadata files is the one sanctioned
+      // home of the participant-data classification token; everything else
+      // stays scanned.
+      if (n.b001MetadataAllowed && r.startsWith("aipt/p0-b001/")) continue;
       for (let i = 0; i < lines.length; i++) {
         if (n.re.test(lines[i])) {
           throw new Error(
@@ -1047,7 +1110,7 @@ function checkScan() {
       }
     }
   }
-  pass(`delivery-surface scan: no credential material or private absolute paths (${scanned} files scanned)`);
+  pass(`delivery-surface scan: no credential material, private absolute paths, or actual participant data (${scanned} files scanned; ${["HUMAN", "PRIVATE", "DATA"].join("_")} classification token allowed only in aipt/p0-b001/)`);
 }
 
 // ---------------------------------------------------------------------------
@@ -1136,6 +1199,18 @@ function checkWorkflow() {
   require(/^\s*timeout-minutes:\s*5\s*$/m.test(text), "job must set timeout-minutes: 5");
   require(text.includes("node --version") && text.includes("v24.19.0"), "must explicitly assert node --version is v24.19.0");
   require(text.includes("node scripts/aipt/validate-p0-b000.mjs"), "must run node scripts/aipt/validate-p0-b000.mjs");
+  // Both validators must run as separate, clearly named steps: the B000 gate
+  // plus the new B001 gate. Distinct run lines are required so a later edit
+  // cannot silently fold both commands into one step.
+  const validatorRuns = lines
+    .map((l) => l.trim())
+    .filter((l) => /^run:\s*node scripts\/aipt\/validate-p0-b00[01]\.mjs\s*$/.test(l));
+  require(
+    validatorRuns.length === 2 &&
+      validatorRuns.some((r) => r.includes("validate-p0-b000.mjs")) &&
+      validatorRuns.some((r) => r.includes("validate-p0-b001.mjs")),
+    `must run both validators as separate steps (node scripts/aipt/validate-p0-b000.mjs and node scripts/aipt/validate-p0-b001.mjs), got ${JSON.stringify(validatorRuns)}`,
+  );
   const forbidden = [];
   if (/\bnpm\s+(install|ci|i)\b/.test(text)) forbidden.push("npm install");
   if (/\bpnpm\b/.test(text)) forbidden.push("pnpm");
@@ -1146,7 +1221,7 @@ function checkWorkflow() {
   if (/\b(curl|wget)\b/.test(text) || /\bgit\s+(clone|push|pull|fetch)\b/.test(text)) forbidden.push("remote calls");
   require(forbidden.length === 0, `forbidden workflow content detected: ${forbidden.join(", ")}`);
   if (fails.length) throw new Error(fails.join("; "));
-  pass("workflow: AIPT Content Gate static structure OK");
+  pass("workflow: AIPT Content Gate static structure OK (both validator steps; immutable pins, Node 24.19.0, contents:read, no install/cache/token/remote calls)");
 }
 
 // ---------------------------------------------------------------------------
@@ -1214,40 +1289,42 @@ function runProbes() {
 }
 
 // ---------------------------------------------------------------------------
-// 9b. In-memory closeout-state probe set — every stale/legacy/contradictory
-//     status.json mutation must be rejected by checkCloseoutState
+// 9b. In-memory status-mutation probe set — every stale/legacy/contradictory
+//     mutation of the legal B001 IN_PROGRESS status.json must be rejected by
+//     checkBatchStatus (and the B000 historical invariant must hold)
 // ---------------------------------------------------------------------------
 
-function runCloseoutProbes() {
+function runStatusProbes() {
   const base = loadJson("aipt/status.json");
   const probes = [
-    ["stale status IN_PROGRESS", () => checkCloseoutState({ ...base, status: "IN_PROGRESS" })],
-    ["global_wip=1", () => checkCloseoutState({ ...base, global_wip: 1 })],
-    ["next_batch_state drift (IN_PROGRESS)", () => checkCloseoutState({ ...base, next_batch_state: "IN_PROGRESS" })],
-    ["authorization false", () => checkCloseoutState({ ...base, next_batch_authorized: false })],
-    ["authorization missing", () => {
-      const m = { ...base };
-      delete m.next_batch_authorized;
-      checkCloseoutState(m);
-    }],
-    ["next_batch_started=true", () => checkCloseoutState({ ...base, next_batch_started: true })],
-    ["legacy next_started key", () => checkCloseoutState({ ...base, next_started: false })],
-    ["extra lifecycle key", () => checkCloseoutState({ ...base, next_batch_active: true })],
+    ["current status drift (MERGED_CLOSED)", () => checkBatchStatus({ ...base, status: "MERGED_CLOSED" })],
+    ["global_wip=0", () => checkBatchStatus({ ...base, global_wip: 0 })],
+    ["previous_batch.status drift (IN_PROGRESS)", () =>
+      checkBatchStatus({ ...base, previous_batch: { batch_id: "UNREGISTERED-AIPT-P0-B000", status: "IN_PROGRESS" } })],
+    ["previous_batch.batch_id drift", () =>
+      checkBatchStatus({ ...base, previous_batch: { batch_id: "UNREGISTERED-AIPT-P0-B002", status: "MERGED_CLOSED" } })],
+    ["next_batch drift", () => checkBatchStatus({ ...base, next_batch: "AIPT-M0-B004" })],
+    ["next_batch_state drift (AUTHORIZED_TO_PREPARE)", () =>
+      checkBatchStatus({ ...base, next_batch_state: "AUTHORIZED_TO_PREPARE" })],
+    ["next_batch_authorized=true", () => checkBatchStatus({ ...base, next_batch_authorized: true })],
+    ["next_batch_started=true", () => checkBatchStatus({ ...base, next_batch_started: true })],
+    ["legacy next_started key", () => checkBatchStatus({ ...base, next_started: false })],
+    ["extra lifecycle key", () => checkBatchStatus({ ...base, next_batch_active: true })],
   ];
   let rejected = 0;
   probes.forEach(([label, fn], i) => {
     try {
       fn();
-      fail(`closeout-state probe must reject but did not: ${label}`);
+      fail(`status-mutation probe must reject but did not: ${label}`);
     } catch {
       rejected += 1;
-      console.log(`PASS closeout-state probe ${i + 1}/${probes.length} (${label}): rejected`);
+      console.log(`PASS status-mutation probe ${i + 1}/${probes.length} (${label}): rejected`);
     }
   });
   if (rejected === probes.length) {
-    console.log(`PASS closeout-state probes: ${probes.length}/${probes.length} rejected as expected`);
+    console.log(`PASS status-mutation probes: ${probes.length}/${probes.length} rejected as expected`);
   } else {
-    console.error(`FAIL closeout-state probes: only ${rejected}/${probes.length} rejected as expected`);
+    console.error(`FAIL status-mutation probes: only ${rejected}/${probes.length} rejected as expected`);
   }
 }
 
@@ -1286,11 +1363,14 @@ function main() {
   });
   runCheck("links", () => checkRepoLinks(mdFiles, jsons));
   runCheck("forbidden schema keys", () => {
-    // AIPT schema-key concepts are checked on AIPT delivery JSON only, so the
-    // legitimate root pack-manifest.json is not misread as a new AIPT manifest.
-    const delivery = [...jsons].filter(([r]) => r.startsWith("aipt/"));
+    // AIPT schema-key concepts are checked on the B000 delivery JSON only
+    // (aipt/p0-b000/**): the B001 input manifest and the p0-b001 artifacts
+    // legitimately carry stable-ID / visibility / SafetyProfile fields and are
+    // deeply validated by validate-p0-b001.mjs. The root pack-manifest.json
+    // stays out of AIPT schema-key scope.
+    const delivery = [...jsons].filter(([r]) => r.startsWith("aipt/p0-b000/"));
     for (const [r, obj] of delivery) checkForbiddenKeys(obj, r);
-    pass(`forbidden schema keys: none found in ${delivery.length} AIPT delivery JSON file(s) (root pack-manifest.json stays out of AIPT schema-key scope)`);
+    pass(`forbidden schema keys: none found in ${delivery.length} AIPT P0-B000 delivery JSON file(s) (B001 artifacts and the input manifest are out of B000 schema-key scope)`);
   });
   runCheck("identity", checkIdentity);
   runCheck("title surfaces", checkTitleSurfaces);
@@ -1301,7 +1381,7 @@ function main() {
   runCheck("delivery-surface scan", checkScan);
   runCheck("workflow", checkWorkflow);
   runProbes();
-  runCloseoutProbes();
+  runStatusProbes();
 
   if (errors.length > 0) {
     for (const e of errors) console.error("FAIL " + e);

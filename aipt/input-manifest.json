@@ -157,17 +157,17 @@
   "registry_refs": [
     {
       "path": "aipt/p0-b001/stable-ids.json",
-      "role": "stable entity ID registry (namespaces UNR-CHAR/UNR-SECRET/UNR-SCENE assigned; UNR-RULE/UNR-INVARIANT/UNR-MUTATION reserved)",
+      "role": "stable entity ID registry (source-backed CHARACTER/SECRET/SCENE/CLUE/NPC/ITEM/SAFETY_EVENT assignments; justified-zero STATE/ENDING; reserved-zero RULE/INVARIANT/MUTATION)",
       "lifecycle": "PROPOSAL",
-      "lifecycle_note": "B001 registry metadata; ID assignment does not promote source lifecycles (sources stay PROPOSAL/PLAYTESTABLE_DRAFT) and nothing in the registry promotes any entity to CANON.",
-      "sha256": "e614ce46bf5f2bf9278d6d05600d3482a3cd6e800ab326ef13828bf08c3cf0a6"
+      "lifecycle_note": "B001 registry metadata; ID assignment does not promote source lifecycles (sources stay PROPOSAL/PLAYTESTABLE_DRAFT), nothing is promoted to CANON, and STATE/ENDING zero assignments are source-audited justifications rather than invented entities.",
+      "sha256": "c7e296bf7f7595ec17e67e44fef60ac38e979d4906ab31d1d9081e6bed53dba6"
     },
     {
       "path": "aipt/p0-b001/visibility.json",
       "role": "player-visibility classification registry (six-label taxonomy, per-source mappings, fail-closed coverage rules)",
       "lifecycle": "PROPOSAL",
       "lifecycle_note": "Declares lifecycle.status PROPOSAL; classification does not change any source lifecycle.",
-      "sha256": "59f7e1d87179182dd3fc0a26621c6c6c9d9a14f117e8d6a38ba23af3ce4681fb"
+      "sha256": "e232a2f95c6359cf54dd5f4147c72e0c3433614e00555226cd2993716f7bbb70"
     },
     {
       "path": "aipt/p0-b001/safety-profile.json",
@@ -187,6 +187,23 @@
       "scope": "Task 0《入职测试》vertical-slice: 2–4h teaching/single-run module running the full loop 接单→侦查→计划→潜入→盗取→撤离→结算 on the simulated version of the task-1 building; scene IDs UNR-SCENE-T000-01..08.",
       "scene_ids": ["UNR-SCENE-T000-01", "UNR-SCENE-T000-02", "UNR-SCENE-T000-03", "UNR-SCENE-T000-04", "UNR-SCENE-T000-05", "UNR-SCENE-T000-06", "UNR-SCENE-T000-07", "UNR-SCENE-T000-08"],
       "source": "campaign/playtest/stage3-run-guide-v1.md"
+    },
+    "stable_id_coverage": {
+      "registry_source": "aipt/p0-b001/stable-ids.json",
+      "visibility_source": "aipt/p0-b001/visibility.json",
+      "assigned_ids": {
+        "CHARACTER": ["UNR-CHAR-0001", "UNR-CHAR-0002", "UNR-CHAR-0003", "UNR-CHAR-0004"],
+        "SECRET": ["UNR-SECRET-0001", "UNR-SECRET-0002", "UNR-SECRET-0003", "UNR-SECRET-0004"],
+        "SCENE": ["UNR-SCENE-T000-01", "UNR-SCENE-T000-02", "UNR-SCENE-T000-03", "UNR-SCENE-T000-04", "UNR-SCENE-T000-05", "UNR-SCENE-T000-06", "UNR-SCENE-T000-07", "UNR-SCENE-T000-08"],
+        "CLUE": ["UNR-CLUE-0001", "UNR-CLUE-0002", "UNR-CLUE-0003", "UNR-CLUE-0004", "UNR-CLUE-0005", "UNR-CLUE-0006", "UNR-CLUE-0007", "UNR-CLUE-0008", "UNR-CLUE-T000-01", "UNR-CLUE-T000-02", "UNR-CLUE-T000-03", "UNR-CLUE-T000-04"],
+        "NPC": ["UNR-NPC-T000-01", "UNR-NPC-T000-02", "UNR-NPC-T000-03"],
+        "ITEM": ["UNR-ITEM-T000-01"],
+        "SAFETY_EVENT": ["UNR-SAFETY-EVENT-0001", "UNR-SAFETY-EVENT-0002"]
+      },
+      "justified_zero_kinds": ["STATE", "ENDING"],
+      "reserved_zero_kinds": ["RULE", "INVARIANT", "MUTATION"],
+      "synthetic_entities_added": false,
+      "note": "Assigned IDs are an exact manifest summary of source-backed entities in the frozen first-roster/Task-0 vertical slice; STATE and ENDING have machine-checked zero-assignment justifications in the registry; RULE, INVARIANT, and MUTATION remain reserved with zero assignments."
     },
     "rules_inputs": {
       "statement": "The rules documents (campaign/rules/vertical-slice-v0.md, campaign/rules/mechanics-fine-v1.md, campaign/rules/logic-map-v1.md) are included strictly as PROPOSAL/playtest prose inputs. This manifest includes no machine Rule object, no semantic graph, no adapter/runtime, no mutant definition, no RULE/INVARIANT/MUTATION assignment, and no next-batch work.",

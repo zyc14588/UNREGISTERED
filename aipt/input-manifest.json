@@ -1,0 +1,218 @@
+{
+  "aipt_schema": "aipt.input-manifest.v1",
+  "manifest_format_version": "1.0.0",
+  "manifest_id": "UNREGISTERED-AIPT-P0-B001-INPUT-MANIFEST-V1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B001",
+  "manifest_kind": "game-owned input manifest",
+  "authority_scope": "zyc14588/UNREGISTERED only; game-owned metadata, not cross-game generic AIPT authority",
+  "game": {
+    "repo": "zyc14588/UNREGISTERED",
+    "package_id": "zyc14588/agent-sim",
+    "formal_name_zh": "《未登记》",
+    "formal_name_en": "UNREGISTERED",
+    "formal_display_name": "《未登记》UNREGISTERED",
+    "readiness": "PLAYTESTABLE_DRAFT",
+    "identity_source": "aipt/p0-b000/identity.json",
+    "note": "Game identity and readiness are exactly PLAYTESTABLE_DRAFT. Identity metadata is authoritative in aipt/p0-b000/identity.json; the package_id zyc14588/agent-sim remains a technical identifier only, never a display identity."
+  },
+  "content_license": {
+    "ref": "LicenseRef-UNREGISTERED-NC-SA-1.0",
+    "status": "POLICY_FROZEN_TEXT_NOT_DRAFTED",
+    "final_legal_text_published": false,
+    "legal_review_required": true,
+    "policy_summary_source": "LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md",
+    "note": "The content license ref is declared with status POLICY_FROZEN_TEXT_NOT_DRAFTED and final_legal_text_published false (the authoritative B000 key): the human-readable policy is a frozen policy summary (POLICY SUMMARY / NOT FINAL LICENSE TEXT), the final legal text has not been drafted, legal review is required before publication (legal_review_required true), and no root LICENSE file exists. Metadata is authoritative in aipt/p0-b000/licensing.json."
+  },
+  "aipt_compatibility": {
+    "repo": "zyc14588/AIPT",
+    "protocol_commit": "fccfb595c23feab38397506505a3e996fe7b9e9c",
+    "protocol_tree": "f99570bc3c4307244ca926cec62e82a07ef5aee8",
+    "schema_path": "schemas/protocol/v1/aipt-protocol.schema.json",
+    "protocol_schema_sha256": "59467ffb27622b7858bd590b2b711a7affc9b5b0cb13e358504bd44eabe09dcf",
+    "protocol_version": "1.0.0",
+    "schema_version": "1.0.0",
+    "jsonrpc": "2.0"
+  },
+  "source_binding": {
+    "model": "EXTERNAL_AIPT_RUN_MANIFEST_COMMIT_PAIR",
+    "authority": "future AIPT Run Manifest (external)",
+    "statement": "A future AIPT Run Manifest externally binds the immutable game revision of this input set together with the pinned AIPT revision (aipt_compatibility.protocol_commit). This file is game-owned metadata for zyc14588/UNREGISTERED; it embeds no game revision, declares no commit fields of its own, and does not bind, claim to bind, or fingerprint its own containing commit. Commit pinning is deferred entirely to the AIPT Run Manifest.",
+    "note": "The only commit value anywhere in this manifest is the external AIPT protocol commit inside aipt_compatibility.protocol_commit; no field binds the game source revision or this manifest's own containing commit. All referenced source paths are governed by the top-level source_path_policy (applies to source_files and registry_refs)."
+  },
+  "source_path_policy": {
+    "path_form": "RELATIVE_POSIX_ONLY",
+    "absolute_paths": false,
+    "backslashes": false,
+    "empty_segments": false,
+    "dot_segments": false,
+    "dotdot_segments": false,
+    "nul_bytes": false,
+    "symlink_escape": false,
+    "non_regular_files": false,
+    "directories": false,
+    "devices": false,
+    "applies_to": ["source_files", "registry_refs"],
+    "note": "Every path in source_files and registry_refs must be a relative POSIX path (forward slashes only): no absolute paths, no backslashes, no empty segments, no dot or dot-dot segments, no NUL bytes, no symlink escape outside the repository, and each referenced target must be a regular file (never a directory, device, or other non-regular file). All 17 referenced paths comply."
+  },
+  "source_files": [
+    {
+      "path": "aipt/p0-b000/identity.json",
+      "role": "game identity metadata (formal name, old-codename marker, technical package_id)",
+      "lifecycle": "MERGED_CLOSED",
+      "lifecycle_note": "Historical AIPT P0-B000 delivery status (MERGED_CLOSED per aipt/status.json previous_batch); this delivery status does not alter campaign content lifecycle and carries no lifecycle verdict on the identity content. Game readiness remains PLAYTESTABLE_DRAFT.",
+      "sha256": "b2302eb17c6ab08bbc47bbcb884ff03f92de8b0159d7508c25c565b4ef31d22d"
+    },
+    {
+      "path": "aipt/p0-b000/licensing.json",
+      "role": "content licensing policy metadata (license ref, policy status, fail-closed path scope)",
+      "lifecycle": "POLICY_FROZEN_TEXT_NOT_DRAFTED",
+      "lifecycle_note": "Declares policy_status POLICY_FROZEN_TEXT_NOT_DRAFTED and final_legal_text_published=false: the license ref is declared, the final legal text is not drafted.",
+      "sha256": "480b8924a928bdd8ed3e4eabadf2cb4bdfb4ee4021c7a8c5c0c2f1564d9ed17e"
+    },
+    {
+      "path": "aipt/p0-b000/premades-v2.json",
+      "role": "first-roster premade cards (characters 游隼/短波/静水/底片, secrets, discovery clues, private triggers, final skills, bonds)",
+      "lifecycle": "PLAYTESTABLE_DRAFT",
+      "lifecycle_note": "Declares status PLAYTESTABLE_DRAFT (delivery AIPT FIRST ROSTER V2); explicitly not promoted to CANON.",
+      "sha256": "5bbd5bb9ca180004b4407e558961dc679dde888df78f3dd1b9d1ea2b8c9b2163"
+    },
+    {
+      "path": "campaign/proposals/tasks-v1.md",
+      "role": "mission design proposal (task 0–finale structure; GM-locked objective anomaly laws, mystery candidates, faction truth, GM decision points)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "Declares 状态：PROPOSAL（脑暴级）; not written back to any canon file.",
+      "sha256": "df4d6c7afe0a891ce29a21306ab810ad32cc0b54c8ccf3d7ff3281d43cac2a72"
+    },
+    {
+      "path": "campaign/playtest/stage3-run-guide-v1.md",
+      "role": "GM run guide for task 0 stage-3 tabletest (one-screen, prep, rules quick-teach, pacing budget, scene cards S1–S8, leak timeline, observation flow, pitfalls)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "Declares 状态：PROPOSAL（桌测材料）; GM-facing playtest material.",
+      "sha256": "c1ccd8a77d917e05f86f0604731344b22c8902c508858ef71a39ed9da3cce17f"
+    },
+    {
+      "path": "campaign/playtest/task0-handouts-v1.md",
+      "role": "player handouts for task 0 (dispatch order, 访客须知, 安保巡逻手册 excerpt)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "Playtest handout material; the file declares no inline lifecycle line. Its PROPOSAL status comes from the repository campaign policy default for unadopted material (campaign/00-campaign.md Canon Policy: 未采用脑暴=PROPOSAL; AGENTS.md rule 5), not from aipt/p0-b001/visibility.json — visibility classification never changes source lifecycle. Not CANON.",
+      "sha256": "56f1a9fba799f5c281162290c27b39db9bbbaa9d83cdaa83dd235506f3d68288"
+    },
+    {
+      "path": "campaign/playtest/task0-intel-pack-v1.md",
+      "role": "GM intel pack for task 0 (area map, patrol schedule, monitoring/gate facts, leaks, target and guard stats)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "GM-facing playtest material; the file declares no inline lifecycle line. Its PROPOSAL status comes from the repository campaign policy default for unadopted material (campaign/00-campaign.md Canon Policy: 未采用脑暴=PROPOSAL; AGENTS.md rule 5), not from aipt/p0-b001/visibility.json — visibility classification never changes source lifecycle. Not CANON.",
+      "sha256": "38908bcaa6155e5e916aa1e9f73c58289054e3a0f333a0f2114f3e239009acf0"
+    },
+    {
+      "path": "campaign/playtest/gm-screen-v1.md",
+      "role": "GM one-page quick reference (face A judgement / face B state and procedures)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "GM-facing playtest material; the file declares no inline lifecycle line. Its PROPOSAL status comes from the repository campaign policy default for unadopted material (campaign/00-campaign.md Canon Policy: 未采用脑暴=PROPOSAL; AGENTS.md rule 5), not from aipt/p0-b001/visibility.json — visibility classification never changes source lifecycle. Not CANON.",
+      "sha256": "2a054d42eb48e378a29db07ddd6c5cd751b4d2340f6426552fea516d63bf2b8a"
+    },
+    {
+      "path": "campaign/playtest/rule-knowledge-sheet-v1.md",
+      "role": "player rule-knowledge record sheet (five-column status, record table, pollution-card GM notes)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "Declares 状态：PROPOSAL 原型 (spawned from solo-report-v1 P1); player/GM playtest material.",
+      "sha256": "61af1a1beaede971b50508bc38954533b18e3706587dc96e472406c0260d3691"
+    },
+    {
+      "path": "campaign/session0-redlines.md",
+      "role": "session 0 safety red-lines draft (preset lines/veils, required confirmations, table tools, cognitive-pollution protections)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "Title declares 草稿（PROPOSAL）; safety semantics encoded in aipt/p0-b001/safety-profile.json preserve this PROPOSAL status.",
+      "sha256": "d5d9246e07b2d4c9de9ce602835ec763ac33f5dd01a8b5e83c9b2318f9b6e630"
+    },
+    {
+      "path": "campaign/rules/vertical-slice-v0.md",
+      "role": "core rules vertical slice v0 (d100 core judgement, attribute/skill/specialty framework, four-track resources, reversal window, infiltration procedure)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "Declares 状态：全部条目为 PROPOSAL，未桌测，不视为正式规则; lifecycle PROPOSAL → task-0 tabletest → PLAYTEST → CANON (per-item promotion, not wholesale).",
+      "sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2"
+    },
+    {
+      "path": "campaign/rules/mechanics-fine-v1.md",
+      "role": "rules fine-tuning v1 (resource parameters A1–A8, area combat B1–B6, progression C1–C2, procedure D1–D8, GM decision log)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "Declares 状态：全部 PROPOSAL，未桌测; conflict-resolution authority vs vertical-slice per logic-map-v1.md.",
+      "sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a"
+    },
+    {
+      "path": "campaign/rules/logic-map-v1.md",
+      "role": "logic-map convergence/verification document (concept-node table, causal cross-validation matrix, violation/fix log)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "Design-verification prose for the PROPOSAL rules; the file declares no inline lifecycle line. Its PROPOSAL status comes from the repository campaign policy default for unadopted material (campaign/00-campaign.md Canon Policy: 未采用脑暴=PROPOSAL; AGENTS.md rule 5), not from aipt/p0-b001/visibility.json — visibility classification never changes source lifecycle. Not CANON.",
+      "sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4"
+    },
+    {
+      "path": "LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md",
+      "role": "human-readable content policy summary (POLICY SUMMARY / NOT FINAL LICENSE TEXT)",
+      "lifecycle": "POLICY_FROZEN_TEXT_NOT_DRAFTED",
+      "lifecycle_note": "Policy summary only — the final legal text has not been drafted; the POLICY_FROZEN_TEXT_NOT_DRAFTED status is retained and the document is not a final license text.",
+      "sha256": "2aab086afd0fc6a0d9455a56ae9052039b4af3d098e5fd2fc4cc22551972bc11"
+    }
+  ],
+  "registry_refs": [
+    {
+      "path": "aipt/p0-b001/stable-ids.json",
+      "role": "stable entity ID registry (source-backed CHARACTER/SECRET/SCENE/CLUE/NPC/ITEM/SAFETY_EVENT assignments; justified-zero STATE/ENDING; reserved-zero RULE/INVARIANT/MUTATION)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "B001 registry metadata; ID assignment does not promote source lifecycles (sources stay PROPOSAL/PLAYTESTABLE_DRAFT), nothing is promoted to CANON, and STATE/ENDING zero assignments are source-audited justifications rather than invented entities.",
+      "sha256": "c7e296bf7f7595ec17e67e44fef60ac38e979d4906ab31d1d9081e6bed53dba6"
+    },
+    {
+      "path": "aipt/p0-b001/visibility.json",
+      "role": "player-visibility classification registry (six-label taxonomy, per-source mappings, fail-closed coverage rules)",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "Declares lifecycle.status PROPOSAL; classification does not change any source lifecycle.",
+      "sha256": "e232a2f95c6359cf54dd5f4147c72e0c3433614e00555226cd2993716f7bbb70"
+    },
+    {
+      "path": "aipt/p0-b001/safety-profile.json",
+      "role": "session-0 safety profile plus mandatory batch-level data-handling declarations",
+      "lifecycle": "PROPOSAL",
+      "lifecycle_note": "Declares lifecycle.status/source_status PROPOSAL; safety content encodes only statements from campaign/session0-redlines.md; the data_handling block is B001 authority metadata.",
+      "sha256": "dea0b7a62ba8ac81cb9314546afebca400642d9923f9ae928d97c9a40a29304f"
+    }
+  ],
+  "scope": {
+    "first_roster": {
+      "character_ids": ["UNR-CHAR-0001", "UNR-CHAR-0002", "UNR-CHAR-0003", "UNR-CHAR-0004"],
+      "note": "Exactly the four first-roster Character IDs registered in aipt/p0-b001/stable-ids.json (游隼/短波/静水/底片)."
+    },
+    "task0": {
+      "id": "T-000",
+      "scope": "Task 0《入职测试》vertical-slice: 2–4h teaching/single-run module running the full loop 接单→侦查→计划→潜入→盗取→撤离→结算 on the simulated version of the task-1 building; scene IDs UNR-SCENE-T000-01..08.",
+      "scene_ids": ["UNR-SCENE-T000-01", "UNR-SCENE-T000-02", "UNR-SCENE-T000-03", "UNR-SCENE-T000-04", "UNR-SCENE-T000-05", "UNR-SCENE-T000-06", "UNR-SCENE-T000-07", "UNR-SCENE-T000-08"],
+      "source": "campaign/playtest/stage3-run-guide-v1.md"
+    },
+    "stable_id_coverage": {
+      "registry_source": "aipt/p0-b001/stable-ids.json",
+      "visibility_source": "aipt/p0-b001/visibility.json",
+      "assigned_ids": {
+        "CHARACTER": ["UNR-CHAR-0001", "UNR-CHAR-0002", "UNR-CHAR-0003", "UNR-CHAR-0004"],
+        "SECRET": ["UNR-SECRET-0001", "UNR-SECRET-0002", "UNR-SECRET-0003", "UNR-SECRET-0004"],
+        "SCENE": ["UNR-SCENE-T000-01", "UNR-SCENE-T000-02", "UNR-SCENE-T000-03", "UNR-SCENE-T000-04", "UNR-SCENE-T000-05", "UNR-SCENE-T000-06", "UNR-SCENE-T000-07", "UNR-SCENE-T000-08"],
+        "CLUE": ["UNR-CLUE-0001", "UNR-CLUE-0002", "UNR-CLUE-0003", "UNR-CLUE-0004", "UNR-CLUE-0005", "UNR-CLUE-0006", "UNR-CLUE-0007", "UNR-CLUE-0008", "UNR-CLUE-T000-01", "UNR-CLUE-T000-02", "UNR-CLUE-T000-03", "UNR-CLUE-T000-04"],
+        "NPC": ["UNR-NPC-T000-01", "UNR-NPC-T000-02", "UNR-NPC-T000-03"],
+        "ITEM": ["UNR-ITEM-T000-01"],
+        "SAFETY_EVENT": ["UNR-SAFETY-EVENT-0001", "UNR-SAFETY-EVENT-0002"]
+      },
+      "justified_zero_kinds": ["STATE", "ENDING"],
+      "reserved_zero_kinds": ["RULE", "INVARIANT", "MUTATION"],
+      "synthetic_entities_added": false,
+      "note": "Assigned IDs are an exact manifest summary of source-backed entities in the frozen first-roster/Task-0 vertical slice; STATE and ENDING have machine-checked zero-assignment justifications in the registry; RULE, INVARIANT, and MUTATION remain reserved with zero assignments."
+    },
+    "rules_inputs": {
+      "statement": "The rules documents (campaign/rules/vertical-slice-v0.md, campaign/rules/mechanics-fine-v1.md, campaign/rules/logic-map-v1.md) are included strictly as PROPOSAL/playtest prose inputs. This manifest includes no machine Rule object, no semantic graph, no adapter/runtime, no mutant definition, no RULE/INVARIANT/MUTATION assignment, and no next-batch work.",
+      "machine_rule_object": false,
+      "semantic_graph": false,
+      "adapter_or_runtime": false,
+      "mutant_definition": false,
+      "rule_invariant_mutation_assignment": false,
+      "next_batch_work_included": false
+    }
+  }
+}

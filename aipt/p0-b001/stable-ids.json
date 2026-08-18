@@ -1,0 +1,551 @@
+{
+  "aipt_schema": "aipt.stable-ids.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B001",
+  "id_policy": {
+    "global": true,
+    "reusable": false,
+    "display_name_decoupled": true,
+    "bound_to": ["source.path", "source.locator", "kind"],
+    "note": "Stable IDs are repository-global, never reused, and decoupled from display names. Each ID is permanently bound to exactly one repository-relative POSIX regular-file source path, a deterministic locator inside that file, and one entity kind."
+  },
+  "lifecycle": {
+    "assigned_source_statuses": ["PROPOSAL", "PLAYTESTABLE_DRAFT"],
+    "promotes_to_canon": false,
+    "note": "Stable-ID registration does not change source lifecycle status. PLAYTESTABLE_DRAFT: characters, secrets, and premade clues (aipt/p0-b000/premades-v2.json declares status PLAYTESTABLE_DRAFT). PROPOSAL: scenes, Task-0 clues, NPCs, item, and safety events (campaign/playtest Task-0 sources and campaign/session0-redlines.md declare 状态：PROPOSAL). Nothing in this file promotes any entity to CANON. STATE and ENDING are justified zero-assignment namespaces (see zero_assignment_justifications): no audited source yields a standalone identity-bearing STATE or ENDING record."
+  },
+  "namespaces": {
+    "UNR-CHAR": { "entity_kind": "CHARACTER", "state": "ASSIGNED", "assigned_count": 4, "reserved_count": 0 },
+    "UNR-SECRET": { "entity_kind": "SECRET", "state": "ASSIGNED", "assigned_count": 4, "reserved_count": 0 },
+    "UNR-SCENE": { "entity_kind": "SCENE", "state": "ASSIGNED", "assigned_count": 8, "reserved_count": 0 },
+    "UNR-RULE": { "entity_kind": "RULE", "state": "RESERVED", "assigned_count": 0, "reserved_count": 0 },
+    "UNR-INVARIANT": { "entity_kind": "INVARIANT", "state": "RESERVED", "assigned_count": 0, "reserved_count": 0 },
+    "UNR-MUTATION": { "entity_kind": "MUTATION", "state": "RESERVED", "assigned_count": 0, "reserved_count": 0 },
+    "UNR-CLUE": { "entity_kind": "CLUE", "state": "ASSIGNED", "assigned_count": 12, "reserved_count": 0 },
+    "UNR-NPC": { "entity_kind": "NPC", "state": "ASSIGNED", "assigned_count": 3, "reserved_count": 0 },
+    "UNR-ITEM": { "entity_kind": "ITEM", "state": "ASSIGNED", "assigned_count": 1, "reserved_count": 0 },
+    "UNR-SAFETY-EVENT": { "entity_kind": "SAFETY_EVENT", "state": "ASSIGNED", "assigned_count": 2, "reserved_count": 0 },
+    "UNR-STATE": { "entity_kind": "STATE", "state": "JUSTIFIED_ZERO", "assigned_count": 0, "reserved_count": 0 },
+    "UNR-ENDING": { "entity_kind": "ENDING", "state": "JUSTIFIED_ZERO", "assigned_count": 0, "reserved_count": 0 }
+  },
+  "zero_assignment_justifications": [
+    {
+      "namespace": "UNR-STATE",
+      "kind": "STATE",
+      "assigned_count": 0,
+      "audited_sources": [
+        "aipt/p0-b000/identity.json",
+        "aipt/p0-b000/licensing.json",
+        "aipt/p0-b000/premades-v2.json",
+        "campaign/proposals/tasks-v1.md",
+        "campaign/playtest/stage3-run-guide-v1.md",
+        "campaign/playtest/task0-handouts-v1.md",
+        "campaign/playtest/task0-intel-pack-v1.md",
+        "campaign/playtest/gm-screen-v1.md",
+        "campaign/playtest/rule-knowledge-sheet-v1.md",
+        "campaign/session0-redlines.md",
+        "campaign/rules/vertical-slice-v0.md",
+        "campaign/rules/mechanics-fine-v1.md",
+        "campaign/rules/logic-map-v1.md",
+        "LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md"
+      ],
+      "qualification_rule": "An explicit standalone identity-bearing STATE record must exist within the first-roster/Task-0 vertical-slice scope for a stable ID; mechanics state values, worksheet column values, scenes, future finale prose, and headings/incidental nouns are excluded and do not qualify.",
+      "evidence": [
+        {
+          "source": {
+            "path": "campaign/playtest/gm-screen-v1.md",
+            "locator": "## 面 B：状态与流程",
+            "locator_type": "markdown_heading"
+          },
+          "classification": "RULE_STATE_VALUES_NOT_ENTITY",
+          "reason": "The state values under this heading are mechanics/record field values (statuses a record may carry), not standalone identity-bearing STATE records."
+        },
+        {
+          "source": {
+            "path": "campaign/playtest/rule-knowledge-sheet-v1.md",
+            "locator": "## 五列状态",
+            "locator_type": "markdown_heading"
+          },
+          "classification": "WORKSHEET_COLUMN_VALUES_NOT_ENTITY",
+          "reason": "The five column states are worksheet/record field values describing how records are tracked, not standalone identity-bearing STATE records."
+        }
+      ],
+      "conclusion": "Zero source-backed STATE assignments: no audited source within the frozen first-roster/Task-0 vertical-slice scope contains a standalone identity-bearing STATE record, so namespace UNR-STATE registers no entity."
+    },
+    {
+      "namespace": "UNR-ENDING",
+      "kind": "ENDING",
+      "assigned_count": 0,
+      "audited_sources": [
+        "aipt/p0-b000/identity.json",
+        "aipt/p0-b000/licensing.json",
+        "aipt/p0-b000/premades-v2.json",
+        "campaign/proposals/tasks-v1.md",
+        "campaign/playtest/stage3-run-guide-v1.md",
+        "campaign/playtest/task0-handouts-v1.md",
+        "campaign/playtest/task0-intel-pack-v1.md",
+        "campaign/playtest/gm-screen-v1.md",
+        "campaign/playtest/rule-knowledge-sheet-v1.md",
+        "campaign/session0-redlines.md",
+        "campaign/rules/vertical-slice-v0.md",
+        "campaign/rules/mechanics-fine-v1.md",
+        "campaign/rules/logic-map-v1.md",
+        "LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md"
+      ],
+      "qualification_rule": "An explicit standalone identity-bearing ENDING record must exist within the first-roster/Task-0 vertical-slice scope for a stable ID; mechanics values, worksheet values, scenes (including S8's wrap-up), future finale prose, and headings/incidental nouns are excluded and do not qualify.",
+      "evidence": [
+        {
+          "source": {
+            "path": "campaign/playtest/stage3-run-guide-v1.md",
+            "locator": "### S8 结算＋休整",
+            "locator_type": "markdown_heading"
+          },
+          "classification": "EXISTING_SCENE_NOT_ENDING",
+          "reason": "S8 already has a SCENE stable ID (UNR-SCENE-T000-08); its wrap-up is scene content, not a standalone identity-bearing ENDING record."
+        },
+        {
+          "source": {
+            "path": "campaign/proposals/tasks-v1.md",
+            "locator": "## 5. 终局《清零》（元层 · 盗「概念」· 2 场）",
+            "locator_type": "markdown_heading"
+          },
+          "classification": "OUTSIDE_TASK0_PROPOSAL_NOT_ENDING",
+          "reason": "The future finale proposal is outside the first-roster/Task-0 vertical-slice scope and is proposal prose, not a standalone identity-bearing ENDING record."
+        }
+      ],
+      "conclusion": "Zero source-backed ENDING assignments: no audited source within the frozen first-roster/Task-0 vertical-slice scope contains a standalone identity-bearing ENDING record, so namespace UNR-ENDING registers no entity."
+    }
+  ],
+  "entities": [
+    {
+      "stable_id": "UNR-CHAR-0001",
+      "kind": "CHARACTER",
+      "display_name": "游隼",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.游隼",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CHAR-0002",
+      "kind": "CHARACTER",
+      "display_name": "短波",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.短波",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CHAR-0003",
+      "kind": "CHARACTER",
+      "display_name": "静水",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.静水",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CHAR-0004",
+      "kind": "CHARACTER",
+      "display_name": "底片",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.底片",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SECRET-0001",
+      "kind": "SECRET",
+      "display_name": "游隼的秘密",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.游隼.secret",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SECRET-0002",
+      "kind": "SECRET",
+      "display_name": "短波的秘密",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.短波.secret",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SECRET-0003",
+      "kind": "SECRET",
+      "display_name": "静水的秘密",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.静水.secret",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SECRET-0004",
+      "kind": "SECRET",
+      "display_name": "底片的秘密",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.底片.secret",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SCENE-T000-01",
+      "kind": "SCENE",
+      "display_name": "S1 据点接单（Strong Start）",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "### S1 据点接单（Strong Start）",
+        "locator_type": "markdown_heading"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SCENE-T000-02",
+      "kind": "SCENE",
+      "display_name": "S2 侦查（三渠道，各 30min）",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "### S2 侦查（三渠道，各 30min）",
+        "locator_type": "markdown_heading"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SCENE-T000-03",
+      "kind": "SCENE",
+      "display_name": "S3 计划（主内容，GM 只答问不催）",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "### S3 计划（主内容，GM 只答问不催）",
+        "locator_type": "markdown_heading"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SCENE-T000-04",
+      "kind": "SCENE",
+      "display_name": "S4 潜入·大堂→办公层（含教学预置巡逻遭遇）",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "### S4 潜入·大堂→办公层（含教学预置巡逻遭遇）",
+        "locator_type": "markdown_heading"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SCENE-T000-05",
+      "kind": "SCENE",
+      "display_name": "S5 机房·值守者",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "### S5 机房·值守者",
+        "locator_type": "markdown_heading"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SCENE-T000-06",
+      "kind": "SCENE",
+      "display_name": "S6 开保险箱",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "### S6 开保险箱",
+        "locator_type": "markdown_heading"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SCENE-T000-07",
+      "kind": "SCENE",
+      "display_name": "S7 撤离",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "### S7 撤离",
+        "locator_type": "markdown_heading"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SCENE-T000-08",
+      "kind": "SCENE",
+      "display_name": "S8 结算＋休整",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "### S8 结算＋休整",
+        "locator_type": "markdown_heading"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0001",
+      "kind": "CLUE",
+      "display_name": "游隼侦破线索 1",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.游隼.discovery_clues.0",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0002",
+      "kind": "CLUE",
+      "display_name": "游隼侦破线索 2",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.游隼.discovery_clues.1",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0003",
+      "kind": "CLUE",
+      "display_name": "短波侦破线索 1",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.短波.discovery_clues.0",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0004",
+      "kind": "CLUE",
+      "display_name": "短波侦破线索 2",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.短波.discovery_clues.1",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0005",
+      "kind": "CLUE",
+      "display_name": "静水侦破线索 1",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.静水.discovery_clues.0",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0006",
+      "kind": "CLUE",
+      "display_name": "静水侦破线索 2",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.静水.discovery_clues.1",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0007",
+      "kind": "CLUE",
+      "display_name": "底片侦破线索 1",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.底片.discovery_clues.0",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-0008",
+      "kind": "CLUE",
+      "display_name": "底片侦破线索 2",
+      "source": {
+        "path": "aipt/p0-b000/premades-v2.json",
+        "locator": "characters.底片.discovery_clues.1",
+        "locator_type": "json_path"
+      },
+      "lifecycle_status": "PLAYTESTABLE_DRAFT",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-T000-01",
+      "kind": "CLUE",
+      "display_name": "派单背面空白",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "| 接单 | 派单小字\"须知见背面·背面空白\" | 是 | 三层模型：文本可以空 |",
+        "locator_type": "markdown_table_row"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-T000-02",
+      "kind": "CLUE",
+      "display_name": "未标注夹层门",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "| 侦查卓越 | 夹层门（未标注，锁死） | 是（暗层） | 情报卡三层 |",
+        "locator_type": "markdown_table_row"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-T000-03",
+      "kind": "CLUE",
+      "display_name": "监控 23:14 上一批测试员背影",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "| 侦查卓越收益 | 监控 23:14 帧\"上一批测试员\"背影 | 是（GM 暗线，赛后回收） | 再访变化伏笔 |",
+        "locator_type": "markdown_table_row"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-CLUE-T000-04",
+      "kind": "CLUE",
+      "display_name": "回收条目：测试员 1 名",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "locator": "| 结算 | 「已回收：编号 000 —— 测试员 1 名」 | 是（决策 #42） | 长线钩子 |",
+        "locator_type": "markdown_table_row"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-NPC-T000-01",
+      "kind": "NPC",
+      "display_name": "任务0 保安（2人组）",
+      "source": {
+        "path": "campaign/playtest/task0-intel-pack-v1.md",
+        "locator": "保安×2（观察 45／手枪 30／近身格斗 30）",
+        "locator_type": "markdown_text_fragment"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-NPC-T000-02",
+      "kind": "NPC",
+      "display_name": "任务0 机房值守",
+      "source": {
+        "path": "campaign/playtest/task0-intel-pack-v1.md",
+        "locator": "机房值守×1（观察 40）",
+        "locator_type": "markdown_text_fragment"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-NPC-T000-03",
+      "kind": "NPC",
+      "display_name": "任务0 监控员",
+      "source": {
+        "path": "campaign/playtest/task0-intel-pack-v1.md",
+        "locator": "监控员×1（观察 45）",
+        "locator_type": "markdown_text_fragment"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-ITEM-T000-01",
+      "kind": "ITEM",
+      "display_name": "测试档案盒",
+      "source": {
+        "path": "campaign/playtest/task0-intel-pack-v1.md",
+        "locator": "- 机房(3)内保险箱（开锁 60，可电子干扰减难度）：内含\"测试档案盒\"（空盒+一张测试合格单）。",
+        "locator_type": "markdown_line"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SAFETY-EVENT-0001",
+      "kind": "SAFETY_EVENT",
+      "display_name": "X 卡／平台安全暂停",
+      "source": {
+        "path": "campaign/session0-redlines.md",
+        "locator": "- X 卡（或平台安全暂停）：随时暂停/跳过，无需解释",
+        "locator_type": "markdown_line"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    },
+    {
+      "stable_id": "UNR-SAFETY-EVENT-0002",
+      "kind": "SAFETY_EVENT",
+      "display_name": "结束后解压检查",
+      "source": {
+        "path": "campaign/session0-redlines.md",
+        "locator": "- 结束后的\"解压检查\"：一句话确认状态；高压恐怖局必做",
+        "locator_type": "markdown_line"
+      },
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false
+    }
+  ],
+  "retired": [],
+  "validation": {
+    "duplicate_ids": {
+      "rule": "every entities[].stable_id must be unique across the entire file",
+      "fields": ["entities[].stable_id"]
+    },
+    "same_entity_two_ids": {
+      "rule": "an entity identity — (source.path, source.locator, kind) — may carry exactly one stable_id; a second stable_id for the same identity is a violation",
+      "entity_identity_fields": ["entities[].source.path", "entities[].source.locator", "entities[].kind"]
+    },
+    "one_id_two_entities": {
+      "rule": "each stable_id appears exactly once and binds exactly one source (one path, one locator, one kind)",
+      "fields": ["entities[].stable_id", "entities[].source"]
+    },
+    "retired_id_reuse": {
+      "rule": "entities[].stable_id must be disjoint from retired[]; an id moved to retired[] is never reassigned to a different entity",
+      "fields": ["entities[].stable_id", "retired[]"]
+    },
+    "zero_assignment": {
+      "rule": "every namespace with state JUSTIFIED_ZERO must have exactly one zero_assignment_justifications[] entry matching the same namespace and kind, with assigned_count 0 and an audited_sources array covering the full frozen first-roster/Task-0 scope; each evidence entry must cite an exact source locator and classify why it is not a standalone identity-bearing entity; the conclusion must explicitly state zero source-backed assignments",
+      "fields": ["namespaces[].state", "zero_assignment_justifications[]"]
+    }
+  }
+}

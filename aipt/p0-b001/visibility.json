@@ -1,0 +1,787 @@
+{
+  "aipt_schema": "aipt.visibility.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B001",
+  "lifecycle": {
+    "status": "PROPOSAL",
+    "promotes_to_canon": false,
+    "note": "Visibility classification does not change any source lifecycle status. Sources mapped here are PROPOSAL (campaign/playtest, campaign/rules, campaign/proposals, session0-redlines) or PLAYTESTABLE_DRAFT (aipt/p0-b000/premades-v2.json). Nothing in this file promotes any entity to CANON."
+  },
+  "scope": {
+    "note": "First-slice sources expected by the later game-package manifest. Every path in first_slice_sources must have at least one applicable mapping below (whole-file or section/entity-level); a missing mapping fails closed.",
+    "first_slice_sources": [
+      "aipt/p0-b000/identity.json",
+      "aipt/p0-b000/licensing.json",
+      "LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md",
+      "aipt/p0-b000/premades-v2.json",
+      "campaign/proposals/tasks-v1.md",
+      "campaign/playtest/stage3-run-guide-v1.md",
+      "campaign/playtest/task0-handouts-v1.md",
+      "campaign/playtest/task0-intel-pack-v1.md",
+      "campaign/playtest/gm-screen-v1.md",
+      "campaign/playtest/rule-knowledge-sheet-v1.md",
+      "campaign/session0-redlines.md",
+      "campaign/rules/vertical-slice-v0.md",
+      "campaign/rules/mechanics-fine-v1.md",
+      "campaign/rules/logic-map-v1.md"
+    ],
+    "aipt_metadata_out_of_scope": {
+      "note": "aipt/** operational metadata (status.json, stable-ids.json, this file, safety-profile.json, future manifest) is AIPT tooling metadata — not game content and not subject to player-visibility classification. Licensing classification (aipt/** = EXCLUDED_FROM_CONTENT_POLICY) is orthogonal to visibility classification."
+    }
+  },
+  "policy": {
+    "taxonomy": {
+      "labels": [
+        "PUBLIC",
+        "UNRELEASED_REMOTE_ALLOWED",
+        "TABLE_HIDDEN_REMOTE_ALLOWED",
+        "LOCAL_ONLY_SECRET",
+        "HUMAN_PRIVATE_DATA",
+        "CREDENTIAL_SECRET"
+      ],
+      "definitions": {
+        "PUBLIC": {
+          "meaning": "Freely publishable and player-visible with no confidentiality restriction. May live in the public repository and be shown to any principal at any time. A release note, when present, is presentation timing only (when the GM hands the material out at the table); it is never a principal-access override and never restricts the GM from accessing the same material."
+        },
+        "UNRELEASED_REMOTE_ALLOWED": {
+          "meaning": "Player-facing content that must not reach ALL_PLAYERS before its release point, but may be transmitted remotely (to the GM / prep tooling / platform backend) ahead of time for preparation. The release field records the in-game point at which it becomes player-visible; it is a presentation-timing gate for ALL_PLAYERS only and never restricts GM access — the GM may access the same material at any time."
+        },
+        "TABLE_HIDDEN_REMOTE_ALLOWED": {
+          "meaning": "Not table-wide content: visible only to the principals listed on the mapping (typically the GM; for a Secret, also its owning CHARACTER principal). Never shown to the whole table — ALL_PLAYERS is a hard-forbidden principal on any TABLE_HIDDEN_REMOTE_ALLOWED mapping. May be transmitted remotely to the GM and to any other listed principal for preparation."
+        },
+        "LOCAL_ONLY_SECRET": {
+          "meaning": "Never transmitted remotely under any path. Kept only on local, non-remote storage. No instance may be packaged or referenced by the manifest."
+        },
+        "HUMAN_PRIVATE_DATA": {
+          "meaning": "Participant responses and personal data (safety confirmations, session feedback, any answers/names/mental-health data). Never a formal game input. Never persisted in the public repository, never included in the manifest or packaged bundle, never sent to remote models by default. See aipt/p0-b001/safety-profile.json data_handling."
+        },
+        "CREDENTIAL_SECRET": {
+          "meaning": "Actual credentials, tokens, keys, or secrets that unlock systems. Must never appear in this public repository, in the manifest, or in any packaged bundle. Declared absent here by policy; any future occurrence is a fail-closed rejection."
+        }
+      },
+      "remote_allowed": {
+        "PUBLIC": true,
+        "UNRELEASED_REMOTE_ALLOWED": true,
+        "TABLE_HIDDEN_REMOTE_ALLOWED": true,
+        "LOCAL_ONLY_SECRET": false,
+        "HUMAN_PRIVATE_DATA": false,
+        "CREDENTIAL_SECRET": false
+      }
+    },
+    "locators": {
+      "types": {
+        "whole_file": {
+          "meaning": "covers the entire file from line 1 to the last line; no other mapping may overlap it for the same path",
+          "specificity": "file"
+        },
+        "json_path": {
+          "meaning": "covers the JSON subtree addressed by the locator path",
+          "specificity": "path"
+        },
+        "markdown_heading": {
+          "meaning": "covers the heading line plus its section body until the next heading of equal or higher level; with source.scope.heading_only=true covers only the heading line itself and never the subtree",
+          "specificity": "section"
+        },
+        "markdown_table_column": {
+          "meaning": "covers one column of a markdown table, addressed by its containing heading plus the column header",
+          "specificity": "column"
+        },
+        "markdown_preamble": {
+          "meaning": "covers the document front matter before the first level-2 (## ) section heading: from line 1 up to the last non-empty line before that heading (trailing blank lines excluded); the locator records the resolved inclusive line range {start_line, end_line}",
+          "specificity": "preamble"
+        }
+      },
+      "overlap_resolution": {
+        "deterministic_precedence": "when two mappings for the same source path cover ranges of different specificity (e.g., preamble vs section, parent heading vs child heading, section vs table column), the narrower mapping deterministically governs its own range and the broader mapping covers only its remainder",
+        "equal_specificity_conflict": "two mappings for the same source path whose effective ranges overlap with equal specificity must agree on label, remote_allowed, and principals; any disagreement is REJECTED (fail closed) — there is no permissive tie-break",
+        "declared_complementary_exclusion": "a broader mapping may explicitly exclude a sub-range (source.scope.exclude_columns, source.scope.heading_only, or a markdown_preamble boundary) that a separate narrower mapping covers; the declared exclusion makes the pair complementary rather than conflicting"
+      }
+    },
+    "principals": {
+      "layer": ["GM", "ALL_PLAYERS", "CHARACTER:<UNR-CHAR-xxxx>"],
+      "game_owned": true,
+      "runtime_seat_ids": false,
+      "note": "Principals are game-owned entities only. GM is the game master seat; ALL_PLAYERS means any player at the table; CHARACTER:<UNR-CHAR-xxxx> references the stable character entity IDs registered in aipt/p0-b001/stable-ids.json (UNR-CHAR-0001 游隼 / 0002 短波 / 0003 静水 / 0004 底片). Principals are never runtime seat IDs and never identify human participants.",
+      "player_facing_access": "Every PUBLIC and UNRELEASED_REMOTE_ALLOWED mapping lists GM alongside ALL_PLAYERS: the GM always has access to the same player-facing material. A release note is presentation timing only (when ALL_PLAYERS may see the material) and is never a principal-access override for the GM."
+    },
+    "fail_closed": {
+      "unknown_label": "REJECT",
+      "missing_label": "REJECT",
+      "missing_mapping_for_in_scope_source": "REJECT",
+      "note": "Any mapping whose label is not one of the six taxonomy labels is rejected; any in-scope source without at least one applicable mapping is rejected; any manifest reference to a label absent from this taxonomy is rejected; any equal-specificity mapping overlap for the same source path that disagrees on label, remote_allowed, or principals is rejected (see policy.locators.overlap_resolution). There is no permissive fallback."
+    }
+  },
+  "mappings": [
+    {
+      "id": "identity-001",
+      "source": { "path": "aipt/p0-b000/identity.json", "locator": null, "locator_type": "whole_file" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Formal title, old-codename marker, and unchanged technical package_id. Public metadata; no release gate."
+    },
+    {
+      "id": "licensing-001",
+      "source": { "path": "aipt/p0-b000/licensing.json", "locator": null, "locator_type": "whole_file" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Licensing policy metadata (LicenseRef-UNREGISTERED-NC-SA-1.0, POLICY_FROZEN_TEXT_NOT_DRAFTED). Public metadata."
+    },
+    {
+      "id": "licensing-002",
+      "source": { "path": "LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md", "locator": null, "locator_type": "whole_file" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Human-readable policy summary (POLICY SUMMARY / NOT FINAL LICENSE TEXT). Public."
+    },
+    {
+      "id": "premades-stats-0001",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.游隼", "locator_type": "json_path", "scope": { "fields": ["name_zh", "attributes", "final_skills"] } },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "entity_ids": ["UNR-CHAR-0001"],
+      "note": "Non-secret premade card surface (name, attributes, final skills) for 游隼. Player-visible for roster selection; released at session/table time with no gate."
+    },
+    {
+      "id": "premades-secret-0001",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.游隼.secret", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM", "CHARACTER:UNR-CHAR-0001"],
+      "entity_ids": ["UNR-SECRET-0001", "UNR-CHAR-0001"],
+      "note": "游隼's secret (当众爆发 tier). Only the GM and the owning character may see it; never ALL_PLAYERS and never another character."
+    },
+    {
+      "id": "premades-clues-0001",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.游隼.discovery_clues", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-CHAR-0001","UNR-CLUE-0001","UNR-CLUE-0002"],
+      "note": "游隼's discovery clues are GM-run procedure, not pre-authorized owner content: the GM decides when and how a clue becomes discoverable in play. The owning character is not pre-authorized to this source object; clues reach them only as in-game findings at the GM's discretion."
+    },
+    {
+      "id": "premades-trigger-0001",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.游隼.private_trigger", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-CHAR-0001"],
+      "note": "游隼's private trigger is GM procedure: gm_observation is GM-only text delivered privately to the owning character only when the trigger fires in play. The owner is not pre-authorized to the source object itself."
+    },
+    {
+      "id": "premades-stats-0002",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.短波", "locator_type": "json_path", "scope": { "fields": ["name_zh", "attributes", "final_skills"] } },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "entity_ids": ["UNR-CHAR-0002"],
+      "note": "Non-secret premade card surface for 短波."
+    },
+    {
+      "id": "premades-secret-0002",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.短波.secret", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM", "CHARACTER:UNR-CHAR-0002"],
+      "entity_ids": ["UNR-SECRET-0002", "UNR-CHAR-0002"],
+      "note": "短波's secret (长线影响 tier). GM + owning character only."
+    },
+    {
+      "id": "premades-clues-0002",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.短波.discovery_clues", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-CHAR-0002","UNR-CLUE-0003","UNR-CLUE-0004"],
+      "note": "短波's discovery clues are GM-run procedure; the owning character is not pre-authorized to this source object — clues reach them only as in-game findings at the GM's discretion."
+    },
+    {
+      "id": "premades-trigger-0002",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.短波.private_trigger", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-CHAR-0002"],
+      "note": "短波's private trigger is GM procedure; gm_observation is delivered privately only when triggered, not pre-authorized as owner-visible source content."
+    },
+    {
+      "id": "premades-stats-0003",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.静水", "locator_type": "json_path", "scope": { "fields": ["name_zh", "attributes", "final_skills"] } },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "entity_ids": ["UNR-CHAR-0003"],
+      "note": "Non-secret premade card surface for 静水."
+    },
+    {
+      "id": "premades-secret-0003",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.静水.secret", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM", "CHARACTER:UNR-CHAR-0003"],
+      "entity_ids": ["UNR-SECRET-0003", "UNR-CHAR-0003"],
+      "note": "静水's secret (当众爆发 tier). GM + owning character only."
+    },
+    {
+      "id": "premades-clues-0003",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.静水.discovery_clues", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-CHAR-0003","UNR-CLUE-0005","UNR-CLUE-0006"],
+      "note": "静水's discovery clues are GM-run procedure; the owning character is not pre-authorized to this source object — clues reach them only as in-game findings at the GM's discretion."
+    },
+    {
+      "id": "premades-trigger-0003",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.静水.private_trigger", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-CHAR-0003"],
+      "note": "静水's private trigger is GM procedure; gm_observation is delivered privately only when triggered, not pre-authorized as owner-visible source content."
+    },
+    {
+      "id": "premades-stats-0004",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.底片", "locator_type": "json_path", "scope": { "fields": ["name_zh", "attributes", "final_skills"] } },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "entity_ids": ["UNR-CHAR-0004"],
+      "note": "Non-secret premade card surface for 底片."
+    },
+    {
+      "id": "premades-secret-0004",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.底片.secret", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM", "CHARACTER:UNR-CHAR-0004"],
+      "entity_ids": ["UNR-SECRET-0004", "UNR-CHAR-0004"],
+      "note": "底片's secret (长线影响 tier). GM + owning character only."
+    },
+    {
+      "id": "premades-clues-0004",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.底片.discovery_clues", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-CHAR-0004","UNR-CLUE-0007","UNR-CLUE-0008"],
+      "note": "底片's discovery clues are GM-run procedure; the owning character is not pre-authorized to this source object — clues reach them only as in-game findings at the GM's discretion."
+    },
+    {
+      "id": "premades-trigger-0004",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "characters.底片.private_trigger", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-CHAR-0004"],
+      "note": "底片's private trigger is GM procedure; gm_observation is delivered privately only when triggered, not pre-authorized as owner-visible source content."
+    },
+    {
+      "id": "premades-bonds-001",
+      "source": { "path": "aipt/p0-b000/premades-v2.json", "locator": "bonds", "locator_type": "json_path" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "Bond entries carry private per-character perspectives and tension cores. The mechanics field (支撑/抵命 二选一, A6) is player-facing rules and may be disclosed at the table at GM discretion; perspectives and tension cores are never distributed to ALL_PLAYERS or to the other party."
+    },
+    {
+      "id": "tasks-v1-001",
+      "source": { "path": "campaign/proposals/tasks-v1.md", "locator": null, "locator_type": "whole_file" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "Mission design proposal containing GM-locked 客观异常法则, 谜底 candidates, faction truth and 待 GM 决策点. Uniformly GM-facing; not player handout material (player handouts are generated separately, e.g. task0-handouts-v1.md)."
+    },
+    {
+      "id": "handouts-dispatch-order",
+      "source": { "path": "campaign/playtest/task0-handouts-v1.md", "locator": "## 派单（结算系统文本，任务开始时发放）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "release": { "point": "S1 据点接单（任务开始时发放）", "timing": "session_start" },
+      "note": "Player-facing dispatch order; handed to players at task start. No gate."
+    },
+    {
+      "id": "handouts-visitor-notice",
+      "source": { "path": "campaign/playtest/task0-handouts-v1.md", "locator": "## 《访客须知》（大堂张贴，A4 打印件）", "locator_type": "markdown_heading" },
+      "label": "UNRELEASED_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "release": { "point": "S2 侦查——玩家在游戏内于大堂实地取得", "timing": "in_game_discovery" },
+      "note": "Player-facing in-game document; must not reach players before they obtain it during recon. May be transmitted to the remote GM/platform for preparation ahead of release."
+    },
+    {
+      "id": "handouts-patrol-manual",
+      "source": { "path": "campaign/playtest/task0-handouts-v1.md", "locator": "## 《安保巡逻手册》节选（侦查所得，半页打印）", "locator_type": "markdown_heading" },
+      "label": "UNRELEASED_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "release": { "point": "S2 侦查——玩家通过侦查渠道获得", "timing": "in_game_discovery" },
+      "note": "Player-facing recon result (含被撕去的第 14 条); released when obtained in-game."
+    },
+    {
+      "id": "intel-pack-001",
+      "source": { "path": "campaign/playtest/task0-intel-pack-v1.md", "locator": null, "locator_type": "whole_file" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-NPC-T000-01","UNR-NPC-T000-02","UNR-NPC-T000-03","UNR-ITEM-T000-01"],
+      "note": "GM truth for task0: area map, patrol schedule, surveillance/monitoring facts, leaks (夹层门 / 23:14 帧 / 回收条目), target and guard stats. Never player-facing."
+    },
+    {
+      "id": "stage3-s0",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "## 0. 本局一屏", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM-only run guide section."
+    },
+    {
+      "id": "stage3-s1-prep",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "## 1. 赛前准备（约 30 分钟）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM-only prep checklist and recommended roster matrix."
+    },
+    {
+      "id": "stage3-s2-quick",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "## 2. 规则速讲（15 分钟，最小脚本）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM script for the rules quick-teach; rules themselves are PUBLIC via the rules docs, this is the GM delivery script."
+    },
+    {
+      "id": "stage3-s3-budget",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "## 3. 节奏预算（目标 3h）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM-only pacing budget and timeouts."
+    },
+    {
+      "id": "stage3-s4-menu",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "## 4. 场景菜单（8 张，按发生顺序；玩家绕开就跳过，不重摆）", "locator_type": "markdown_heading", "scope": { "heading_only": true } },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "Scene-menu section header only (heading_only scope: covers the parent heading line, never the subtree); the eight scene cards are mapped individually below (stage3-scene-S1..S8), so there is no ambiguous parent-heading overlap."
+    },
+    {
+      "id": "stage3-scene-S1",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "### S1 据点接单（Strong Start）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-SCENE-T000-01"],
+      "note": "GM-only scene card (What Is True / Actors / Mechanic / If Ignored)."
+    },
+    {
+      "id": "stage3-scene-S2",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "### S2 侦查（三渠道，各 30min）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-SCENE-T000-02"],
+      "note": "GM-only scene card (recon channels and outcomes)."
+    },
+    {
+      "id": "stage3-scene-S3",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "### S3 计划（主内容，GM 只答问不催）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-SCENE-T000-03"],
+      "note": "GM-only scene card (planning phase)."
+    },
+    {
+      "id": "stage3-scene-S4",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "### S4 潜入·大堂→办公层（含教学预置巡逻遭遇）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-SCENE-T000-04"],
+      "note": "GM-only scene card (infiltration and preset patrol encounter)."
+    },
+    {
+      "id": "stage3-scene-S5",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "### S5 机房·值守者", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-SCENE-T000-05"],
+      "note": "GM-only scene card (server room keeper)."
+    },
+    {
+      "id": "stage3-scene-S6",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "### S6 开保险箱", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-SCENE-T000-06"],
+      "note": "GM-only scene card (safe cracking)."
+    },
+    {
+      "id": "stage3-scene-S7",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "### S7 撤离", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-SCENE-T000-07"],
+      "note": "GM-only scene card (extraction)."
+    },
+    {
+      "id": "stage3-scene-S8",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "### S8 结算＋休整", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-SCENE-T000-08"],
+      "note": "GM-only scene card (settlement and rest, includes the 回收条目 leak)."
+    },
+    {
+      "id": "stage3-s5-tips",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "## 5. GM 口袋提示（教学点速记）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM pocket tips."
+    },
+    {
+      "id": "stage3-s6-leak",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "## 6. 渗漏时间轴（本局怪谈微剂量，勿加码）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "entity_ids": ["UNR-CLUE-T000-01","UNR-CLUE-T000-02","UNR-CLUE-T000-03","UNR-CLUE-T000-04"],
+      "note": "GM-only leak timeline."
+    },
+    {
+      "id": "stage3-s7-observe",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "## 7. 观察与记录流程", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM observation/hypothesis sheet instructions (5 主问题)."
+    },
+    {
+      "id": "stage3-s8-pitfalls",
+      "source": { "path": "campaign/playtest/stage3-run-guide-v1.md", "locator": "## 8. 避坑清单", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM-only pitfalls checklist."
+    },
+    {
+      "id": "gm-screen-001",
+      "source": { "path": "campaign/playtest/gm-screen-v1.md", "locator": null, "locator_type": "whole_file" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM one-page quick-reference (face A judgement / face B state & procedures). Uniformly GM-facing."
+    },
+    {
+      "id": "rks-columns",
+      "source": { "path": "campaign/playtest/rule-knowledge-sheet-v1.md", "locator": "## 五列状态", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Player-facing definitions of the five record columns (见闻/推测/验证/反证/分享状态). Each PC keeps their own page."
+    },
+    {
+      "id": "rks-blank-table",
+      "source": { "path": "campaign/playtest/rule-knowledge-sheet-v1.md", "locator": "## 记录表", "locator_type": "markdown_heading", "scope": { "exclude_columns": ["GM 备注（污染条，勿向玩家出示）"] } },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Blank record table given to each PC (all columns except the GM-only 备注 column, mapped separately as rks-gm-notes-column)."
+    },
+    {
+      "id": "rks-gm-notes-column",
+      "source": { "path": "campaign/playtest/rule-knowledge-sheet-v1.md", "locator": "## 记录表 / GM 备注（污染条，勿向玩家出示）", "locator_type": "markdown_table_column" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM-only notes column of the record table ('勿向玩家出示'); holds pollution-card annotations."
+    },
+    {
+      "id": "rks-examples",
+      "source": { "path": "campaign/playtest/rule-knowledge-sheet-v1.md", "locator": "## 示例行（任务0 派单）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "Example rows include a 反证 row referencing the unreleased 夹层门 (dark-layer recon fact). Kept GM-side so example content cannot spoil recon outcomes if printed."
+    },
+    {
+      "id": "rks-pollution",
+      "source": { "path": "campaign/playtest/rule-knowledge-sheet-v1.md", "locator": "## 污染条说明（GM 用）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM-only pollution-card procedure (污染条 #n injection; ≥5 rule knowledge severely unreliable)."
+    },
+    {
+      "id": "session0-preamble",
+      "source": { "path": "campaign/session0-redlines.md", "locator": { "start_line": 1, "end_line": 4 }, "locator_type": "markdown_preamble" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "Session 0 red-lines document front matter (lines 1–4, resolved by the markdown_preamble rule: everything before the first ## section heading, trailing blank lines excluded): the H1 title plus the 用途/依据/映射 meta blockquote. GM-facing document meta, not player handout material. The four content sections are mapped individually below (session0-lines, session0-confirmations, session0-tools, session0-protections). Confirmations' responses are HUMAN_PRIVATE_DATA and never persisted. Safety semantics are declared in aipt/p0-b001/safety-profile.json."
+    },
+    {
+      "id": "session0-lines",
+      "source": { "path": "campaign/session0-redlines.md", "locator": "## 1. 已预设红线（GM 已确认）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "release": { "point": "Session 0 开团前逐人确认时向全桌披露", "timing": "session0_disclosure" },
+      "note": "The preset Lines/Veils (儿童受害 Line, 精神疾病污名化 Line, 身体恐怖（变形/虫/自残） Veil) are table-disclosed safety boundaries that every player is entitled to know."
+    },
+    {
+      "id": "session0-confirmations",
+      "source": { "path": "campaign/session0-redlines.md", "locator": "## 2. 必确认条目（逐人问，未确认=按 Veil 处理）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM-run per-player confirmation checklist (questions only — no answers are stored). Answers are classified HUMAN_PRIVATE_DATA and never enter the repository or the manifest."
+    },
+    {
+      "id": "session0-tools",
+      "source": { "path": "campaign/session0-redlines.md", "locator": "## 3. 桌上工具", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "entity_ids": ["UNR-SAFETY-EVENT-0001","UNR-SAFETY-EVENT-0002"],
+      "release": { "point": "Session 0 安全预热（3 分钟）", "timing": "session0_disclosure" },
+      "note": "Table tools (X 卡/平台安全暂停, 红灯词清单, 解压检查) that all participants use and must know."
+    },
+    {
+      "id": "session0-protections",
+      "source": { "path": "campaign/session0-redlines.md", "locator": "## 4. 认知污染的桌上保护（本作特有）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM procedures protecting the table from cognitive pollution (character rule knowledge only; fixed-format card 你的角色现在相信：___; identity alteration needs player consent). The fixed card text is disclosed to players when a pollution card is issued."
+    },
+    {
+      "id": "vs-s0",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 0. 本草案回答什么", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Rules-body section; system rules are shared with players (delivered via 规则速讲)."
+    },
+    {
+      "id": "vs-s1",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 1. 核心判定（d100 下掷）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Core resolution rules (five-tier d100)."
+    },
+    {
+      "id": "vs-s2",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 2. 能力框架", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Attributes / skills / specialty framework."
+    },
+    {
+      "id": "vs-s3",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 3. 四轨资源", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Four-track resources (压力/疲劳/伤口/污染)."
+    },
+    {
+      "id": "vs-s4",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 4. 逆转窗口（三层，平台规范）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Reversal window procedure."
+    },
+    {
+      "id": "vs-s45",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 4.5 羁绊（双向，机制收益）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Bond system rules (mechanics surface); the specific private perspectives live in premades-v2 bonds (GM-only mapping premades-bonds-001)."
+    },
+    {
+      "id": "vs-s5",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 5. 预案资源", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Plan-point resource rules."
+    },
+    {
+      "id": "vs-s6",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 6. 潜入 procedure（任务核心循环）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Infiltration procedure (recon/plan/execute/extract/settle)."
+    },
+    {
+      "id": "vs-s7",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 7. 异常规则遵守（违规管线，平台规范）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Anomaly-rule compliance pipeline presented as system rules (世界内文本=游戏数据); GM procedure detail is in the rules body."
+    },
+    {
+      "id": "vs-s8",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 8. 区域制战斗（摘要）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Area-based combat summary (including 无双/交火代价 rules)."
+    },
+    {
+      "id": "vs-s9",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 9. 据点休整（恢复循环草案）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Safehouse rest cycle rules."
+    },
+    {
+      "id": "vs-s10",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 10. 敌对样本（简版草案）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "Enemy stat samples incl. 守卫数值 and '它' — GM reference, not player handout."
+    },
+    {
+      "id": "vs-s11",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 11. 垂直切片清单（对照 trpg-system-designer）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "Design checklist for the system designer — GM/design-facing, not player content."
+    },
+    {
+      "id": "vs-s12",
+      "source": { "path": "campaign/rules/vertical-slice-v0.md", "locator": "## 12. 待 GM 决策点（审阅轮后更新）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "Open GM decision items — GM/design-facing."
+    },
+    {
+      "id": "mf-A",
+      "source": { "path": "campaign/rules/mechanics-fine-v1.md", "locator": "## A. 资源参数（resource-economy 五要素）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Resource parameters (A1–A8). 锚点/收敛 annotation columns are design-verification metadata and should be stripped for player-facing distribution."
+    },
+    {
+      "id": "mf-B",
+      "source": { "path": "campaign/rules/mechanics-fine-v1.md", "locator": "## B. 区域战斗参数（conflict-engine）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Combat parameters (B1–B6)."
+    },
+    {
+      "id": "mf-C",
+      "source": { "path": "campaign/rules/mechanics-fine-v1.md", "locator": "## C. 成长与自建（character-progression）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Progression and character-building rules (C1–C2)."
+    },
+    {
+      "id": "mf-D",
+      "source": { "path": "campaign/rules/mechanics-fine-v1.md", "locator": "## D. 流程参数（gm-procedure）", "locator_type": "markdown_heading" },
+      "label": "PUBLIC",
+      "remote_allowed": true,
+      "principals": ["GM", "ALL_PLAYERS"],
+      "note": "Procedure parameters (D1–D8) — rules surface players operate under."
+    },
+    {
+      "id": "mf-E",
+      "source": { "path": "campaign/rules/mechanics-fine-v1.md", "locator": "## E. 待 GM 裁决项（已全部裁决）", "locator_type": "markdown_heading" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "GM decision log — GM/design-facing."
+    },
+    {
+      "id": "logic-map-001",
+      "source": { "path": "campaign/rules/logic-map-v1.md", "locator": null, "locator_type": "whole_file" },
+      "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+      "remote_allowed": true,
+      "principals": ["GM"],
+      "note": "Design-verification document (concept nodes, cross-validation matrix, fix log). GM/design-facing, not player content."
+    }
+  ],
+  "declared_absent_instances": {
+    "LOCAL_ONLY_SECRET": {
+      "instances_in_repository": 0,
+      "note": "By definition local-only secrets are not stored in the repository. The label is declared for future use; any instance that would need to appear in the repo or manifest must instead be rejected."
+    },
+    "HUMAN_PRIVATE_DATA": {
+      "instances_in_repository": 0,
+      "note": "No participant answers, names, or mental-health data exist anywhere in this repository. Session-0 confirmations and any table feedback are classified HUMAN_PRIVATE_DATA (see safety-profile.json) and are never a formal game input, never persisted in the public game repo, and never sent to remote models by default."
+    },
+    "CREDENTIAL_SECRET": {
+      "instances_in_repository": 0,
+      "note": "No credential instances exist. Credentials must never appear in this public repository, in the manifest, or in any packaged bundle. Any occurrence is a fail-closed rejection (see fail_closed)."
+    }
+  },
+  "validation": {
+    "taxonomy_exact": {
+      "rule": "taxonomy.labels must be exactly the six labels PUBLIC, UNRELEASED_REMOTE_ALLOWED, TABLE_HIDDEN_REMOTE_ALLOWED, LOCAL_ONLY_SECRET, HUMAN_PRIVATE_DATA, CREDENTIAL_SECRET; any other label anywhere is rejected",
+      "fields": ["policy.taxonomy.labels", "mappings[].label"]
+    },
+    "remote_allowed_derived": {
+      "rule": "every mapping's remote_allowed must equal policy.taxonomy.remote_allowed[mapping.label]; mappings may not override the taxonomy",
+      "fields": ["mappings[].remote_allowed"]
+    },
+    "principal_layer": {
+      "rule": "every principal in every mapping is exactly GM, ALL_PLAYERS, or CHARACTER:<registered UNR-CHAR id> from aipt/p0-b001/stable-ids.json (UNR-CHAR-0001..0004); runtime seat IDs and participant identifiers are rejected",
+      "fields": ["mappings[].principals"]
+    },
+    "secret_principal_exact": {
+      "rule": "a mapping carrying entity_ids including UNR-SECRET-* must have principals exactly [GM, CHARACTER:<owning character>]; ALL_PLAYERS or any character other than the owner is rejected",
+      "fields": ["mappings[].principals", "mappings[].entity_ids"]
+    },
+    "table_hidden_never_all_players": {
+      "rule": "a mapping labeled TABLE_HIDDEN_REMOTE_ALLOWED is never table-wide: ALL_PLAYERS is forbidden in principals and the principals listed on the mapping are the only authorized viewers (e.g., GM, plus a Secret's owning CHARACTER principal)",
+      "fields": ["mappings[].label", "mappings[].principals"]
+    },
+    "locator_type_declared": {
+      "rule": "every mapping's source.locator_type must be one of the types declared in policy.locators.types (whole_file, json_path, markdown_heading, markdown_table_column, markdown_preamble); an undeclared locator type is rejected",
+      "fields": ["mappings[].source.locator_type", "policy.locators.types"]
+    },
+    "conflicting_mappings": {
+      "rule": "no two mappings for the same source path may conflict: (a) an equal-specificity overlap must agree on label, remote_allowed, and principals or it is REJECTED; (b) different-specificity nesting resolves deterministically — the narrower mapping governs its own range and the broader mapping covers only the remainder; (c) declared complementary exclusions (source.scope.heading_only, source.scope.exclude_columns, markdown_preamble boundary) make a pair complementary rather than conflicting",
+      "fields": ["mappings[].source", "mappings[].label", "mappings[].principals", "mappings[].source.scope"]
+    },
+    "credential_absent": {
+      "rule": "no mapping may use label CREDENTIAL_SECRET and no credential-like content may exist in the repository or manifest; presence is a fail-closed rejection",
+      "fields": ["mappings[].label", "declared_absent_instances.CREDENTIAL_SECRET"]
+    },
+    "human_private_not_game_input": {
+      "rule": "label HUMAN_PRIVATE_DATA is never a formal game input; the manifest must never reference it as packaged content and no mapping may use it for a repository source",
+      "fields": ["mappings[].label"]
+    },
+    "coverage": {
+      "rule": "every path in scope.first_slice_sources must be covered by at least one mapping (whole-file, preamble, or section/entity-level); a missing mapping is a fail-closed rejection",
+      "fields": ["scope.first_slice_sources", "mappings[].source.path"]
+    }
+  }
+}

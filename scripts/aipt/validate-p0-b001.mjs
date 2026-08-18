@@ -41,7 +41,15 @@
  *      SCENE 8, CLUE 12, NPC 3, ITEM 1, SAFETY_EVENT 2 ASSIGNED;
  *      RULE / INVARIANT / MUTATION RESERVED and STATE / ENDING
  *      JUSTIFIED_ZERO, all at zero assignments (any active entity in those
- *      namespaces is rejected); exactly 34 entities with globally unique IDs,
+ *      namespaces is rejected); the exactly two accepted STATE/ENDING
+ *      zero-assignment justification objects pinned byte-exact in order
+ *      (namespace, kind, assigned_count, all 14 audited_sources in frozen
+ *      manifest order, qualification_rule, both evidence objects with exact
+ *      source path/locator/locator_type/classification/reason, and
+ *      conclusion) with all four evidence headings independently resolved as
+ *      unique exact lines via the type-aware resolver, and
+ *      validation.zero_assignment present with the exact accepted rule and
+ *      fields; exactly 34 entities with globally unique IDs,
  *      unique (path, locator, kind) binding even if kind changes, unique
  *      path+locator pairs, and retired ids disjoint/non-reusable; Character /
  *      Secret / Scene IDs bound byte-exact to their sources plus exact
@@ -932,6 +940,113 @@ const EXTRA_ENTITIES = [
   { stable_id: "UNR-SAFETY-EVENT-0002", kind: "SAFETY_EVENT", display_name: "结束后解压检查", path: "campaign/session0-redlines.md", locator: "- 结束后的\"解压检查\"：一句话确认状态；高压恐怖局必做", locator_type: "markdown_line", lifecycle: "PROPOSAL" },
 ];
 
+/**
+ * The exactly two accepted STATE/ENDING zero-assignment justification objects,
+ * hardcoded in the accepted order (STATE first, then ENDING). Every field is
+ * pinned byte-exact: namespace, kind, assigned_count, all 14 audited_sources
+ * in the frozen manifest order, qualification_rule, both evidence objects
+ * (exact source path/locator/locator_type, classification and reason) and the
+ * conclusion. audited_sources intentionally reuses EXPECTED_SOURCE_FILES so
+ * the accepted justifications always audit the same frozen manifest source
+ * set in the same order.
+ */
+const ACCEPTED_ZERO_JUSTIFICATIONS = [
+  {
+    namespace: "UNR-STATE",
+    kind: "STATE",
+    assigned_count: 0,
+    audited_sources: EXPECTED_SOURCE_FILES,
+    qualification_rule:
+      "An explicit standalone identity-bearing STATE record must exist within the first-roster/Task-0 vertical-slice scope for a stable ID; mechanics state values, worksheet column values, scenes, future finale prose, and headings/incidental nouns are excluded and do not qualify.",
+    evidence: [
+      {
+        source: { path: "campaign/playtest/gm-screen-v1.md", locator: "## 面 B：状态与流程", locator_type: "markdown_heading" },
+        classification: "RULE_STATE_VALUES_NOT_ENTITY",
+        reason: "The state values under this heading are mechanics/record field values (statuses a record may carry), not standalone identity-bearing STATE records.",
+      },
+      {
+        source: { path: "campaign/playtest/rule-knowledge-sheet-v1.md", locator: "## 五列状态", locator_type: "markdown_heading" },
+        classification: "WORKSHEET_COLUMN_VALUES_NOT_ENTITY",
+        reason: "The five column states are worksheet/record field values describing how records are tracked, not standalone identity-bearing STATE records.",
+      },
+    ],
+    conclusion:
+      "Zero source-backed STATE assignments: no audited source within the frozen first-roster/Task-0 vertical-slice scope contains a standalone identity-bearing STATE record, so namespace UNR-STATE registers no entity.",
+  },
+  {
+    namespace: "UNR-ENDING",
+    kind: "ENDING",
+    assigned_count: 0,
+    audited_sources: EXPECTED_SOURCE_FILES,
+    qualification_rule:
+      "An explicit standalone identity-bearing ENDING record must exist within the first-roster/Task-0 vertical-slice scope for a stable ID; mechanics values, worksheet values, scenes (including S8's wrap-up), future finale prose, and headings/incidental nouns are excluded and do not qualify.",
+    evidence: [
+      {
+        source: { path: "campaign/playtest/stage3-run-guide-v1.md", locator: "### S8 结算＋休整", locator_type: "markdown_heading" },
+        classification: "EXISTING_SCENE_NOT_ENDING",
+        reason: "S8 already has a SCENE stable ID (UNR-SCENE-T000-08); its wrap-up is scene content, not a standalone identity-bearing ENDING record.",
+      },
+      {
+        source: { path: "campaign/proposals/tasks-v1.md", locator: "## 5. 终局《清零》（元层 · 盗「概念」· 2 场）", locator_type: "markdown_heading" },
+        classification: "OUTSIDE_TASK0_PROPOSAL_NOT_ENDING",
+        reason: "The future finale proposal is outside the first-roster/Task-0 vertical-slice scope and is proposal prose, not a standalone identity-bearing ENDING record.",
+      },
+    ],
+    conclusion:
+      "Zero source-backed ENDING assignments: no audited source within the frozen first-roster/Task-0 vertical-slice scope contains a standalone identity-bearing ENDING record, so namespace UNR-ENDING registers no entity.",
+  },
+];
+
+/** The accepted stable-ids.validation.zero_assignment object: exact rule and
+ *  exact fields array (fail-closed — removed or drifted validation is
+ *  rejected). */
+const ZERO_ASSIGNMENT_VALIDATION = {
+  rule:
+    "every namespace with state JUSTIFIED_ZERO must have exactly one zero_assignment_justifications[] entry matching the same namespace and kind, with assigned_count 0 and an audited_sources array covering the full frozen first-roster/Task-0 scope; each evidence entry must cite an exact source locator and classify why it is not a standalone identity-bearing entity; the conclusion must explicitly state zero source-backed assignments",
+  fields: ["namespaces[].state", "zero_assignment_justifications[]"],
+};
+
+/** Section 5 zero-assignment machine verification: the exactly two accepted
+ *  justification objects must be present in order with structured exact
+ *  equality (every field pinned byte-exact); each of the four evidence source
+ *  locators must independently resolve through the type-aware resolver (a
+ *  markdown_heading evidence locator must be an exact unique line of the
+ *  declared source file); and validation.zero_assignment must carry the exact
+ *  accepted rule and fields. */
+function checkZeroAssignmentJustifications(s) {
+  const jz = s.zero_assignment_justifications;
+  if (!Array.isArray(jz) || jz.length !== ACCEPTED_ZERO_JUSTIFICATIONS.length) {
+    throw new Error(
+      `stable-ids.zero_assignment_justifications must be exactly ${ACCEPTED_ZERO_JUSTIFICATIONS.length} entries in the accepted order (STATE then ENDING), got ${
+        Array.isArray(jz) ? jz.length : "missing"
+      }`,
+    );
+  }
+  for (let i = 0; i < ACCEPTED_ZERO_JUSTIFICATIONS.length; i++) {
+    const got = jz[i];
+    if (!got || JSON.stringify(got) !== JSON.stringify(ACCEPTED_ZERO_JUSTIFICATIONS[i])) {
+      throw new Error(
+        `stable-ids.zero_assignment_justifications[${i}] must be exactly the accepted ${ACCEPTED_ZERO_JUSTIFICATIONS[i].namespace} justification (every field pinned: namespace, kind, assigned_count, all ${EXPECTED_SOURCE_FILES.length} audited_sources in frozen manifest order, qualification_rule, both evidence source path/locator/locator_type/classification/reason, conclusion)`,
+      );
+    }
+    for (const ev of got.evidence) {
+      if (!ev || !ev.source) throw new Error(`stable-ids.zero_assignment_justifications[${i}] evidence source missing`);
+      if (resolveEntityLocator(ev.source) === null) {
+        throw new Error(
+          `stable-ids.zero_assignment_justifications[${i}] evidence locator does not resolve (locator_type ${ev.source.locator_type}, locator ${JSON.stringify(
+            ev.source.locator,
+          )} in ${ev.source.path})`,
+        );
+      }
+    }
+  }
+  const vld = s.validation;
+  if (!vld || typeof vld !== "object" || !("zero_assignment" in vld)) {
+    throw new Error("stable-ids.validation.zero_assignment missing (must carry the exact accepted rule and fields)");
+  }
+  assertExact(vld.zero_assignment, ZERO_ASSIGNMENT_VALIDATION, "stable-ids.validation.zero_assignment");
+}
+
 function checkStableIdsObj(s) {
   if (!s || typeof s !== "object") throw new Error("stable-ids.json: missing object");
   assertExact(s.aipt_schema, "aipt.stable-ids.v1", "stable-ids.aipt_schema");
@@ -1076,11 +1191,12 @@ function checkStableIdsObj(s) {
       throw new Error(`namespace ${ns} assigned_count must be ${exp.assigned_count}, found ${counts[ns]} entities`);
     }
   }
+  checkZeroAssignmentJustifications(s);
 }
 
 function checkStableIds() {
   checkStableIdsObj(loadJson("aipt/p0-b001/stable-ids.json"));
-  pass("stable-ids: exact schema/policy/lifecycle; 12 namespaces with exact per-kind counts/states (4 CHARACTER + 4 SECRET + 8 SCENE + 12 CLUE + 3 NPC + 1 ITEM + 2 SAFETY_EVENT ASSIGNED; RULE/INVARIANT/MUTATION RESERVED, STATE/ENDING JUSTIFIED_ZERO); 34 entities with type-aware locators resolved; Character/Secret/Scene + 18 CLUE/NPC/ITEM/SAFETY_EVENT byte-exact bindings; unique IDs and entity bindings; any active RULE/INVARIANT/MUTATION/STATE/ENDING entity rejected");
+  pass("stable-ids: exact schema/policy/lifecycle; 12 namespaces with exact per-kind counts/states (4 CHARACTER + 4 SECRET + 8 SCENE + 12 CLUE + 3 NPC + 1 ITEM + 2 SAFETY_EVENT ASSIGNED; RULE/INVARIANT/MUTATION RESERVED, STATE/ENDING JUSTIFIED_ZERO); exact accepted STATE/ENDING zero-assignment justifications pinned byte-exact in order (all four evidence headings independently resolved as unique exact lines) plus exact validation.zero_assignment rule/fields; 34 entities with type-aware locators resolved; Character/Secret/Scene + 18 CLUE/NPC/ITEM/SAFETY_EVENT byte-exact bindings; unique IDs and entity bindings; any active RULE/INVARIANT/MUTATION/STATE/ENDING entity rejected");
 }
 
 // ---------------------------------------------------------------------------
@@ -2137,6 +2253,63 @@ function runProbes() {
         canonical: false,
       });
       expectThrown(() => checkStableIdsObj(s), "MUTATION namespace reserved");
+    }],
+    // --- zero-assignment justifications (STATE/ENDING) ---
+    ["active STATE entity (JUSTIFIED_ZERO namespace assigned)", () => {
+      const s = structuredClone(stableIds);
+      s.entities.push({
+        stable_id: "UNR-STATE-0001",
+        kind: "STATE",
+        display_name: "state probe",
+        source: { path: "campaign/playtest/gm-screen-v1.md", locator: "## 面 B：状态与流程", locator_type: "markdown_heading" },
+        lifecycle_status: "PROPOSAL",
+        canonical: false,
+      });
+      expectThrown(() => checkStableIdsObj(s), "STATE namespace must stay at zero assignments");
+    }],
+    ["active ENDING entity (JUSTIFIED_ZERO namespace assigned)", () => {
+      const s = structuredClone(stableIds);
+      s.entities.push({
+        stable_id: "UNR-ENDING-0001",
+        kind: "ENDING",
+        display_name: "ending probe",
+        source: { path: "campaign/proposals/tasks-v1.md", locator: "## 5. 终局《清零》（元层 · 盗「概念」· 2 场）", locator_type: "markdown_heading" },
+        lifecycle_status: "PROPOSAL",
+        canonical: false,
+      });
+      expectThrown(() => checkStableIdsObj(s), "ENDING namespace must stay at zero assignments");
+    }],
+    ["missing STATE zero-assignment justification", () => {
+      const s = structuredClone(stableIds);
+      s.zero_assignment_justifications = s.zero_assignment_justifications.filter((j) => j.namespace !== "UNR-STATE");
+      expectThrown(() => checkStableIdsObj(s), "both accepted justifications required in the accepted order (STATE then ENDING)");
+    }],
+    ["truncated ENDING audited_sources", () => {
+      const s = structuredClone(stableIds);
+      s.zero_assignment_justifications.find((j) => j.namespace === "UNR-ENDING").audited_sources = s.zero_assignment_justifications
+        .find((j) => j.namespace === "UNR-ENDING")
+        .audited_sources.slice(0, 13);
+      expectThrown(() => checkStableIdsObj(s), "all 14 audited_sources in frozen manifest order");
+    }],
+    ["STATE evidence locator changed to a different valid heading", () => {
+      const s = structuredClone(stableIds);
+      s.zero_assignment_justifications[0].evidence[0].source.locator = "## 面 A：判定";
+      expectThrown(() => checkStableIdsObj(s), "evidence source locator pinned byte-exact");
+    }],
+    ["ENDING evidence classification changed", () => {
+      const s = structuredClone(stableIds);
+      s.zero_assignment_justifications[1].evidence[0].classification = "SCENE_NOT_ENDING";
+      expectThrown(() => checkStableIdsObj(s), "evidence classification pinned exact");
+    }],
+    ["validation.zero_assignment removed", () => {
+      const s = structuredClone(stableIds);
+      delete s.validation.zero_assignment;
+      expectThrown(() => checkStableIdsObj(s), "validation.zero_assignment required");
+    }],
+    ["validation.zero_assignment rule drifted", () => {
+      const s = structuredClone(stableIds);
+      s.validation.zero_assignment.rule = "drifted zero-assignment rule";
+      expectThrown(() => checkStableIdsObj(s), "validation.zero_assignment exact rule");
     }],
     // --- visibility ---
     ["missing visibility label (taxonomy)", () => {

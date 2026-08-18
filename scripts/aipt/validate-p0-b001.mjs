@@ -77,7 +77,16 @@
  *      types declared and every actual locator resolved; every first-slice
  *      source covered; LOCAL_ONLY_SECRET remote false and absent; the
  *      participant-data classification token never a formal source/input;
- *      credentials absent;
+ *      credentials absent; exact visibility bindings for the 18 newly assigned
+ *      CLUE / NPC / ITEM / SAFETY_EVENT IDs across the exactly seven accepted
+ *      mappings (premades-clues-0001..0004, stage3-s6-leak, intel-pack-001,
+ *      session0-tools) — source path / locator / locator_type / label /
+ *      principals (accepted order) / entity_ids pinned byte-exact (premade
+ *      clue mappings carry their CHARACTER plus the correct two CLUEs; stage3
+ *      carries exactly four Task-0 CLUEs; intel carries exactly three NPCs
+ *      plus one ITEM; session0-tools carries exactly two SAFETY_EVENTs), and
+ *      each of the 18 new IDs occurs exactly once globally and only in its
+ *      accepted mapping (duplicates within or across mappings rejected);
  *   7. safety profile: derived only from campaign/session0-redlines.md; exact
  *      two Lines, exact one Veil, exact five confirmations with exact 0/1/2
  *      levels; unconfirmed_default VEIL; X card/safety pause; redlight-added
@@ -1366,6 +1375,69 @@ const SESSION0_EXPECT = [
   },
 ];
 
+/**
+ * Exact accepted visibility bindings for the 18 newly assigned CLUE / NPC /
+ * ITEM / SAFETY_EVENT entity IDs across the exactly seven accepted mappings:
+ * premades-clues-0001..0004, stage3-s6-leak, intel-pack-001 and
+ * session0-tools. Every field is pinned byte-exact: source path, locator,
+ * locator_type, label, principals (in the accepted order) and the exact
+ * entity_ids array — premade clue mappings include their existing CHARACTER
+ * plus the correct two CLUEs, stage3-s6-leak carries exactly four Task-0
+ * CLUEs, intel-pack-001 carries exactly three NPCs plus one ITEM, and
+ * session0-tools carries exactly two SAFETY_EVENTs.
+ */
+const NEW_ID_VISIBILITY_BINDINGS = [
+  {
+    id: "premades-clues-0001",
+    source: { path: "aipt/p0-b000/premades-v2.json", locator: "characters.游隼.discovery_clues", locator_type: "json_path" },
+    label: "TABLE_HIDDEN_REMOTE_ALLOWED",
+    principals: ["GM"],
+    entity_ids: ["UNR-CHAR-0001", "UNR-CLUE-0001", "UNR-CLUE-0002"],
+  },
+  {
+    id: "premades-clues-0002",
+    source: { path: "aipt/p0-b000/premades-v2.json", locator: "characters.短波.discovery_clues", locator_type: "json_path" },
+    label: "TABLE_HIDDEN_REMOTE_ALLOWED",
+    principals: ["GM"],
+    entity_ids: ["UNR-CHAR-0002", "UNR-CLUE-0003", "UNR-CLUE-0004"],
+  },
+  {
+    id: "premades-clues-0003",
+    source: { path: "aipt/p0-b000/premades-v2.json", locator: "characters.静水.discovery_clues", locator_type: "json_path" },
+    label: "TABLE_HIDDEN_REMOTE_ALLOWED",
+    principals: ["GM"],
+    entity_ids: ["UNR-CHAR-0003", "UNR-CLUE-0005", "UNR-CLUE-0006"],
+  },
+  {
+    id: "premades-clues-0004",
+    source: { path: "aipt/p0-b000/premades-v2.json", locator: "characters.底片.discovery_clues", locator_type: "json_path" },
+    label: "TABLE_HIDDEN_REMOTE_ALLOWED",
+    principals: ["GM"],
+    entity_ids: ["UNR-CHAR-0004", "UNR-CLUE-0007", "UNR-CLUE-0008"],
+  },
+  {
+    id: "stage3-s6-leak",
+    source: { path: "campaign/playtest/stage3-run-guide-v1.md", locator: "## 6. 渗漏时间轴（本局怪谈微剂量，勿加码）", locator_type: "markdown_heading" },
+    label: "TABLE_HIDDEN_REMOTE_ALLOWED",
+    principals: ["GM"],
+    entity_ids: ["UNR-CLUE-T000-01", "UNR-CLUE-T000-02", "UNR-CLUE-T000-03", "UNR-CLUE-T000-04"],
+  },
+  {
+    id: "intel-pack-001",
+    source: { path: "campaign/playtest/task0-intel-pack-v1.md", locator: null, locator_type: "whole_file" },
+    label: "TABLE_HIDDEN_REMOTE_ALLOWED",
+    principals: ["GM"],
+    entity_ids: ["UNR-NPC-T000-01", "UNR-NPC-T000-02", "UNR-NPC-T000-03", "UNR-ITEM-T000-01"],
+  },
+  {
+    id: "session0-tools",
+    source: { path: "campaign/session0-redlines.md", locator: "## 3. 桌上工具", locator_type: "markdown_heading" },
+    label: "PUBLIC",
+    principals: ["GM", "ALL_PLAYERS"],
+    entity_ids: ["UNR-SAFETY-EVENT-0001", "UNR-SAFETY-EVENT-0002"],
+  },
+];
+
 function findTableHeader(lines, from) {
   for (let i = from; i < lines.length; i++) {
     const t = lines[i].trim();
@@ -1694,6 +1766,71 @@ function checkSplitExpectations(v) {
   }
 }
 
+/** The 18 newly assigned CLUE / NPC / ITEM / SAFETY_EVENT entity IDs (the
+ *  EXTRA_ENTITIES stable-id bindings, excluding the pre-existing CHARACTER /
+ *  SECRET / SCENE ids). Each of these must occur exactly once across all
+ *  visibility mappings, only in its accepted mapping below. */
+const NEW_ENTITY_IDS = new Set(EXTRA_ENTITIES.map((e) => e.stable_id));
+
+/** Exact new-ID visibility bindings: each of the exactly seven accepted
+ *  mappings (premades-clues-0001..0004, stage3-s6-leak, intel-pack-001,
+ *  session0-tools) must match the accepted table byte-exact — source path,
+ *  locator, locator_type, label, principals (accepted order) and the exact
+ *  entity_ids array — and every one of the 18 newly assigned CLUE / NPC /
+ *  ITEM / SAFETY_EVENT IDs must occur exactly once globally and only in its
+ *  accepted mapping (duplicates within or across mappings rejected). */
+function checkNewEntityVisibilityBindings(v) {
+  const mappings = v.mappings;
+  const byId = new Map(mappings.map((mp) => [mp.id, mp]));
+  const acceptedByNewId = new Map();
+  for (const exp of NEW_ID_VISIBILITY_BINDINGS) {
+    const mp = byId.get(exp.id);
+    if (!mp) throw new Error(`new-ID visibility mapping ${exp.id} missing`);
+    assertExact(mp.source.path, exp.source.path, `visibility ${exp.id} source.path`);
+    assertExact(mp.source.locator, exp.source.locator, `visibility ${exp.id} source.locator`);
+    assertExact(mp.source.locator_type, exp.source.locator_type, `visibility ${exp.id} source.locator_type`);
+    assertExact(mp.label, exp.label, `visibility ${exp.id} label`);
+    assertExact(
+      mp.principals,
+      exp.principals,
+      `visibility ${exp.id} principals must be exactly ${JSON.stringify(exp.principals)} in the accepted order`,
+    );
+    assertExact(mp.entity_ids, exp.entity_ids, `visibility ${exp.id} entity_ids`);
+    for (const eid of exp.entity_ids) {
+      if (!NEW_ENTITY_IDS.has(eid)) continue;
+      if (acceptedByNewId.has(eid)) {
+        throw new Error(`new ID ${eid} is accepted in more than one mapping (${acceptedByNewId.get(eid)} and ${exp.id})`);
+      }
+      acceptedByNewId.set(eid, exp.id);
+    }
+  }
+  for (const id of NEW_ENTITY_IDS) {
+    if (!acceptedByNewId.has(id)) throw new Error(`new ID ${id} has no accepted visibility mapping (each of the 18 new IDs must be bound in exactly one accepted mapping)`);
+  }
+  const seen = new Map();
+  for (const mp of mappings) {
+    for (const eid of mp.entity_ids || []) {
+      if (!NEW_ENTITY_IDS.has(eid)) continue;
+      const prior = seen.get(eid);
+      if (prior !== undefined) {
+        throw new Error(
+          `new ID ${eid} appears in more than one mapping (${prior} and ${mp.id}); each of the 18 new IDs must occur exactly once globally, only in its accepted mapping`,
+        );
+      }
+      seen.set(eid, mp.id);
+    }
+  }
+  for (const [eid, acceptedId] of acceptedByNewId) {
+    const foundId = seen.get(eid);
+    if (foundId === undefined) {
+      throw new Error(`new ID ${eid} is absent from every mapping; it must appear exactly once in its accepted mapping ${acceptedId}`);
+    }
+    if (foundId !== acceptedId) {
+      throw new Error(`new ID ${eid} appears in mapping ${foundId} but its accepted mapping is ${acceptedId} (each new ID only in its accepted mapping)`);
+    }
+  }
+}
+
 function checkVisibilityObj(v) {
   if (!v || typeof v !== "object") throw new Error("visibility.json: missing object");
   assertExact(v.aipt_schema, "aipt.visibility.v1", "visibility.aipt_schema");
@@ -1783,11 +1920,12 @@ function checkVisibilityObj(v) {
     if (!ctx.covered.has(p)) throw new Error(`fail-closed: no mapping covers first-slice source ${p}`);
   }
   checkSplitExpectations(v);
+  checkNewEntityVisibilityBindings(v);
 }
 
 function checkVisibility() {
   checkVisibilityObj(loadJson("aipt/p0-b001/visibility.json"));
-  pass("visibility: exact 73 mapping ids; exact six labels/remote booleans/locator types/absent labels; three fail-closed overlap_resolution fields; all 17 stage3 mappings GM-only; exactly five session0 mappings (preamble 1-4 + sections 1-4)");
+  pass("visibility: exact 73 mapping ids; exact six labels/remote booleans/locator types/absent labels; three fail-closed overlap_resolution fields; all 17 stage3 mappings GM-only; exactly five session0 mappings (preamble 1-4 + sections 1-4); exact new-ID visibility bindings for the seven accepted mappings (premades-clues-0001..0004, stage3-s6-leak, intel-pack-001, session0-tools) — source/locator/locator_type/label/principals/entity_ids pinned, each of the 18 CLUE/NPC/ITEM/SAFETY_EVENT IDs exactly once globally and only in its accepted mapping");
 }
 
 // ---------------------------------------------------------------------------
@@ -2393,6 +2531,53 @@ function runProbes() {
       const v = structuredClone(visibility);
       v.mappings[0].source.locator_type = "regex_search";
       expectThrown(() => checkVisibilityObj(v), "locator type declared");
+    }],
+    // --- exact new-ID visibility bindings (18 CLUE/NPC/ITEM/SAFETY_EVENT ids,
+    //     exactly once globally, only in their accepted mapping) ---
+    ["new ID removed from its accepted mapping", () => {
+      const v = structuredClone(visibility);
+      const mp = v.mappings.find((m) => m.id === "premades-clues-0001");
+      mp.entity_ids = mp.entity_ids.filter((eid) => eid !== "UNR-CLUE-0001");
+      expectThrown(() => checkVisibilityObj(v), "premades-clues-0001 must keep its exact entity_ids (CHARACTER + two CLUEs) and UNR-CLUE-0001 must occur exactly once globally");
+    }],
+    ["new ID duplicated into another mapping", () => {
+      const v = structuredClone(visibility);
+      v.mappings.find((m) => m.id === "stage3-s6-leak").entity_ids.push("UNR-CLUE-0001");
+      expectThrown(() => checkVisibilityObj(v), "UNR-CLUE-0001 must occur exactly once, only in premades-clues-0001 (no duplicate across mappings)");
+    }],
+    ["two clue IDs swapped between accepted mappings", () => {
+      const v = structuredClone(visibility);
+      const a = v.mappings.find((m) => m.id === "premades-clues-0001");
+      const b = v.mappings.find((m) => m.id === "premades-clues-0002");
+      const aIds = a.entity_ids;
+      const bIds = b.entity_ids;
+      a.entity_ids = [bIds[0], bIds[1], bIds[2]];
+      b.entity_ids = [aIds[0], aIds[1], aIds[2]];
+      expectThrown(() => checkVisibilityObj(v), "each premade clue mapping must keep its own exact entity_ids (no cross-mapping clue swap)");
+    }],
+    ["premade clue mapping given owning-character access", () => {
+      const v = structuredClone(visibility);
+      v.mappings.find((m) => m.id === "premades-clues-0001").principals = ["GM", "CHARACTER:UNR-CHAR-0001"];
+      expectThrown(() => checkVisibilityObj(v), "premades-clues-0001 principals must stay exactly [GM] (discovery clues are GM-run procedure, not owner pre-authorized)");
+    }],
+    ["ITEM removed from intel-pack-001", () => {
+      const v = structuredClone(visibility);
+      v.mappings.find((m) => m.id === "intel-pack-001").entity_ids = v.mappings
+        .find((m) => m.id === "intel-pack-001")
+        .entity_ids.filter((eid) => eid !== "UNR-ITEM-T000-01");
+      expectThrown(() => checkVisibilityObj(v), "intel-pack-001 must carry exactly three NPCs plus one ITEM (UNR-ITEM-T000-01)");
+    }],
+    ["NPC placed in stage3-s6-leak", () => {
+      const v = structuredClone(visibility);
+      v.mappings.find((m) => m.id === "stage3-s6-leak").entity_ids.push("UNR-NPC-T000-01");
+      expectThrown(() => checkVisibilityObj(v), "stage3-s6-leak must carry exactly the four Task-0 CLUEs; UNR-NPC-T000-01 belongs only in intel-pack-001");
+    }],
+    ["SAFETY_EVENT moved out of session0-tools", () => {
+      const v = structuredClone(visibility);
+      v.mappings.find((m) => m.id === "session0-tools").entity_ids = v.mappings
+        .find((m) => m.id === "session0-tools")
+        .entity_ids.filter((eid) => eid !== "UNR-SAFETY-EVENT-0001");
+      expectThrown(() => checkVisibilityObj(v), "session0-tools must carry exactly the two SAFETY_EVENTs; UNR-SAFETY-EVENT-0001 may not leave its accepted mapping");
     }],
     // --- safety ---
     ["required Line removed", () => {

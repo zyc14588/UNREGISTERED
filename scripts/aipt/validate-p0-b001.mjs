@@ -109,7 +109,12 @@
  *      runProbes), including source+manifest co-drift, actual participant
  *      payload probes, real injected machine-Rule/semantic-graph/
  *      adapter/runtime/mutant objects, stage3-section deletion, ambiguous
- *      session0 whole-file mappings, and symlink / extra-script entries.
+ *      session0 whole-file mappings, symlink / extra-script entries, and
+ *      drift coverage: stable-id ID/locator/namespace drift (duplicate ID,
+ *      same source binding, cross-kind path+locator, CLUE id/locator swaps,
+ *      RESERVED namespace assigned_count) plus manifest stable_id_coverage
+ *      drift (assigned_ids, synthetic_entities_added, zero-kind order) — all
+ *      93 probes must reject.
  *
  * Output is concise and deterministic; exits non-zero with actionable errors
  * on any failure.
@@ -2204,7 +2209,9 @@ function checkScan() {
 }
 
 // ---------------------------------------------------------------------------
-// 9. In-memory negative probes — every one must reject
+// 9. In-memory negative probes — every one must reject (93 probes total,
+//    including stable-id ID/locator/namespace drift and manifest
+//    stable_id_coverage drift; each probe mutates an in-memory clone only)
 // ---------------------------------------------------------------------------
 
 function runProbes() {
@@ -2331,19 +2338,25 @@ function runProbes() {
     // --- stable-ids ---
     ["duplicate stable_id (one ID two entities)", () => {
       const s = structuredClone(stableIds);
-      s.entities.push({ ...s.entities[0], display_name: "游隼副本" });
+      // Replace UNR-CHAR-0002's ID with UNR-CHAR-0001 (no push): 34 entities kept,
+      // two entities now share one ID.
+      s.entities.find((e) => e.stable_id === "UNR-CHAR-0002").stable_id = "UNR-CHAR-0001";
       expectThrown(() => checkStableIdsObj(s), "duplicate stable_id");
     }],
     ["two IDs binding the same source entity", () => {
       const s = structuredClone(stableIds);
-      const first = s.entities[0];
-      s.entities.push({ ...first, stable_id: "UNR-CHAR-9999" });
+      // Copy UNR-CHAR-0001's source onto UNR-CHAR-0002 (no push): 34 entities kept,
+      // two IDs now bind the same (path, locator, kind).
+      const first = s.entities.find((e) => e.stable_id === "UNR-CHAR-0001");
+      s.entities.find((e) => e.stable_id === "UNR-CHAR-0002").source = structuredClone(first.source);
       expectThrown(() => checkStableIdsObj(s), "same (path,locator,kind) under two IDs");
     }],
     ["same path+locator under two kinds", () => {
       const s = structuredClone(stableIds);
-      const first = s.entities[0];
-      s.entities.push({ ...first, stable_id: "UNR-SECRET-9999", kind: "SECRET" });
+      // Copy UNR-CHAR-0001's source onto UNR-SECRET-0001 (no push): 34 entities kept,
+      // the same path+locator is now bound under two different kinds.
+      const first = s.entities.find((e) => e.stable_id === "UNR-CHAR-0001");
+      s.entities.find((e) => e.stable_id === "UNR-SECRET-0001").source = structuredClone(first.source);
       expectThrown(() => checkStableIdsObj(s), "same path+locator even if kind changes");
     }],
     ["retired id reuse", () => {
@@ -2392,29 +2405,43 @@ function runProbes() {
       });
       expectThrown(() => checkStableIdsObj(s), "MUTATION namespace reserved");
     }],
+    // --- stable-id drift coverage (ID / locator / namespace, 34 entities kept) ---
+    ["UNR-CLUE-T000-04 replaced by a well-formed UNR-CLUE-9999", () => {
+      const s = structuredClone(stableIds);
+      s.entities.find((e) => e.stable_id === "UNR-CLUE-T000-04").stable_id = "UNR-CLUE-9999";
+      expectThrown(() => checkStableIdsObj(s), "accepted 18 CLUE/NPC/ITEM/SAFETY_EVENT bindings pinned byte-exact (UNR-CLUE-T000-04 must stay registered)");
+    }],
+    ["UNR-CLUE-T000-01 pointed at another valid unique table row", () => {
+      const s = structuredClone(stableIds);
+      s.entities.find((e) => e.stable_id === "UNR-CLUE-T000-01").source.locator = "| 侦查卓越 | 夹层门（未标注，锁死） | 是（暗层） | 情报卡三层 |";
+      expectThrown(() => checkStableIdsObj(s), "each (path, locator, kind) binding must be unique across entities");
+    }],
+    ["RULE/INVARIANT/MUTATION namespace assigned_count=1", () => {
+      for (const ns of ["UNR-RULE", "UNR-INVARIANT", "UNR-MUTATION"]) {
+        const s = structuredClone(stableIds);
+        s.namespaces[ns].assigned_count = 1;
+        expectThrown(() => checkStableIdsObj(s), `namespaces.${ns}.assigned_count must stay 0 (RESERVED)`);
+      }
+    }],
     // --- zero-assignment justifications (STATE/ENDING) ---
     ["active STATE entity (JUSTIFIED_ZERO namespace assigned)", () => {
       const s = structuredClone(stableIds);
-      s.entities.push({
-        stable_id: "UNR-STATE-0001",
-        kind: "STATE",
-        display_name: "state probe",
-        source: { path: "campaign/playtest/gm-screen-v1.md", locator: "## 面 B：状态与流程", locator_type: "markdown_heading" },
-        lifecycle_status: "PROPOSAL",
-        canonical: false,
-      });
+      // Replace the last existing entity's stable_id + kind with a STATE entity
+      // (no push): 34 entities kept, one now assigns the JUSTIFIED_ZERO namespace.
+      const last = s.entities[s.entities.length - 1];
+      last.stable_id = "UNR-STATE-0001";
+      last.kind = "STATE";
+      last.display_name = "state probe";
       expectThrown(() => checkStableIdsObj(s), "STATE namespace must stay at zero assignments");
     }],
     ["active ENDING entity (JUSTIFIED_ZERO namespace assigned)", () => {
       const s = structuredClone(stableIds);
-      s.entities.push({
-        stable_id: "UNR-ENDING-0001",
-        kind: "ENDING",
-        display_name: "ending probe",
-        source: { path: "campaign/proposals/tasks-v1.md", locator: "## 5. 终局《清零》（元层 · 盗「概念」· 2 场）", locator_type: "markdown_heading" },
-        lifecycle_status: "PROPOSAL",
-        canonical: false,
-      });
+      // Replace the last existing entity's stable_id + kind with an ENDING entity
+      // (no push): 34 entities kept, one now assigns the JUSTIFIED_ZERO namespace.
+      const last = s.entities[s.entities.length - 1];
+      last.stable_id = "UNR-ENDING-0001";
+      last.kind = "ENDING";
+      last.display_name = "ending probe";
       expectThrown(() => checkStableIdsObj(s), "ENDING namespace must stay at zero assignments");
     }],
     ["missing STATE zero-assignment justification", () => {
@@ -2647,6 +2674,29 @@ function runProbes() {
       const m = structuredClone(manifest);
       m.scope.rules_inputs.mutant_definition = true;
       expectThrown(() => checkManifestObj(m), "mutant_definition false");
+    }],
+    // --- manifest stable_id_coverage drift (assigned_ids / synthetic / zero kinds) ---
+    ["assigned_ids.CLUE drops UNR-CLUE-0001", () => {
+      const m = structuredClone(manifest);
+      m.scope.stable_id_coverage.assigned_ids.CLUE = m.scope.stable_id_coverage.assigned_ids.CLUE.filter((id) => id !== "UNR-CLUE-0001");
+      expectThrown(() => checkManifestObj(m), "assigned_ids.CLUE must equal the registry CLUE sequence in registry order");
+    }],
+    ["synthetic_entities_added true", () => {
+      const m = structuredClone(manifest);
+      m.scope.stable_id_coverage.synthetic_entities_added = true;
+      expectThrown(() => checkManifestObj(m), "synthetic_entities_added must be false");
+    }],
+    ["justified_zero_kinds missing STATE / reversed", () => {
+      const m = structuredClone(manifest);
+      m.scope.stable_id_coverage.justified_zero_kinds = ["ENDING"];
+      expectThrown(() => checkManifestObj(m), "justified_zero_kinds must be exactly [STATE, ENDING]");
+      m.scope.stable_id_coverage.justified_zero_kinds = ["ENDING", "STATE"];
+      expectThrown(() => checkManifestObj(m), "justified_zero_kinds must equal the registry JUSTIFIED_ZERO sequence in registry order");
+    }],
+    ["reserved_zero_kinds order drifted", () => {
+      const m = structuredClone(manifest);
+      m.scope.stable_id_coverage.reserved_zero_kinds = ["INVARIANT", "MUTATION", "RULE"];
+      expectThrown(() => checkManifestObj(m), "reserved_zero_kinds must be exactly [RULE, INVARIANT, MUTATION] in registry order");
     }],
     // --- status ---
     ["status drift from IN_PROGRESS", () => {

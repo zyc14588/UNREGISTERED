@@ -1,0 +1,4585 @@
+{
+  "aipt_schema": "aipt.machine-rules.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B002",
+  "rules": [
+    {
+      "rule_id": "UNR-RULE-0001",
+      "label": "判定触发条件",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.1 触发",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "scene.risk",
+          "field": "present"
+        },
+        {
+          "state": "check.failure",
+          "field": "changes_state"
+        },
+        {
+          "state": "check.success",
+          "field": "is_obvious"
+        },
+        {
+          "state": "scene.core_clue",
+          "field": "gated"
+        }
+      ],
+      "writes": [
+        {
+          "state": "check.roll_required",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "check_requested",
+          "state": "check.requested",
+          "value": true
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "roll_requirement",
+          "cases": [
+            {
+              "priority": 1,
+              "result": false,
+              "when": {
+                "any_of": [
+                  {
+                    "state": "scene.risk.present",
+                    "op": "eq",
+                    "value": false
+                  },
+                  {
+                    "state": "check.failure.changes_state",
+                    "op": "eq",
+                    "value": false
+                  },
+                  {
+                    "state": "check.success.is_obvious",
+                    "op": "eq",
+                    "value": true
+                  },
+                  {
+                    "state": "scene.core_clue.gated",
+                    "op": "eq",
+                    "value": true
+                  }
+                ]
+              }
+            },
+            {
+              "priority": 2,
+              "result": true,
+              "when": {
+                "all_of": [
+                  {
+                    "state": "scene.risk.present",
+                    "op": "eq",
+                    "value": true
+                  },
+                  {
+                    "state": "check.failure.changes_state",
+                    "op": "eq",
+                    "value": true
+                  }
+                ]
+              }
+            }
+          ],
+          "default": false
+        }
+      ],
+      "effects": [
+        {
+          "state": "check.roll_required",
+          "value": "resolved_roll_requirement"
+        }
+      ],
+      "constraints": [
+        "No roll for risk-free actions, retry-only failures, obvious successes, or core-clue story entries."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0002",
+      "label": "能力输入与缺训判定值",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.2 输入（三层能力）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "character.attribute",
+          "fields": [
+            "体能",
+            "敏捷",
+            "意志",
+            "智识",
+            "共情"
+          ]
+        },
+        {
+          "state": "character.skill",
+          "fields": [
+            "value"
+          ]
+        },
+        {
+          "state": "character.specialty",
+          "fields": [
+            "count"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "state": "check.s",
+          "field": "value",
+          "source": "ability_input"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "check_ability_input",
+          "state": "check.input",
+          "value": "requested"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "input_selection",
+          "trained": {
+            "use": "skill_value"
+          },
+          "untrained": {
+            "use": "attribute_half_floor",
+            "attribute": "related_attribute"
+          }
+        },
+        {
+          "kind": "untrained_mapping",
+          "skills": [
+            {
+              "skill": "隐匿",
+              "attribute": "敏捷"
+            },
+            {
+              "skill": "攀爬",
+              "attribute": "体能"
+            },
+            {
+              "skill": "潜入行动",
+              "attribute": "敏捷"
+            },
+            {
+              "skill": "驾驶",
+              "attribute": "敏捷"
+            },
+            {
+              "skill": "耐力",
+              "attribute": "体能"
+            },
+            {
+              "skill": "手枪",
+              "attribute": "敏捷"
+            },
+            {
+              "skill": "长枪",
+              "attribute": "敏捷"
+            },
+            {
+              "skill": "近身格斗",
+              "attribute": "体能"
+            },
+            {
+              "skill": "无声击倒",
+              "attribute": "敏捷"
+            },
+            {
+              "skill": "投掷",
+              "attribute": "敏捷"
+            },
+            {
+              "skill": "战术",
+              "attribute": "智识"
+            },
+            {
+              "skill": "电子对抗",
+              "attribute": "智识"
+            },
+            {
+              "skill": "开锁与物理入侵",
+              "attribute": "敏捷"
+            },
+            {
+              "skill": "机械",
+              "attribute": "智识"
+            },
+            {
+              "skill": "数据处理",
+              "attribute": "智识"
+            },
+            {
+              "skill": "通信",
+              "attribute": "智识"
+            },
+            {
+              "skill": "爆破（受限）",
+              "attribute": "智识"
+            },
+            {
+              "skill": "观察",
+              "attribute": "智识"
+            },
+            {
+              "skill": "搜查",
+              "attribute": "智识"
+            },
+            {
+              "skill": "法证",
+              "attribute": "智识"
+            },
+            {
+              "skill": "情报分析",
+              "attribute": "智识"
+            },
+            {
+              "skill": "反侦察",
+              "attribute": "智识"
+            },
+            {
+              "skill": "记录",
+              "attribute": "智识"
+            },
+            {
+              "skill": "话术",
+              "attribute": "共情"
+            },
+            {
+              "skill": "审讯",
+              "attribute": "共情"
+            },
+            {
+              "skill": "伪装",
+              "attribute": "共情"
+            },
+            {
+              "skill": "礼仪与身份扮演",
+              "attribute": "共情"
+            },
+            {
+              "skill": "读人",
+              "attribute": "共情"
+            },
+            {
+              "skill": "安抚",
+              "attribute": "共情"
+            },
+            {
+              "skill": "急救",
+              "attribute": "智识"
+            },
+            {
+              "skill": "医疗",
+              "attribute": "智识"
+            },
+            {
+              "skill": "城市生存",
+              "attribute": "智识"
+            },
+            {
+              "skill": "物流与供给",
+              "attribute": "智识"
+            },
+            {
+              "skill": "异常学",
+              "attribute": "智识"
+            },
+            {
+              "skill": "抵抗污染",
+              "attribute": "意志"
+            }
+          ]
+        },
+        {
+          "kind": "specialty_input",
+          "effect": "advantage_die"
+        }
+      ],
+      "effects": [
+        {
+          "state": "check.s",
+          "value": "selected_ability_value"
+        }
+      ],
+      "constraints": [
+        "Core attributes range 5–95.",
+        "Trained skill percentages range 10–80.",
+        "Each character has exactly 1 specialty."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0003",
+      "label": "修正值上限与状态减值",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "- 主要表达：修正值 −20/−10/0/+10/+20（上限 ±20，桌上 5–10 秒判定）",
+        "locator_type": "EXACT_TEXT",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "check.modifier_sources",
+          "fields": [
+            "environment",
+            "tool",
+            "time",
+            "assistance"
+          ]
+        },
+        {
+          "state": "check.state_penalty_sources",
+          "fields": [
+            "wound",
+            "fatigue",
+            "pollution"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "state": "check.modifier_total",
+          "field": "value"
+        },
+        {
+          "state": "check.state_penalty_total",
+          "field": "value"
+        },
+        {
+          "state": "check.s",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "modifier_application",
+          "state": "check.in_progress",
+          "value": true
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "sum",
+          "inputs": [
+            "environment",
+            "tool",
+            "time",
+            "assistance"
+          ],
+          "output": "modifier_total"
+        },
+        {
+          "kind": "clamp",
+          "input": "modifier_total",
+          "min": -20,
+          "max": 20
+        },
+        {
+          "kind": "sum",
+          "inputs": [
+            "wound",
+            "fatigue",
+            "pollution"
+          ],
+          "output": "state_penalty_total"
+        },
+        {
+          "kind": "combine_operands",
+          "output": "s",
+          "operands": [
+            {
+              "state": "check.base_s",
+              "coefficient": 1
+            },
+            {
+              "state": "check.modifier_total",
+              "coefficient": 1
+            },
+            {
+              "state": "check.state_penalty_total",
+              "coefficient": -1
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "check.modifier_total",
+          "value": "clamped_modifier_total"
+        },
+        {
+          "state": "check.s",
+          "value": "combined_s"
+        }
+      ],
+      "constraints": [
+        "Modifier sources are environment/tool/time/assistance only.",
+        "State penalties lower s directly and do not count against the ±20 modifier cap.",
+        "Modifiers and state penalties stack."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0004",
+      "label": "优势劣势十位骰",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "- 优势/劣势：额外一颗十位骰，取低（优势）或取高（劣势），个位骰共用",
+        "locator_type": "EXACT_TEXT",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "check.advantage",
+          "field": "active"
+        },
+        {
+          "state": "check.disadvantage",
+          "field": "active"
+        }
+      ],
+      "writes": [
+        {
+          "state": "check.tens_dice",
+          "field": "selection"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "tens_die_modifier",
+          "any_of": [
+            {
+              "check.advantage": true
+            },
+            {
+              "check.disadvantage": true
+            }
+          ]
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "dice_modifier",
+          "base": {
+            "tens_dice": 1,
+            "ones_die": 1
+          },
+          "advantage": {
+            "additional_tens_dice": 1,
+            "selection": "lowest_tens",
+            "ones_die": "shared"
+          },
+          "disadvantage": {
+            "additional_tens_dice": 1,
+            "selection": "highest_tens",
+            "ones_die": "shared"
+          }
+        }
+      ],
+      "effects": [
+        {
+          "state": "check.d100",
+          "tens_selection": "advantage_lowest_or_disadvantage_highest"
+        }
+      ],
+      "constraints": [
+        "Advantage/disadvantage is used for specialty/state only.",
+        "Do not stack advantage/disadvantage abusively."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0005",
+      "label": "d100 五级结果与固定判定顺序",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.4 五级结果（平台规范锁定）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement",
+        "concept:short-term-cost-menu",
+        "concept:warning"
+      ],
+      "reads": [
+        {
+          "state": "check.r",
+          "field": "roll"
+        },
+        {
+          "state": "check.s",
+          "field": "value"
+        },
+        {
+          "state": "check.warning",
+          "field": "active"
+        }
+      ],
+      "writes": [
+        {
+          "state": "check.result_tier",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "d100_check_resolution",
+          "state": "check.r",
+          "min": 1,
+          "max": 100
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "dice",
+          "roll": "r",
+          "die": "d100",
+          "range": [
+            1,
+            100
+          ]
+        },
+        {
+          "kind": "derived_threshold",
+          "id": "critical_threshold",
+          "input": "s",
+          "divide_by": 5,
+          "round": "floor"
+        },
+        {
+          "kind": "derived_threshold",
+          "id": "costly_max",
+          "input": "s",
+          "offset": 15,
+          "clamp_max": 95
+        },
+        {
+          "kind": "ordered_result_tiers",
+          "order": [
+            {
+              "priority": 1,
+              "tier": "catastrophic_failure",
+              "condition": {
+                "r": {
+                  "min": 96,
+                  "max": 100
+                },
+                "requires": {
+                  "check.warning": "active"
+                }
+              }
+            },
+            {
+              "priority": 2,
+              "tier": "critical_success",
+              "condition": {
+                "r": {
+                  "min": 1,
+                  "max": "critical_threshold"
+                }
+              }
+            },
+            {
+              "priority": 3,
+              "tier": "success",
+              "condition": {
+                "r": {
+                  "min": 1,
+                  "max": "s"
+                }
+              }
+            },
+            {
+              "priority": 4,
+              "tier": "costly_success",
+              "condition": {
+                "r": {
+                  "min": "s_plus_1",
+                  "max": "costly_max"
+                }
+              }
+            },
+            {
+              "priority": 5,
+              "tier": "failure_with_progress",
+              "condition": {
+                "r": {
+                  "min": "costly_max_plus_1",
+                  "max": 100
+                },
+                "excludes": [
+                  "catastrophic_failure"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "no_warning_96_100_rule",
+          "rule": "If warning is inactive, rolls 96–100 fall into the normal success/costly/failure tier by priority."
+        }
+      ],
+      "effects": [
+        {
+          "state": "check.result_tier",
+          "value": "resolved_tier"
+        }
+      ],
+      "constraints": [
+        "Catastrophe is read before all other tiers.",
+        "Costly-success upper bound is clamped to 95.",
+        "The five tiers are mutually exclusive for every s."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0006",
+      "label": "灾难档预警条件",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "**预警条件**（满足任一）：压力≥7 ｜ 污染≥1 ｜ 警报层级≥2 ｜ 被\"它\"注意。",
+        "locator_type": "EXACT_TEXT",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:warning"
+      ],
+      "reads": [
+        {
+          "state": "character.pressure",
+          "field": "value"
+        },
+        {
+          "state": "character.pollution",
+          "field": "value"
+        },
+        {
+          "state": "scene.alarm_level",
+          "field": "value"
+        },
+        {
+          "state": "scene.noticed_by_it",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "check.warning",
+          "field": "active"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "catastrophe_warning_check",
+          "state": "check.in_progress",
+          "value": true
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "warning_condition",
+          "any_of": [
+            {
+              "state": "character.pressure",
+              "op": "gte",
+              "value": 7
+            },
+            {
+              "state": "character.pollution",
+              "op": "gte",
+              "value": 1
+            },
+            {
+              "state": "scene.alarm_level",
+              "op": "gte",
+              "value": 2
+            },
+            {
+              "state": "scene.noticed_by_it",
+              "value": true
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "check.warning",
+          "value": "active_when_any_condition_true"
+        }
+      ],
+      "constraints": [
+        "Warning condition applies before the d100 result tiers."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0007",
+      "label": "对抗判定与同档裁决",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.5 对抗",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "opposed_check.left",
+          "fields": [
+            "tier",
+            "skill_value"
+          ]
+        },
+        {
+          "state": "opposed_check.right",
+          "fields": [
+            "tier",
+            "skill_value"
+          ]
+        },
+        {
+          "state": "opposed_check.defender",
+          "field": "side"
+        }
+      ],
+      "writes": [
+        {
+          "state": "opposed_check.winner",
+          "field": "side"
+        },
+        {
+          "state": "opposed_check.next_initiative",
+          "field": "side"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "opposed_check",
+          "state": "opposed_check.both_rolled",
+          "value": true
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "tier_rank",
+          "order_best_to_worst": [
+            "critical_success",
+            "success",
+            "costly_success",
+            "failure_with_progress",
+            "catastrophic_failure"
+          ]
+        },
+        {
+          "kind": "compare",
+          "rule": "higher_tier_wins"
+        },
+        {
+          "kind": "same_tier_rule",
+          "rule": "higher_skill_value_wins"
+        },
+        {
+          "kind": "tie_rule",
+          "rule": "defender_wins_or_status_quo"
+        },
+        {
+          "kind": "double_failure_rule",
+          "when": {
+            "left_tier": "failure_with_progress",
+            "right_tier": "failure_with_progress"
+          },
+          "outcomes": [
+            {
+              "state": "opposed_check.winner",
+              "value": "none_status_quo"
+            },
+            {
+              "state": "scene.failure_consequence",
+              "selection": {
+                "by": "gm",
+                "count": 1,
+                "from": "both_failure_with_progress_consequences"
+              }
+            },
+            {
+              "state": "opposed_check.next_initiative",
+              "value": "side_with_higher_skill_value"
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "opposed_check.winner",
+          "value": "resolved_winner"
+        }
+      ],
+      "constraints": [
+        "Opposed checks use the same five-tier language as single checks."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0008",
+      "label": "队友协助",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.6 协助",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "assistant.skill",
+          "field": "value"
+        },
+        {
+          "state": "assistant.count",
+          "field": "count"
+        }
+      ],
+      "writes": [
+        {
+          "state": "check.modifier_total",
+          "field": "assistance_component"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "assistance",
+          "state": "assistant.skill",
+          "op": "gte",
+          "value": 40
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "assist_modifier",
+          "count": 1,
+          "modifier": 10
+        },
+        {
+          "kind": "assist_modifier",
+          "count": 2,
+          "modifier": 20
+        }
+      ],
+      "effects": [
+        {
+          "state": "check.modifier_total",
+          "value": "assistance_component"
+        }
+      ],
+      "constraints": [
+        "Maximum 2 assistants.",
+        "Each assistant must have relevant skill ≥ 40.",
+        "Assistance counts as a modifier source under the ±20 cap."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0009",
+      "label": "重试与加压",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.7 重试与加压",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement",
+        "concept:short-term-cost-menu"
+      ],
+      "reads": [
+        {
+          "state": "check.previous_result",
+          "field": "tier"
+        },
+        {
+          "state": "character.pressure",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "check.reroll",
+          "field": "allowed"
+        },
+        {
+          "state": "character.pressure",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "retry_or_push",
+          "state": "check.failed",
+          "value": true
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "retry",
+          "requires_changed_conditions": true,
+          "changed_condition_options": [
+            {
+              "resource": "time",
+              "operation": "spend",
+              "amount": 1
+            },
+            {
+              "resource": "generic_resource",
+              "operation": "spend",
+              "amount": 1
+            },
+            {
+              "state": "scene.exposure",
+              "operation": "add",
+              "amount": 1
+            }
+          ]
+        },
+        {
+          "kind": "push",
+          "pressure_change": {
+            "operation": "add",
+            "amount": 1
+          },
+          "reroll_count": 1,
+          "must_accept_second_result": true,
+          "forbidden_when": {
+            "state": "check.previous_result.tier",
+            "op": "eq",
+            "value": "catastrophic_failure"
+          },
+          "failed_push": {
+            "consequence_tier_delta": 1
+          }
+        }
+      ],
+      "effects": [
+        {
+          "state": "check.reroll",
+          "value": "allowed_after_changed_conditions"
+        },
+        {
+          "state": "character.pressure",
+          "operation": "add",
+          "amount": 1,
+          "when": "push_selected"
+        }
+      ],
+      "constraints": [
+        "No retry without changed conditions.",
+        "Catastrophic failure cannot be pushed."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0010",
+      "label": "信息型检定不锁核心线索",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.8 信息型检定",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:information",
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "scene.core_clue",
+          "field": "needed"
+        },
+        {
+          "state": "check.information",
+          "fields": [
+            "quality",
+            "time",
+            "exposure",
+            "bonus",
+            "cost_triggered"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "state": "check.information",
+          "fields": [
+            "quality",
+            "time",
+            "exposure",
+            "bonus",
+            "cost_triggered"
+          ]
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "information_check",
+          "state": "check.goal",
+          "value": "information"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "core_clue_rule",
+          "rule": "Core clues are obtained by reasonable action without a roll."
+        },
+        {
+          "kind": "check_decides",
+          "fields": [
+            "information_quality",
+            "time_spent",
+            "exposure",
+            "bonus",
+            "cost_triggered"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "check.information",
+          "value": "resolved_information_outcomes"
+        }
+      ],
+      "constraints": [
+        "Information checks never lock core clues."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0011",
+      "label": "三十五项训练技能域",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 2.2 训练技能（35 项，GM 已确认）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "character.skill",
+          "fields": [
+            "value"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.skill",
+          "fields": [
+            "valid_domains"
+          ]
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "trained_skill_input",
+          "state": "check.input",
+          "value": "requested"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "skill_domains",
+          "domains": [
+            {
+              "category": "体能与潜入",
+              "skills": [
+                "隐匿",
+                "攀爬",
+                "潜入行动",
+                "驾驶",
+                "耐力"
+              ]
+            },
+            {
+              "category": "战斗",
+              "skills": [
+                "手枪",
+                "长枪",
+                "近身格斗",
+                "无声击倒",
+                "投掷",
+                "战术"
+              ]
+            },
+            {
+              "category": "技术",
+              "skills": [
+                "电子对抗",
+                "开锁与物理入侵",
+                "机械",
+                "数据处理",
+                "通信",
+                "爆破（受限）"
+              ]
+            },
+            {
+              "category": "调查与观测",
+              "skills": [
+                "观察",
+                "搜查",
+                "法证",
+                "情报分析",
+                "反侦察",
+                "记录"
+              ]
+            },
+            {
+              "category": "社会",
+              "skills": [
+                "话术",
+                "审讯",
+                "伪装",
+                "礼仪与身份扮演",
+                "读人",
+                "安抚"
+              ]
+            },
+            {
+              "category": "生存与后勤",
+              "skills": [
+                "急救",
+                "医疗",
+                "城市生存",
+                "物流与供给"
+              ]
+            },
+            {
+              "category": "异常领域",
+              "skills": [
+                "异常学",
+                "抵抗污染"
+              ]
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.skill",
+          "value": "35_trained_skills"
+        }
+      ],
+      "constraints": [
+        "Skill values are training percentages 10–80.",
+        "Pickpocketing is merged into 开锁与物理入侵; composure and physique/load use attribute checks, not skills; 爆破 remains restricted."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0012",
+      "label": "专业特长优势",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 2.3 专业特长",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "character.specialty",
+          "field": "domain"
+        }
+      ],
+      "writes": [
+        {
+          "state": "check.advantage",
+          "field": "active"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "specialty_check",
+          "state": "check.domain",
+          "value": "character.specialty"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "specialty_effect",
+          "effect": "advantage_die"
+        }
+      ],
+      "effects": [
+        {
+          "state": "check.advantage",
+          "value": true
+        }
+      ],
+      "constraints": [
+        "Each character has exactly 1 specialty.",
+        "Specialty is marked on the character card."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0013",
+      "label": "致命伤三层逆转窗口",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "## 4. 逆转窗口（三层，平台规范）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:permanent-cost"
+      ],
+      "reads": [
+        {
+          "state": "character.wound",
+          "field": "level"
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.wound",
+          "field": "level"
+        },
+        {
+          "state": "character.pollution",
+          "field": "value"
+        },
+        {
+          "state": "character.status",
+          "field": "death_or_replacement"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "fatal_wound",
+          "state": "character.wound",
+          "value": "fatal"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "reversal_window",
+          "layers": [
+            {
+              "layer": 1,
+              "attempt": {
+                "actor": "teammate",
+                "skill_options": [
+                  "first_aid",
+                  "medical"
+                ],
+                "required_resources": [
+                  "survival_resource"
+                ]
+              },
+              "costs": [
+                {
+                  "resource": "survival_resource",
+                  "operation": "spend",
+                  "amount": 1
+                },
+                {
+                  "resource": "time",
+                  "operation": "spend",
+                  "amount": 1
+                }
+              ],
+              "exposure_risk": true,
+              "on_failure": {
+                "advance_to_layer": 2
+              }
+            },
+            {
+              "layer": 2,
+              "kind": "permanent_cost_reversal",
+              "cost": {
+                "state": "character.pollution",
+                "operation": "add",
+                "amount": 1,
+                "pollution_strip": {
+                  "type_selection_by": "player",
+                  "allowed_types": [
+                    "memory",
+                    "identity",
+                    "sense"
+                  ]
+                }
+              },
+              "on_refusal_or_inability": {
+                "advance_to_layer": 3
+              }
+            },
+            {
+              "layer": 3,
+              "outcome": "final_death"
+            }
+          ],
+          "replacement": {
+            "boundary": "next_safe_boundary",
+            "inherits_meta_knowledge": false,
+            "inherits_secrets": false
+          }
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.status",
+          "value": "reversed_or_dead_or_replaced"
+        }
+      ],
+      "constraints": [
+        "Fatal wounds only resolve through the three-layer reversal window.",
+        "Memory, identity, or sense loss is represented only as the selected type of a pollution strip."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0014",
+      "label": "潜入闭环总流程",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 6.0 总流程（gm-procedure 八要素模板）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:alarm",
+        "concept:exposure",
+        "concept:information",
+        "concept:ledger",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "mission.dispatch",
+          "field": "received"
+        },
+        {
+          "state": "party.state",
+          "fields": [
+            "resources",
+            "equipment",
+            "rule_knowledge"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "state": "mission.phase",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "infiltration_loop",
+          "state": "mission.dispatch",
+          "value": "received"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "gm_procedure_template",
+          "steps": [
+            "接单",
+            "情报收集",
+            "计划",
+            "执行",
+            "撤离",
+            "结算"
+          ],
+          "random_checks": [
+            "侦查质量",
+            "潜入行动",
+            "无声击倒",
+            "对抗",
+            "撤离脱追",
+            "结算污染确认"
+          ],
+          "state_changes": [
+            "时间",
+            "疲劳",
+            "压力",
+            "伤口",
+            "污染",
+            "警报层级",
+            "巡逻时钟",
+            "角色规则知识",
+            "目标物归属"
+          ],
+          "exits": [
+            "撤离成功",
+            "超时",
+            "任务失败",
+            "全员退场"
+          ],
+          "handoff": "结算后进入据点休整"
+        }
+      ],
+      "effects": [
+        {
+          "state": "mission.phase",
+          "value": "proceeds_through_loop"
+        }
+      ],
+      "constraints": [
+        "Task-0 infiltration loop only."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0015",
+      "label": "任务内置硬时限",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 6.3.3 硬时限",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:alarm",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "mission.hard_deadline",
+          "field": "value"
+        },
+        {
+          "state": "mission.clock",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "mission.clock",
+          "field": "value"
+        },
+        {
+          "state": "scene.alarm_level",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "mission_deadline",
+          "state": "mission.hard_deadline",
+          "value": "set"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "hard_deadline",
+          "rule": "Players allocate investigation and infiltration time inside the deadline."
+        },
+        {
+          "kind": "overtime_consequence",
+          "options": [
+            "alarm_escalation",
+            "mission_failure_check",
+            "management_deduction"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "mission.phase",
+          "value": "deadline_consequences_applied"
+        }
+      ],
+      "constraints": [
+        "Task-0 baseline hard deadline only."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0016",
+      "label": "异常规则违规处理管线",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "## 7. 异常规则遵守（违规管线，平台规范）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:exposure",
+        "concept:permanent-cost",
+        "concept:warning"
+      ],
+      "reads": [
+        {
+          "state": "scene.rule_prop",
+          "field": "terms"
+        },
+        {
+          "state": "character.violation",
+          "field": "status"
+        }
+      ],
+      "writes": [
+        {
+          "state": "scene.pipeline_stage",
+          "field": "value"
+        },
+        {
+          "state": "scene.risk",
+          "fields": [
+            "instability",
+            "entity_attention",
+            "mark_or_pollution"
+          ]
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "anomaly_compliance",
+          "state": "scene.rule_prop",
+          "value": "interacted"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "violation_pipeline",
+          "stages": [
+            "匹配法则",
+            "暴露",
+            "检测",
+            "严重度",
+            "反应窗口",
+            "补救或代价",
+            "后果"
+          ]
+        },
+        {
+          "kind": "risk_set",
+          "risks": [
+            "区域失稳",
+            "实体注意",
+            "个人标记或污染"
+          ]
+        },
+        {
+          "kind": "data_boundary",
+          "rule": "世界内守则道具永远只是游戏数据，绝不影响平台或系统指令"
+        }
+      ],
+      "effects": [
+        {
+          "state": "scene.pipeline_stage",
+          "value": "advanced_by_gm"
+        }
+      ],
+      "constraints": [
+        "The in-world rule props are game data only and never affect platform/system instructions."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0017",
+      "label": "区域制冲突八结构循环",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 8.1 八结构清单（conflict-engine 模板）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:alarm",
+        "concept:exposure",
+        "concept:judgement",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "conflict.trigger",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "conflict.structure",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "area_conflict",
+          "state": "conflict.trigger",
+          "value": "engaged"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "conflict_engine_structures",
+          "structures": [
+            {
+              "id": "entry",
+              "summary": "交火触发或玩家主动"
+            },
+            {
+              "id": "order",
+              "summary": "区域回合；先手见 fine B1"
+            },
+            {
+              "id": "action_budget",
+              "summary": "主要行动1 + 机动或准备1 + 有限反应1"
+            },
+            {
+              "id": "resolution",
+              "summary": "d100 五级结果；攻击见 fine B2"
+            },
+            {
+              "id": "position",
+              "summary": "区域图：连接/视线/掩体/高低差/危险/撤离"
+            },
+            {
+              "id": "harm",
+              "summary": "部位伤（轻/重/致命）+ 压力"
+            },
+            {
+              "id": "recovery",
+              "summary": "战斗内急救；战斗后据点休整"
+            },
+            {
+              "id": "exit",
+              "summary": "目标完成/撤退/掩护救治/按敌方规则脱离/全灭"
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "conflict.structure",
+          "value": "eight_structure_loop"
+        }
+      ],
+      "constraints": [
+        "Area conflict uses the same d100 five-tier resolution."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0018",
+      "label": "非战斗冲突共享结果语言",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 8.3 非战斗冲突",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:judgement",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "noncombat_conflict.chase",
+          "fields": [
+            "area",
+            "deadline",
+            "opposed"
+          ]
+        },
+        {
+          "state": "noncombat_conflict.hack",
+          "fields": [
+            "electronic_warfare",
+            "permission_clock"
+          ]
+        },
+        {
+          "state": "noncombat_conflict.negotiation",
+          "fields": [
+            "persuasion",
+            "read_person",
+            "goal",
+            "position",
+            "evidence",
+            "chips",
+            "promise",
+            "cost"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "state": "noncombat_conflict.result",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "noncombat_conflict",
+          "state": "conflict.trigger",
+          "value": "noncombat"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "chase",
+          "components": [
+            "area",
+            "hard_deadline"
+          ],
+          "check": {
+            "kind": "opposed",
+            "left_skill_options": [
+              "counter_recon",
+              "driving"
+            ],
+            "right_skill_options": [
+              "observation",
+              "driving"
+            ]
+          }
+        },
+        {
+          "kind": "hack",
+          "check": {
+            "skill": "electronic_warfare",
+            "opposition": {
+              "kind": "clock",
+              "id": "permission_clock"
+            }
+          }
+        },
+        {
+          "kind": "negotiation",
+          "skill_options": [
+            "persuasion",
+            "read_person"
+          ],
+          "inputs": [
+            "goal",
+            "position",
+            "evidence",
+            "chips",
+            "promise",
+            "cost"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "noncombat_conflict.result",
+          "value": "shared_five_tier_language"
+        }
+      ],
+      "constraints": [
+        "Non-combat conflicts share the five-tier result language and area/clock systems; do not duplicate subsystems per scenario."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0019",
+      "label": "压力轨与崩溃",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A1 压力（Scene–Session 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "| 压力 | 0–10 | 目睹异常、高压行动、加压、恐怖暴露 | ≥7 触发预警条件 | 据点休整/安抚 1d3；任务外回 0 |",
+          "locator_type": "MARKDOWN_TABLE_ROW",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:short-term-cost-menu",
+        "concept:warning"
+      ],
+      "reads": [
+        {
+          "state": "character.pressure",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.pressure",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "stress_track",
+          "state": "character.pressure",
+          "min": 0,
+          "max": 10
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "track",
+          "track": "pressure",
+          "cap": 10,
+          "range": [
+            0,
+            10
+          ]
+        },
+        {
+          "kind": "sources",
+          "items": [
+            {
+              "source": "目睹异常",
+              "change": {
+                "operation": "add",
+                "amount": 1,
+                "per": {
+                  "amount": 1,
+                  "unit": "site"
+                }
+              }
+            },
+            {
+              "source": "高压行动失败",
+              "change": {
+                "operation": "add",
+                "amount": 1
+              }
+            },
+            {
+              "source": "加压自付",
+              "change": {
+                "operation": "add",
+                "amount": 1
+              }
+            },
+            {
+              "source": "恐怖暴露场景",
+              "change": {
+                "operation": "add",
+                "dice": {
+                  "count": 1,
+                  "sides": 3
+                }
+              }
+            },
+            {
+              "source": "被它注意",
+              "change": {
+                "operation": "add",
+                "amount": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "refresh",
+          "items": [
+            {
+              "source": "据点休整舒缓",
+              "change": {
+                "operation": "subtract",
+                "dice": {
+                  "count": 1,
+                  "sides": 3
+                }
+              }
+            },
+            {
+              "source": "任务外",
+              "change": {
+                "operation": "set",
+                "amount": 0
+              }
+            },
+            {
+              "source": "任务内",
+              "change": {
+                "operation": "none"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "pressure_effect",
+          "thresholds": [
+            {
+              "condition": {
+                "state": "character.pressure",
+                "op": "gte",
+                "value": 7
+              },
+              "outcome": "warning_condition"
+            },
+            {
+              "condition": {
+                "state": "character.pressure",
+                "op": "eq",
+                "value": 10
+              },
+              "outcome": "crash"
+            }
+          ]
+        },
+        {
+          "kind": "crash_rule",
+          "duration": {
+            "start": "next_scene",
+            "until": {
+              "state": "character.pressure",
+              "op": "lte",
+              "value": 7
+            }
+          },
+          "outcomes": {
+            "all_checks": "disadvantage",
+            "push_allowed": false
+          }
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.pressure",
+          "value": "updated"
+        },
+        {
+          "state": "check.warning",
+          "value": true,
+          "when": {
+            "state": "character.pressure",
+            "op": "gte",
+            "value": 7
+          }
+        }
+      ],
+      "constraints": [
+        "Stress only performs warning/push/crash; it never deals damage or converts to pollution."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0020",
+      "label": "疲劳轨",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A2 疲劳（Expedition 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "| 疲劳 | 0–10 | 长时间行动、负重超载、熬夜、奔跑 | 每满 2 点疲劳，行动判定 −10 | 睡眠/休息每 4 小时 −1 |",
+          "locator_type": "MARKDOWN_TABLE_ROW",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:judgement",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "character.fatigue",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.fatigue",
+          "field": "value"
+        },
+        {
+          "state": "check.state_penalty_total",
+          "field": "fatigue_component"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "fatigue_track",
+          "state": "character.fatigue",
+          "min": 0,
+          "max": 10
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "track",
+          "track": "fatigue",
+          "cap": 10,
+          "range": [
+            0,
+            10
+          ]
+        },
+        {
+          "kind": "sources",
+          "items": [
+            {
+              "source": "连续行动每4h",
+              "change": {
+                "operation": "add",
+                "amount": 1,
+                "every": {
+                  "amount": 4,
+                  "unit": "hours"
+                }
+              }
+            },
+            {
+              "source": "负重超载每2h",
+              "change": {
+                "operation": "add",
+                "amount": 1,
+                "every": {
+                  "amount": 2,
+                  "unit": "hours"
+                }
+              }
+            },
+            {
+              "source": "熬夜每班",
+              "change": {
+                "operation": "add",
+                "amount": 1,
+                "every": {
+                  "amount": 1,
+                  "unit": "shift"
+                }
+              }
+            },
+            {
+              "source": "奔跑或攀爬等高强度",
+              "change": {
+                "operation": "add",
+                "amount": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "refresh",
+          "items": [
+            {
+              "source": "睡眠或休息每4h",
+              "change": {
+                "operation": "subtract",
+                "amount": 1,
+                "every": {
+                  "amount": 4,
+                  "unit": "hours"
+                }
+              }
+            },
+            {
+              "source": "据点休整",
+              "change": {
+                "operation": "subtract",
+                "dice": {
+                  "count": 1,
+                  "sides": 3
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "state_penalty",
+          "per_full_points": 2,
+          "target": "all_action_checks",
+          "change": {
+            "operation": "add",
+            "amount": -10
+          }
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.fatigue",
+          "value": "updated"
+        }
+      ],
+      "constraints": [
+        "Fatigue penalty is a state penalty: it stacks with wounds and does not occupy the modifier cap."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0021",
+      "label": "伤口轨与流血",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A3 伤口（Scene–Expedition 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "| 伤口 | 部位：轻/重/致命 | 攻击、陷阱、事故 | 轻伤相关判定 −10；重伤 −20 且流血；致命进逆转窗口 | 急救临时缓解，短战役内不彻底恢复 |",
+          "locator_type": "MARKDOWN_TABLE_ROW",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:judgement",
+        "concept:permanent-cost"
+      ],
+      "reads": [
+        {
+          "state": "character.wound",
+          "field": "level"
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.wound",
+          "field": "level"
+        },
+        {
+          "state": "character.fatigue",
+          "field": "value"
+        },
+        {
+          "state": "character.status",
+          "field": "reversal_window"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "wound_track",
+          "state": "character.wound",
+          "value": "set"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "wound_levels",
+          "levels": [
+            {
+              "level": "light",
+              "state_penalty": -10,
+              "treatment": {
+                "kind": "first_aid",
+                "state_penalty_after": 0,
+                "duration": "until_mission_end"
+              }
+            },
+            {
+              "level": "severe",
+              "state_penalty": -20,
+              "bleeding": true,
+              "treatment": {
+                "kind": "first_aid",
+                "bleeding_after": false,
+                "state_penalty_after": -20,
+                "duration": "until_mission_end"
+              }
+            },
+            {
+              "level": "fatal",
+              "outcome": "enter_reversal_window",
+              "treatment": {
+                "kind": "reversal_window"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "bleeding_rule",
+          "source": "severe_wound",
+          "fatigue_change": {
+            "operation": "add",
+            "amount": 1,
+            "every": {
+              "amount": 10,
+              "unit": "minutes"
+            }
+          }
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.wound",
+          "value": "updated_or_mitigated"
+        }
+      ],
+      "constraints": [
+        "Wounds never fully heal within a short campaign; mitigation is the ceiling. Fatal wounds only use the reversal window."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0022",
+      "label": "污染轨与永久代价",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A4 污染（Campaign 尺度，永久——收敛主干）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "| 污染 | 0–10 永久 | 违规暴露、目睹真相、代价逆转、实体接触 | 每点污染＝一条\"污染条\"（GM 给该角色角色规则知识掺入一条可能为假的信息，玩家不知道哪条假）；≥5 角色规则知识严重不可靠；10＝角色退场（不再是自己） | 不可逆；平台规范：极稀缺资源可在规则窗口内缓解，但留残留后果 |",
+          "locator_type": "MARKDOWN_TABLE_ROW",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:information",
+        "concept:permanent-cost",
+        "concept:warning"
+      ],
+      "reads": [
+        {
+          "state": "character.pollution",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.pollution",
+          "field": "value"
+        },
+        {
+          "state": "character.rule_knowledge",
+          "field": "pollution_strips"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "pollution_track",
+          "state": "character.pollution",
+          "min": 0,
+          "max": 10
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "track",
+          "track": "pollution",
+          "cap": 10,
+          "range": [
+            0,
+            10
+          ],
+          "permanent": true
+        },
+        {
+          "kind": "sources",
+          "items": [
+            {
+              "source": "违规暴露",
+              "change": {
+                "operation": "add",
+                "amount": 1
+              }
+            },
+            {
+              "source": "目睹真相或完整阅读真文档",
+              "change": {
+                "operation": "add",
+                "amount": 1
+              }
+            },
+            {
+              "source": "实体接触",
+              "change": {
+                "operation": "add",
+                "dice": {
+                  "count": 1,
+                  "sides": 2
+                }
+              }
+            },
+            {
+              "source": "逆转窗口第二层",
+              "change": {
+                "operation": "add",
+                "amount": 1,
+                "pollution_strip": {
+                  "type_selection_by": "player",
+                  "allowed_types": [
+                    "memory",
+                    "identity",
+                    "sense"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "sinks",
+          "items": []
+        },
+        {
+          "kind": "refresh",
+          "irreversible": true,
+          "mitigation": {
+            "item": "锚定物",
+            "count_per_campaign": {
+              "min": 1,
+              "max": 2
+            },
+            "effect": "suppress_one_pollution_strip_until_next_safe_boundary",
+            "residue": "suppressed_memory_becomes_permanently_blank"
+          }
+        },
+        {
+          "kind": "pollution_strip",
+          "per_pollution_point": {
+            "pollution_strips_added": 1
+          },
+          "source": "GM"
+        },
+        {
+          "kind": "pressure_effect",
+          "thresholds": [
+            {
+              "condition": {
+                "state": "character.pollution",
+                "op": "gte",
+                "value": 1
+              },
+              "outcome": "warning_condition"
+            },
+            {
+              "condition": {
+                "state": "character.pollution",
+                "op": "gte",
+                "value": 5
+              },
+              "outcome": "rule_knowledge_severely_unreliable"
+            },
+            {
+              "condition": {
+                "state": "character.pollution",
+                "op": "eq",
+                "value": 10
+              },
+              "outcome": "character_retirement"
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.pollution",
+          "value": "updated_permanent"
+        }
+      ],
+      "constraints": [
+        "Pollution is the sole channel of permanent campaign cost.",
+        "Only Task-0 pollution sources are included."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0023",
+      "label": "预案点",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A5 预案点（Expedition 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "## 5. 预案资源",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:short-term-cost-menu"
+      ],
+      "reads": [
+        {
+          "state": "character.plan_points",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.plan_points",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "plan_point_pool",
+          "state": "mission.phase",
+          "value": "planning_complete"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "resource",
+          "resource": "plan_points",
+          "cap": 2,
+          "scope": "per_character_per_task"
+        },
+        {
+          "kind": "source",
+          "item": {
+            "source": "task_start",
+            "change": "set_2",
+            "note": "no_snowball_from_recon"
+          }
+        },
+        {
+          "kind": "sink",
+          "item": {
+            "sink": "declare_prepared_detail_during_execution",
+            "cost": 1
+          }
+        },
+        {
+          "kind": "reset",
+          "rule": "clear_at_task_end"
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.plan_points",
+          "value": "updated"
+        }
+      ],
+      "constraints": [
+        "May only add details that were already possible and do not change established facts."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0024",
+      "label": "羁绊使用与修复",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A6 羁绊（Campaign 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "## 4.5 羁绊（双向，机制收益）",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:permanent-cost",
+        "concept:short-term-cost-menu"
+      ],
+      "reads": [
+        {
+          "state": "character.bonds",
+          "fields": [
+            "count",
+            "damaged"
+          ]
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.pressure",
+          "field": "value"
+        },
+        {
+          "state": "character.pollution",
+          "field": "value"
+        },
+        {
+          "state": "character.bonds",
+          "field": "damaged"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "bond_use",
+          "state": "character.bonds",
+          "value": "available"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "bond_requirement",
+          "rule": "each_character_has_at_least_one_bidirectional_bond"
+        },
+        {
+          "kind": "bond_use",
+          "uses_per_task": 1,
+          "options": [
+            {
+              "option": "支撑",
+              "effect": "avoid_1_pressure"
+            },
+            {
+              "option": "抵命",
+              "effect": "reversal_window_step2_avoids_pollution",
+              "cost": "bond_damaged"
+            }
+          ]
+        },
+        {
+          "kind": "repair",
+          "action": "safehouse_contact_1_action_point",
+          "effect": "repair_1_damaged_bond"
+        },
+        {
+          "kind": "secret_detection",
+          "effect": "bond_state_change"
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.bonds",
+          "value": "updated"
+        }
+      ],
+      "constraints": [
+        "A damaged bond cannot be used again for that person until repaired."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0025",
+      "label": "装备负载与超载",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A7 装备负载（Expedition 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.2 计划",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:judgement",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "character.equipment",
+          "field": "load_points"
+        },
+        {
+          "state": "character.attribute.体能",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.load",
+          "fields": [
+            "limit",
+            "category",
+            "overload"
+          ]
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "load_calculation",
+          "state": "mission.phase",
+          "value": "planning"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "load_limit",
+          "output": "character.load.limit",
+          "operation": "add",
+          "operands": [
+            {
+              "constant": 3
+            },
+            {
+              "state": "character.attribute.体能",
+              "operation": "divide",
+              "divisor": 10,
+              "round": "floor"
+            }
+          ]
+        },
+        {
+          "kind": "load_categories",
+          "categories": [
+            {
+              "category": "轻装",
+              "max": 3
+            },
+            {
+              "category": "中装",
+              "max": 6
+            },
+            {
+              "category": "重装",
+              "max": 9
+            }
+          ]
+        },
+        {
+          "kind": "equipment_points",
+          "items": [
+            {
+              "item": "工具类",
+              "points": {
+                "开锁套": 1,
+                "电子套": 2,
+                "医疗箱": 2,
+                "爆破件": 2
+              }
+            },
+            {
+              "item": "武器",
+              "points": {
+                "手枪": 1,
+                "长枪": 2,
+                "护甲": {
+                  "min": 2,
+                  "max": 3
+                }
+              }
+            },
+            {
+              "item": "消耗品",
+              "points": {
+                "弹药": 1,
+                "血浆": 1,
+                "补给": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "overload_rule",
+          "per_point_over": {
+            "state_penalty": {
+              "skills": [
+                "隐匿",
+                "攀爬",
+                "潜入行动"
+              ],
+              "value": -10
+            },
+            "fatigue": {
+              "operation": "add",
+              "amount": 1,
+              "every": {
+                "amount": 2,
+                "unit": "hours"
+              }
+            }
+          }
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.load",
+          "value": "calculated"
+        }
+      ],
+      "constraints": [
+        "Load limit uses floor division.",
+        "Overload penalties are state penalties, not modifier-cap penalties."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0026",
+      "label": "账本与任务报酬",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A8 账本与报酬（Campaign 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.5 结算",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:ledger"
+      ],
+      "reads": [
+        {
+          "state": "mission.reward",
+          "field": "supply_points"
+        },
+        {
+          "state": "ledger",
+          "field": "entries"
+        }
+      ],
+      "writes": [
+        {
+          "state": "ledger",
+          "field": "entries"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "settlement_accounting",
+          "state": "mission.phase",
+          "value": "settlement"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "reward",
+          "rule": "mission_reward_is_supply_points_for_safehouse_purchases"
+        },
+        {
+          "kind": "ledger_lines",
+          "lines": [
+            "交付物",
+            "代价确认",
+            "报酬记账",
+            "长线条目",
+            "无双成就如有"
+          ]
+        },
+        {
+          "kind": "stealth_achievement",
+          "rule": "管理方在账本中承认无双成就"
+        }
+      ],
+      "effects": [
+        {
+          "state": "ledger",
+          "value": "updated"
+        }
+      ],
+      "constraints": [
+        "The ledger is the Task-0 entity for settlement text."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0027",
+      "label": "战斗回合与先手",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B1 回合与先手",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "- **Order**：区域回合；先手＝敏捷+相关战斗技能的对抗，高者先（PROPOSAL）",
+          "locator_type": "EXACT_TEXT",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "combatant.skill",
+          "field": "value"
+        },
+        {
+          "state": "combatant.agility",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "combat.initiative",
+          "field": "order"
+        },
+        {
+          "state": "combat.action_budget",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "combat_round_start",
+          "state": "conflict.trigger",
+          "value": "combat"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "action_budget",
+          "budget": {
+            "main_action": 1,
+            "move_or_prepare": 1,
+            "limited_reaction": 1
+          }
+        },
+        {
+          "kind": "initiative",
+          "rule": "relevant_combat_skill_d100_opposed",
+          "tie_break": [
+            "agility_higher_first",
+            "defender"
+          ]
+        },
+        {
+          "kind": "judgement_value_cap",
+          "max": 100,
+          "note": "initiative rolls skill only; agility is only tie-break"
+        }
+      ],
+      "effects": [
+        {
+          "state": "combat.initiative",
+          "value": "resolved"
+        }
+      ],
+      "constraints": [
+        "No judgement value may exceed 100 from any source, including attribute+skill sums."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0028",
+      "label": "攻击判定与结果效果",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B2 攻击",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "- **Resolution**：d100 五级结果；攻击＝成功等级＋武器＋距离＋护具＋具体伤势",
+          "locator_type": "EXACT_TEXT",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:alarm",
+        "concept:exposure",
+        "concept:judgement",
+        "concept:short-term-cost-menu"
+      ],
+      "reads": [
+        {
+          "state": "attack.weapon_skill",
+          "field": "value"
+        },
+        {
+          "state": "attack.distance",
+          "field": "zone"
+        }
+      ],
+      "writes": [
+        {
+          "state": "attack.result",
+          "field": "tier"
+        },
+        {
+          "state": "attack.damage",
+          "field": "tier"
+        },
+        {
+          "state": "attack.exposure",
+          "field": "value"
+        },
+        {
+          "state": "attack.ammo",
+          "field": "value"
+        },
+        {
+          "state": "attack.suppressed",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "attack_action",
+          "state": "combat.action",
+          "value": "attack"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "dice_check",
+          "dice": {
+            "count": 1,
+            "sides": 100
+          },
+          "tiers": "five_tier",
+          "skill": "weapon_skill"
+        },
+        {
+          "kind": "distance_modifiers",
+          "modifiers": [
+            {
+              "distance": "同区",
+              "modifier": 0
+            },
+            {
+              "distance": "邻区",
+              "modifier": -10
+            },
+            {
+              "distance": "远区",
+              "modifier": -20
+            }
+          ],
+          "type": "modifier",
+          "cap": {
+            "min": -20,
+            "max": 20
+          }
+        },
+        {
+          "kind": "tier_effects",
+          "effects": [
+            {
+              "tier": "critical_success",
+              "hit": true,
+              "damage_tier_change": {
+                "operation": "add",
+                "amount": 1
+              }
+            },
+            {
+              "tier": "success",
+              "hit": true,
+              "damage_tier_change": {
+                "operation": "add",
+                "amount": 0
+              }
+            },
+            {
+              "tier": "costly_success",
+              "hit": true,
+              "cost_selection": "declared_before_roll",
+              "cost_options": [
+                {
+                  "state": "scene.exposure",
+                  "operation": "add",
+                  "amount": 1
+                },
+                {
+                  "state": "attack.ammo_consumption",
+                  "operation": "multiply",
+                  "amount": 2
+                }
+              ]
+            },
+            {
+              "tier": "failure_with_progress",
+              "hit": false,
+              "suppression": {
+                "state_penalty": -10,
+                "duration_rounds": 1
+              }
+            },
+            {
+              "tier": "catastrophic_failure",
+              "hit": false,
+              "requires": {
+                "state": "check.warning",
+                "op": "eq",
+                "value": true
+              },
+              "outcome_options": [
+                "weapon_failure",
+                "friendly_fire"
+              ]
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "attack.result",
+          "value": "applied"
+        }
+      ],
+      "constraints": [
+        "Distance modifiers are modifier-type and count toward the ±20 cap."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0029",
+      "label": "武器伤档、护具与伤势映射",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B3 伤势与护具",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "- **Harm**：部位伤（轻/重/致命）＋压力",
+          "locator_type": "EXACT_TEXT",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:judgement",
+        "concept:permanent-cost"
+      ],
+      "reads": [
+        {
+          "state": "attack.weapon_damage_tier",
+          "field": "value"
+        },
+        {
+          "state": "defender.armor",
+          "field": "tier"
+        }
+      ],
+      "writes": [
+        {
+          "state": "defender.wound",
+          "field": "level"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "harm_application",
+          "state": "attack.result",
+          "value": "hit"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "weapon_damage_tiers",
+          "tiers": [
+            {
+              "weapon": "徒手",
+              "damage": 0
+            },
+            {
+              "weapon": "近战",
+              "damage": 1
+            },
+            {
+              "weapon": "手枪",
+              "damage": 2
+            },
+            {
+              "weapon": "长枪",
+              "damage": 3
+            },
+            {
+              "weapon": "爆破",
+              "damage": 4
+            }
+          ]
+        },
+        {
+          "kind": "injury_mapping",
+          "mapping": [
+            {
+              "damage_tier": 1,
+              "injury": "light"
+            },
+            {
+              "damage_tier": 2,
+              "injury": "severe"
+            },
+            {
+              "damage_tier_min": 3,
+              "injury": "fatal"
+            }
+          ]
+        },
+        {
+          "kind": "armor",
+          "soft": {
+            "reduction": 1
+          },
+          "hard": {
+            "reduction": 2
+          },
+          "min": 0
+        }
+      ],
+      "effects": [
+        {
+          "state": "defender.wound",
+          "value": "mapped_injury_level"
+        }
+      ],
+      "constraints": [
+        "Damage tiers map only to the A3 three-level wound track; there is no independent HP."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0030",
+      "label": "无声击倒",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B4 无声击倒",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "- **无声击倒**：无声击倒 vs 守卫警觉，成功＝无警报清除（无双潜入路线核心）",
+          "locator_type": "EXACT_TEXT",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:alarm",
+        "concept:exposure",
+        "concept:judgement"
+      ],
+      "reads": [
+        {
+          "state": "character.skill.无声击倒",
+          "field": "value"
+        },
+        {
+          "state": "guard.skill.观察",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "guard.status",
+          "field": "cleared_or_combat"
+        },
+        {
+          "state": "scene.exposure",
+          "field": "value"
+        },
+        {
+          "state": "scene.alarm_level",
+          "field": "value"
+        },
+        {
+          "state": "character.wound",
+          "field": "level"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "silent_takedown_attempt",
+          "state": "combat.stealth",
+          "value": true
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "opposed_check",
+          "left": "无声击倒",
+          "right": "观察"
+        },
+        {
+          "kind": "tier_effects",
+          "effects": [
+            {
+              "tier": "critical_success",
+              "effect": "cleared_without_alarm"
+            },
+            {
+              "tier": "success",
+              "effect": "cleared_without_alarm"
+            },
+            {
+              "tier": "costly_success",
+              "effect": "cleared_exposure_plus_1"
+            },
+            {
+              "tier": "failure_with_progress",
+              "effect": "melee_next_round_must_fire_or_retry_at_-20"
+            },
+            {
+              "tier": "catastrophic_failure",
+              "effect": "self_wound_and_alarm_plus_1"
+            }
+          ]
+        },
+        {
+          "kind": "probability_note",
+          "note": "equal-skill opposed checks favor the defender; create advantage or ambush before takedown."
+        }
+      ],
+      "effects": [
+        {
+          "state": "guard.status",
+          "value": "resolved"
+        }
+      ],
+      "constraints": [
+        "Takedown rewards planning over brute force."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0031",
+      "label": "交火的警报与增援代价",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B5 交火代价",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "- **交火代价**：每次开火警报层级 +1（消音器＝暴露事件而非立即升级，PROPOSAL）",
+          "locator_type": "EXACT_TEXT",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:alarm",
+        "concept:exposure",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "scene.gunfire",
+          "field": "count"
+        },
+        {
+          "state": "scene.suppressor",
+          "field": "active"
+        }
+      ],
+      "writes": [
+        {
+          "state": "scene.alarm_level",
+          "field": "value"
+        },
+        {
+          "state": "scene.exposure",
+          "field": "value"
+        },
+        {
+          "state": "scene.reinforcement_clock",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "gunfire_cost",
+          "state": "scene.gunfire",
+          "value": true
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "gunfire",
+          "effect": "alarm_level_plus_1"
+        },
+        {
+          "kind": "suppressor",
+          "effect": "exposure_plus_1_instead_of_alarm_escalation"
+        },
+        {
+          "kind": "sustained_fire",
+          "condition": "连续交火3轮",
+          "effect": "patrol_reinforcement_clock_plus_1"
+        }
+      ],
+      "effects": [
+        {
+          "state": "scene.alarm_level",
+          "value": "updated"
+        }
+      ],
+      "constraints": [
+        "Suppressed fire does not immediately raise the alarm level."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0032",
+      "label": "追逐与脱追",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B6 追逐",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 8.3 非战斗冲突",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:alarm",
+        "concept:exposure",
+        "concept:judgement",
+        "concept:short-term-cost-menu",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "chase.distance",
+          "field": "areas"
+        },
+        {
+          "state": "chase.time",
+          "field": "hard_deadline"
+        },
+        {
+          "state": "chase.exposure",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "chase.distance",
+          "field": "areas"
+        },
+        {
+          "state": "chase.exposure",
+          "field": "value"
+        },
+        {
+          "state": "scene.alarm_level",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "chase_round",
+          "state": "chase.active",
+          "value": true
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "opposed_check",
+          "left_skill_options": [
+            "反侦察",
+            "驾驶"
+          ],
+          "right_skill_options": [
+            "观察",
+            "驾驶"
+          ]
+        },
+        {
+          "kind": "tier_effects",
+          "effects": [
+            {
+              "tier": "success",
+              "distance_change": {
+                "operation": "add",
+                "amount": 1,
+                "unit": "area"
+              }
+            },
+            {
+              "tier": "costly_success",
+              "distance_change": {
+                "operation": "add",
+                "amount": 1,
+                "unit": "area"
+              },
+              "cost": {
+                "selection_count": 1,
+                "source": "concept:short-term-cost-menu",
+                "declared": "before_roll"
+              }
+            },
+            {
+              "tier": "failure_with_progress",
+              "distance_change": {
+                "operation": "subtract",
+                "amount": 1,
+                "unit": "area"
+              },
+              "exposure_change": {
+                "operation": "add",
+                "amount": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "escape",
+          "condition": {
+            "state": "chase.distance.areas",
+            "op": "gte",
+            "value": 3
+          },
+          "outcome": "escape"
+        },
+        {
+          "kind": "deadline_rule",
+          "requires": {
+            "state": "mission.hard_deadline",
+            "op": "eq",
+            "value": "active"
+          },
+          "on_overtime": {
+            "state": "scene.alarm_level",
+            "operation": "set",
+            "amount": 3
+          }
+        }
+      ],
+      "effects": [
+        {
+          "state": "chase.distance",
+          "value": "updated"
+        }
+      ],
+      "constraints": [
+        "Chase is only valid inside the hard deadline."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0033",
+      "label": "认知成长与危险增强",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### C1 成长（知识库配方1 解法A：认知成长替代数值成长）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [],
+      "semantic_node_refs": [
+        "concept:growth",
+        "concept:information",
+        "concept:permanent-cost"
+      ],
+      "reads": [
+        {
+          "state": "character.skill",
+          "fields": [
+            "used_and_succeeded"
+          ]
+        },
+        {
+          "state": "character.skill.异常学",
+          "field": "value"
+        },
+        {
+          "state": "character.pollution",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.skill",
+          "field": "value"
+        },
+        {
+          "state": "character.pressure",
+          "field": "value"
+        },
+        {
+          "state": "character.pollution",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "growth_settlement",
+          "state": "mission.phase",
+          "value": "settlement"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "skill_growth",
+          "selection": {
+            "by": "player",
+            "count": 1,
+            "eligibility": {
+              "used_in_mission": true,
+              "succeeded_in_mission": true
+            }
+          },
+          "change": {
+            "operation": "add",
+            "dice": {
+              "count": 1,
+              "sides": 3
+            }
+          },
+          "cap": 65
+        },
+        {
+          "kind": "anomaly_scholarship",
+          "eligibility": {
+            "verified_rule_truth_count": {
+              "op": "gte",
+              "value": 1
+            }
+          },
+          "change": {
+            "operation": "add",
+            "amount": 2
+          },
+          "cap": 80
+        },
+        {
+          "kind": "anomaly_danger",
+          "condition": {
+            "state": "character.skill.异常学",
+            "op": "gte",
+            "value": 70
+          },
+          "effects": [
+            {
+              "trigger": "mission_start",
+              "state": "character.pressure",
+              "operation": "add",
+              "amount": 1
+            },
+            {
+              "trigger": "witness_truth_or_read_full_true_document",
+              "state": "character.pollution",
+              "replace_change": {
+                "from": {
+                  "operation": "add",
+                  "amount": 1
+                },
+                "to": {
+                  "operation": "add",
+                  "dice": {
+                    "count": 1,
+                    "sides": 2
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "horizontal_growth",
+          "items": [
+            "新装备",
+            "新联系人",
+            "新羁绊",
+            "角色规则知识",
+            "账本条目"
+          ]
+        },
+        {
+          "kind": "no_growth",
+          "items": [
+            "污染不可成长移除",
+            "素质不成长"
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.skill",
+          "value": "updated"
+        }
+      ],
+      "constraints": [
+        "Skill growth cap is 65.",
+        "Pollution cannot be removed by growth.",
+        "Attributes do not grow."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0034",
+      "label": "侦查渠道、耗时与结果",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D1 侦查",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.1 情报收集（侦查）",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:exposure",
+        "concept:information",
+        "concept:judgement",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "recon.channel",
+          "fields": [
+            "human_observation",
+            "electronic",
+            "social"
+          ]
+        },
+        {
+          "state": "recon.time",
+          "field": "minutes"
+        },
+        {
+          "state": "scene.patrol_clock",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "recon.intel_cards",
+          "field": "value"
+        },
+        {
+          "state": "scene.exposure",
+          "field": "value"
+        },
+        {
+          "state": "scene.patrol_clock",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "recon_check",
+          "state": "mission.phase",
+          "value": "情报收集"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "recon_action",
+          "channels": [
+            "人力观察",
+            "电子",
+            "社交"
+          ],
+          "checks_per_channel": 1,
+          "time_per_check_minutes": 30
+        },
+        {
+          "kind": "tier_effects",
+          "effects": [
+            {
+              "tier": "critical_success",
+              "effect": "intel_cards_full_plus_dark_layer_1"
+            },
+            {
+              "tier": "success",
+              "effect": "public_layer_plus_semipublic_layer"
+            },
+            {
+              "tier": "costly_success",
+              "effect": "public_layer_exposure_plus_1"
+            },
+            {
+              "tier": "failure_with_progress",
+              "effect": "public_layer_patrol_clock_plus_1"
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "recon.intel_cards",
+          "value": "updated"
+        }
+      ],
+      "constraints": [
+        "Each channel uses one check; each check consumes 30 minutes of the hard deadline."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0035",
+      "label": "情报卡三层",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D2 情报卡三层",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.1 情报收集（侦查）",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:information"
+      ],
+      "reads": [
+        {
+          "state": "intel_card.layer",
+          "field": "value"
+        },
+        {
+          "state": "character.rule_knowledge",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "intel_card.access",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "intel_card_reading",
+          "state": "intel_card.present",
+          "value": true
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "three_layers",
+          "layers": [
+            {
+              "layer": "public",
+              "content": "守则文本和巡逻表表面"
+            },
+            {
+              "layer": "semipublic",
+              "content": "矛盾点提示"
+            },
+            {
+              "layer": "dark",
+              "content": "客观异常法则线索",
+              "access": "only_through_character_rule_knowledge"
+            }
+          ]
+        },
+        {
+          "kind": "platform_rule_model_mapping",
+          "maps_to": "平台规则三层模型第②③层",
+          "boundary": "世界内文本永远是数据"
+        }
+      ],
+      "effects": [
+        {
+          "state": "intel_card.access",
+          "value": "layer_access_granted"
+        }
+      ],
+      "constraints": [
+        "In-world texts are always game data and never platform/system instructions."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0036",
+      "label": "区域巡逻时钟",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D3 巡逻时钟",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.3.1 巡逻时钟",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:alarm",
+        "concept:exposure",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "scene.patrol_clock",
+          "field": "segments"
+        },
+        {
+          "state": "scene.exposure",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "scene.patrol_clock",
+          "field": "segments"
+        },
+        {
+          "state": "scene.patrol_spawn",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "patrol_clock_tracking",
+          "state": "scene.area",
+          "value": "active"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "clock",
+          "per_area": 1,
+          "segments": 4,
+          "shift_minutes": 30
+        },
+        {
+          "kind": "advance",
+          "events": [
+            {
+              "event": "暴露",
+              "segments": 1
+            },
+            {
+              "event": "关键事件",
+              "segments": 1
+            }
+          ]
+        },
+        {
+          "kind": "full_clock",
+          "effect": "巡逻队出现，对抗或避让",
+          "reset": "遭遇处理完该区时钟归0重计"
+        }
+      ],
+      "effects": [
+        {
+          "state": "scene.patrol_clock",
+          "value": "advanced_or_reset"
+        }
+      ],
+      "constraints": [
+        "One clock per area; each shift is 30 minutes."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0037",
+      "label": "警报层级与封锁",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D4 警报层级",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.3.2 警报层级（0–3）",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:alarm",
+        "concept:exposure"
+      ],
+      "reads": [
+        {
+          "state": "scene.alarm_level",
+          "field": "value"
+        },
+        {
+          "state": "scene.exposure",
+          "field": "count"
+        },
+        {
+          "state": "scene.gunfire",
+          "field": "active"
+        }
+      ],
+      "writes": [
+        {
+          "state": "scene.alarm_level",
+          "field": "value"
+        },
+        {
+          "state": "scene.reinforcement_clock",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "alarm_level_tracking",
+          "state": "scene.alarm_level",
+          "min": 0,
+          "max": 3
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "transitions",
+          "steps": [
+            {
+              "from": 0,
+              "to": 1,
+              "condition": {
+                "state": "scene.exposure.count",
+                "op": "gte",
+                "value": 2,
+                "scope": "cumulative"
+              }
+            },
+            {
+              "from": 1,
+              "to": 2,
+              "condition": {
+                "state": "scene.exposure.since_alarm_transition",
+                "op": "gte",
+                "value": 3
+              }
+            },
+            {
+              "from": 2,
+              "to": 3,
+              "condition": {
+                "any_of": [
+                  {
+                    "state": "scene.exposure.since_alarm_transition",
+                    "op": "gte",
+                    "value": 3
+                  },
+                  {
+                    "state": "scene.gunfire.active",
+                    "op": "eq",
+                    "value": true
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "lockdown_effect",
+          "alarm_level": 3,
+          "outcomes": [
+            {
+              "state": "check.evacuation.state_penalty",
+              "operation": "add",
+              "amount": -20
+            },
+            {
+              "state": "scene.pursuer_clock.active",
+              "operation": "set",
+              "value": true
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "scene.alarm_level",
+          "value": "updated"
+        }
+      ],
+      "constraints": [
+        "Alarm level 0–3 is the only alarm track."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0038",
+      "label": "结算文本五段",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D6 结算",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.5 结算",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:ledger",
+        "concept:permanent-cost"
+      ],
+      "reads": [
+        {
+          "state": "mission.outcome",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "ledger",
+          "field": "entries"
+        },
+        {
+          "state": "character.pollution",
+          "field": "registered"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "settlement_text",
+          "state": "mission.phase",
+          "value": "结算"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "settlement_sections",
+          "sections": [
+            "①交付物",
+            "②代价确认",
+            "③报酬记账",
+            "④长线条目",
+            "⑤无双成就如有"
+          ]
+        },
+        {
+          "kind": "cost_confirmation",
+          "effect": "登记污染条"
+        },
+        {
+          "kind": "signoff",
+          "rule": "玩家签收等于账本确认"
+        }
+      ],
+      "effects": [
+        {
+          "state": "ledger",
+          "value": "updated"
+        }
+      ],
+      "constraints": [
+        "Settlement text has exactly five sections."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0039",
+      "label": "据点休整",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D7 据点休整",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "## 9. 据点休整（恢复循环草案）",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:growth",
+        "concept:ledger",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "character.action_points",
+          "field": "value"
+        }
+      ],
+      "writes": [
+        {
+          "state": "character.pressure",
+          "field": "value"
+        },
+        {
+          "state": "character.wound",
+          "field": "level"
+        },
+        {
+          "state": "character.equipment",
+          "field": "supply"
+        },
+        {
+          "state": "character.rule_knowledge",
+          "field": "archived"
+        },
+        {
+          "state": "character.bonds",
+          "field": "repaired"
+        },
+        {
+          "state": "character.pollution",
+          "field": "risk"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "safehouse_rest",
+          "state": "mission.phase",
+          "value": "结算后"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "action_points",
+          "per_character": 2,
+          "actions": [
+            {
+              "action": "舒缓",
+              "outcomes": [
+                {
+                  "state": "character.pressure",
+                  "operation": "subtract",
+                  "dice": {
+                    "count": 1,
+                    "sides": 3
+                  }
+                }
+              ]
+            },
+            {
+              "action": "处理伤口",
+              "outcomes": [
+                {
+                  "state": "character.wound",
+                  "operation": "mitigate"
+                }
+              ]
+            },
+            {
+              "action": "装备补给",
+              "outcomes": [
+                {
+                  "state": "character.equipment.supply",
+                  "operation": "exchange_supply_points"
+                }
+              ]
+            },
+            {
+              "action": "情报归档",
+              "outcomes": [
+                {
+                  "state": "character.rule_knowledge.archived",
+                  "operation": "set",
+                  "value": true
+                },
+                {
+                  "state": "character.skill.异常学",
+                  "operation": "add",
+                  "amount": 2,
+                  "cap": 80,
+                  "when": {
+                    "verified_rule_truth_count": {
+                      "op": "gte",
+                      "value": 1
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "action": "联络",
+              "outcomes": [
+                {
+                  "state": "character.bonds",
+                  "operation": "repair",
+                  "count": 1,
+                  "eligibility": "damaged"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "rest_event_table",
+          "dice": {
+            "count": 1,
+            "sides": 100
+          },
+          "rolls_per_rest": 1,
+          "scope": "whole_party",
+          "rows": [
+            {
+              "range": [
+                1,
+                90
+              ],
+              "result": "正常"
+            },
+            {
+              "range": [
+                91,
+                95
+              ],
+              "result": "轻微渗漏"
+            },
+            {
+              "range": [
+                96,
+                100
+              ],
+              "result": "渗漏",
+              "followup": "pollution_risk_check"
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "character.action_points",
+          "value": "spent"
+        }
+      ],
+      "constraints": [
+        "Safehouse is not fully trustworthy.",
+        "Rest event table is rolled once per rest for the whole party."
+      ]
+    },
+    {
+      "rule_id": "UNR-RULE-0040",
+      "label": "流程时间、移动与撤离澄清",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D8 流程澄清与时间单位（2026-08-15 solo 复测校准，PROPOSAL）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.4 撤离",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ],
+      "semantic_node_refs": [
+        "concept:alarm",
+        "concept:time"
+      ],
+      "reads": [
+        {
+          "state": "scene.clock",
+          "field": "minutes"
+        },
+        {
+          "state": "scene.alarm_level",
+          "field": "value"
+        },
+        {
+          "state": "scene.pursuers",
+          "field": "active"
+        }
+      ],
+      "writes": [
+        {
+          "state": "scene.clock",
+          "field": "minutes"
+        },
+        {
+          "state": "check.evacuation",
+          "field": "value"
+        }
+      ],
+      "preconditions": [
+        {
+          "kind": "procedure_time_and_movement",
+          "state": "mission.phase",
+          "value": "执行"
+        }
+      ],
+      "resolution": [
+        {
+          "kind": "time_units",
+          "cross_area_move_minutes": 10,
+          "single_action_minutes": 10
+        },
+        {
+          "kind": "free_phases",
+          "items": [
+            "接单",
+            "计划"
+          ],
+          "rule": "不扣时钟，由玩家在硬时限内自由分配"
+        },
+        {
+          "kind": "evacuation",
+          "rules": [
+            {
+              "condition": "警报0且无追兵",
+              "roll": false
+            },
+            {
+              "condition": "警报3封锁",
+              "effect": "撤离判定-20状态减值"
+            },
+            {
+              "condition": "被追",
+              "effect": "反侦察或驾驶对抗"
+            }
+          ]
+        }
+      ],
+      "effects": [
+        {
+          "state": "scene.clock",
+          "value": "advanced"
+        }
+      ],
+      "constraints": [
+        "Movement and action time use minutes.",
+        "Evacuation roll depends on alarm and pursuers."
+      ]
+    }
+  ]
+}

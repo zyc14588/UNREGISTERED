@@ -33,6 +33,7 @@
 | 阶段3 桌测局 | ◐ 材料齐备，待真人执行 | `playtest/prototype-table-test-guide-v1.md` |
 | 阶段4/5 校准与高压局 | ◐ 指引已备 | `playtest/stage4-5-guide-v1.md` |
 | 平台游戏包 | ◐ 规划中 | `campaign/platform-package-plan.md`（剩 3 个决策点） |
+| AIPT 规则模型 | ◐ P0-B002 IN_PROGRESS | [40 Rules / 10 Invariants / 0 Mutations；机器规则与语义图均为 PROPOSAL](aipt/p0-b002/README.md) |
 | Session 0 | ○ 未执行 | `campaign/session0-redlines.md` |
 
 ## 3. 下一步工作（优先级）

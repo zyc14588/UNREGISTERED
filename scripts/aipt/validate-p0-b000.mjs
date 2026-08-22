@@ -42,20 +42,19 @@
  *   8. static check of the AIPT Content Gate workflow, including a hardened
  *      top-level permissions block parse (blank/comment-safe, runs until the
  *      next top-level key), rejection of any permission entry valued write,
- *      and the requirement that both validator commands run as separate
+ *      and the requirement that all three validator commands run as separate
  *      steps — immutable action pins, Node.js 24.19.0, contents:read,
  *      persist-credentials:false, ubuntu-24.04 and the no-install/no-cache/
  *      no-token/no-remote-call rules are unchanged;
  *   9. eight in-memory negative probes, all of which must be rejected; plus an
- *      in-memory status-mutation probe set proving the status.json B001
- *      MERGED_CLOSED closeout shape (with B000 recorded as previous_batch
- *      MERGED_CLOSED) rejects every stale/legacy/contradictory mutation (9b).
+ *      in-memory status-mutation probe set proving the status.json B002
+ *      IN_PROGRESS construction shape rejects every stale, legacy, or
+ *      contradictory mutation (9b).
  *
- * B000 is historical MERGED_CLOSED; the current batch is the legal B001
- * closeout state (status MERGED_CLOSED, global_wip 0, previous_batch B000
- * MERGED_CLOSED, next AIPT-M0-B003 AUTHORIZED_TO_PREPARE,
- * next_batch_authorized true, next_batch_started false). The required B001
- * artifacts are expected and no longer rejected.
+ * B000 and B001 are historical MERGED_CLOSED batches. The current repository
+ * lifecycle is B002 IN_PROGRESS, opened only after the external serial
+ * predecessor AIPT-M0-B006 closed successfully. The required B001 artifacts
+ * remain frozen, while only the explicit B002 construction paths are allowed.
  *
  * Output is concise and deterministic; exits non-zero with actionable errors
  * on any failure.
@@ -69,7 +68,9 @@ const SCRIPT_DIR = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(SCRIPT_DIR, "..", "..");
 
 const BATCH = "UNREGISTERED-AIPT-P0-B000";
-const NEXT_BATCH = "UNREGISTERED-AIPT-P0-B001";
+const B001_BATCH = "UNREGISTERED-AIPT-P0-B001";
+const CURRENT_BATCH = "UNREGISTERED-AIPT-P0-B002";
+const NEXT_BATCH = "UNREGISTERED-AIPT-P0-B003";
 const CODENAME = "《特工模拟》";
 // The prohibited current-name typo (未登记 misspelled) and its bracketed title
 // form must be assembled from fragments so this validator does not flag its
@@ -538,36 +539,44 @@ function checkForbiddenKeys(obj, fileLabel) {
   }
 }
 
-/** Legal B001 MERGED_CLOSED closeout status for aipt/status.json: exactly
- *  these keys, exactly these values. B000 is historical and recorded inside
- *  previous_batch as MERGED_CLOSED. The exact key set fails any extra or
- *  contradictory lifecycle field (including the legacy abbreviated
- *  next_started key), and the exact value map fails a stale current status
- *  (IN_PROGRESS or any other non-closeout value), global_wip drift,
- *  previous_batch drift (B000 must stay MERGED_CLOSED), any next batch other
- *  than AIPT-M0-B003, any next state other than AUTHORIZED_TO_PREPARE,
- *  authorization false, and next_batch_started=true. */
-const STATUS_KEYS_B001 = [
+/** Legal B002 construction status for aipt/status.json: exactly these keys and
+ *  values. It records the previous repository batch separately from the
+ *  external serial predecessor that authorizes B002. */
+const STATUS_KEYS_B002 = [
   "aipt_schema",
   "current_batch",
   "status",
   "global_wip",
-  "previous_batch",
+  "previous_repo_batch",
+  "external_serial_predecessor",
   "next_batch",
   "next_batch_state",
   "next_batch_authorized",
   "next_batch_started",
 ];
 
-const EXPECTED_STATUS_B001 = {
-  aipt_schema: "aipt.status.v1",
-  current_batch: NEXT_BATCH,
-  status: "MERGED_CLOSED",
-  global_wip: 0,
-  previous_batch: { batch_id: BATCH, status: "MERGED_CLOSED" },
-  next_batch: "AIPT-M0-B003",
-  next_batch_state: "AUTHORIZED_TO_PREPARE",
-  next_batch_authorized: true,
+const EXPECTED_STATUS_B002 = {
+  aipt_schema: "aipt.status.v2",
+  current_batch: CURRENT_BATCH,
+  status: "IN_PROGRESS",
+  global_wip: 1,
+  previous_repo_batch: {
+    batch_id: B001_BATCH,
+    status: "MERGED_CLOSED",
+    closeout_commit: "a37b284bf5ec35895f436abe71d22599edb6da53",
+  },
+  external_serial_predecessor: {
+    batch_id: "AIPT-M0-B006",
+    status: "MERGED_CLOSED",
+    implementation_merge: "35acba9fb629f50087def3b720df304fadfd2158",
+    implementation_tree: "4271a3fb71236a8b003b4d9ddc84727c6fec8d46",
+    closeout_commit: "e1e1a6315ef2308922105dd30fd4bbcf4e3f91c8",
+    closeout_ci_run: 32579049539,
+    closeout_ci_conclusion: "success",
+  },
+  next_batch: NEXT_BATCH,
+  next_batch_state: "NOT_AUTHORIZED",
+  next_batch_authorized: false,
   next_batch_started: false,
 };
 
@@ -580,14 +589,22 @@ const REQUIRED_B001_ARTIFACTS = [
   "aipt/p0-b001/safety-profile.json",
 ];
 
+const REQUIRED_B002_ARTIFACTS = [
+  "aipt/p0-b002/README.md",
+  "aipt/p0-b002/rule-id-map.json",
+  "aipt/p0-b002/machine-rules.json",
+  "aipt/p0-b002/semantic-graph.json",
+];
+const ALLOWED_B002_ARTIFACTS = new Set(REQUIRED_B002_ARTIFACTS);
+
 function checkBatchStatus(s) {
   if (!s || typeof s !== "object") throw new Error("status.json: missing status object");
   const keys = Object.keys(s).sort();
-  const expectedKeys = [...STATUS_KEYS_B001].sort();
+  const expectedKeys = [...STATUS_KEYS_B002].sort();
   if (JSON.stringify(keys) !== JSON.stringify(expectedKeys)) {
     throw new Error(`status.json keys must be exactly ${JSON.stringify(expectedKeys)}, got ${JSON.stringify(keys)}`);
   }
-  for (const [k, v] of Object.entries(EXPECTED_STATUS_B001)) {
+  for (const [k, v] of Object.entries(EXPECTED_STATUS_B002)) {
     if (JSON.stringify(s[k]) !== JSON.stringify(v)) {
       throw new Error(`status.${k} must be exactly ${JSON.stringify(v)}, got ${JSON.stringify(s[k])}`);
     }
@@ -597,10 +614,8 @@ function checkBatchStatus(s) {
 function checkStatusAndArtifacts() {
   const status = loadJson("aipt/status.json");
   checkBatchStatus(status);
-  // B000 historical invariant: the previous batch is this validator's batch
-  // and it is MERGED_CLOSED — never IN_PROGRESS, never anything else.
-  if (status.previous_batch.batch_id !== BATCH || status.previous_batch.status !== "MERGED_CLOSED") {
-    throw new Error(`status.previous_batch must record ${BATCH} MERGED_CLOSED`);
+  if (status.previous_repo_batch.batch_id !== B001_BATCH || status.previous_repo_batch.status !== "MERGED_CLOSED") {
+    throw new Error(`status.previous_repo_batch must record ${B001_BATCH} MERGED_CLOSED`);
   }
   // B001 artifacts are required now (accepted baseline), not rejected.
   for (const r of REQUIRED_B001_ARTIFACTS) {
@@ -609,14 +624,28 @@ function checkStatusAndArtifacts() {
       throw new Error(`required B001 artifact missing: ${r}`);
     }
   }
-  // Unexpected artifacts remain rejected: later-batch paths and any AIPT run
-  // manifest (the B001 input manifest is the one sanctioned manifest file).
+  // S1 freezes the complete B002 delivery surface: all four artifacts are
+  // required and no other construction or later-batch path may appear.
+  for (const r of REQUIRED_B002_ARTIFACTS) {
+    const abs = path.join(ROOT, r);
+    if (!existsSync(abs) || !statSync(abs).isFile()) {
+      throw new Error(`required B002 artifact missing after S1 finalization: ${r}`);
+    }
+  }
   for (const f of walk(path.join(ROOT, "aipt"))) {
     const r = relPath(f);
-    if (/p0-?b00[2-9]/i.test(r)) throw new Error(`unexpected later-batch artifact present: ${r}`);
-    if (/run[-_]?manifest/i.test(path.basename(f))) throw new Error(`AIPT run manifest present: ${r} (not allowed: ${NEXT_BATCH} is MERGED_CLOSED and AIPT-M0-B003 is authorized to prepare but not started)`);
+    if (r.startsWith("aipt/p0-b002/") && !ALLOWED_B002_ARTIFACTS.has(r)) {
+      throw new Error(`unexpected P0-B002 artifact outside the explicit construction allowlist: ${r}`);
+    }
+    if (/^aipt\/p0-b00[3-9]\//i.test(r)) throw new Error(`unexpected later-batch artifact present: ${r}`);
+    if (/^(rule-id-map|machine-rules|semantic-graph)\.json$/i.test(path.basename(f)) && !r.startsWith("aipt/p0-b002/")) {
+      throw new Error(`P0-B002 rule authority artifact outside aipt/p0-b002/**: ${r}`);
+    }
+    if (/run[-_]?manifest/i.test(path.basename(f))) {
+      throw new Error(`AIPT run manifest present: ${r} (not allowed while ${CURRENT_BATCH} is IN_PROGRESS and ${NEXT_BATCH} is not authorized)`);
+    }
   }
-  pass(`status: ${NEXT_BATCH} MERGED_CLOSED (closeout); previous ${BATCH} MERGED_CLOSED; global_wip=0; next AIPT-M0-B003 AUTHORIZED_TO_PREPARE, not started; required B001 artifacts present`);
+  pass(`status: ${CURRENT_BATCH} IN_PROGRESS; previous repo batch ${B001_BATCH} MERGED_CLOSED; external predecessor AIPT-M0-B006 closed successfully; global_wip=1; next ${NEXT_BATCH} NOT_AUTHORIZED, not started; B001 artifacts frozen; B002 surface explicit`);
 }
 
 // ---------------------------------------------------------------------------
@@ -1201,17 +1230,21 @@ function checkWorkflow() {
   require(/^\s*timeout-minutes:\s*5\s*$/m.test(text), "job must set timeout-minutes: 5");
   require(text.includes("node --version") && text.includes("v24.19.0"), "must explicitly assert node --version is v24.19.0");
   require(text.includes("node scripts/aipt/validate-p0-b000.mjs"), "must run node scripts/aipt/validate-p0-b000.mjs");
-  // Both validators must run as separate, clearly named steps: the B000 gate
-  // plus the new B001 gate. Distinct run lines are required so a later edit
-  // cannot silently fold both commands into one step.
+  // B000, B001 and B002 must run exactly once as separate, clearly named
+  // steps after S1 finalization.
   const validatorRuns = lines
     .map((l) => l.trim())
-    .filter((l) => /^run:\s*node scripts\/aipt\/validate-p0-b00[01]\.mjs\s*$/.test(l));
+    .filter((l) => /^run:\s*node scripts\/aipt\/validate-p0-b\d+\.mjs\s*$/.test(l));
+  const allowedValidatorRuns = new Set([
+    "run: node scripts/aipt/validate-p0-b000.mjs",
+    "run: node scripts/aipt/validate-p0-b001.mjs",
+    "run: node scripts/aipt/validate-p0-b002.mjs",
+  ]);
   require(
-    validatorRuns.length === 2 &&
-      validatorRuns.some((r) => r.includes("validate-p0-b000.mjs")) &&
-      validatorRuns.some((r) => r.includes("validate-p0-b001.mjs")),
-    `must run both validators as separate steps (node scripts/aipt/validate-p0-b000.mjs and node scripts/aipt/validate-p0-b001.mjs), got ${JSON.stringify(validatorRuns)}`,
+    validatorRuns.length === 3 &&
+      new Set(validatorRuns).size === 3 &&
+      [...allowedValidatorRuns].every((run) => validatorRuns.includes(run)),
+    `must run B000, B001 and B002 exactly once as three separate steps; got ${JSON.stringify(validatorRuns)}`,
   );
   const forbidden = [];
   if (/\bnpm\s+(install|ci|i)\b/.test(text)) forbidden.push("npm install");
@@ -1223,7 +1256,7 @@ function checkWorkflow() {
   if (/\b(curl|wget)\b/.test(text) || /\bgit\s+(clone|push|pull|fetch)\b/.test(text)) forbidden.push("remote calls");
   require(forbidden.length === 0, `forbidden workflow content detected: ${forbidden.join(", ")}`);
   if (fails.length) throw new Error(fails.join("; "));
-  pass("workflow: AIPT Content Gate static structure OK (both validator steps; immutable pins, Node 24.19.0, contents:read, no install/cache/token/remote calls)");
+  pass("workflow: AIPT Content Gate static structure OK (B000+B001+B002 required exactly once; immutable pins, Node 24.19.0, contents:read, no install/cache/token/remote calls)");
 }
 
 // ---------------------------------------------------------------------------
@@ -1292,27 +1325,37 @@ function runProbes() {
 
 // ---------------------------------------------------------------------------
 // 9b. In-memory status-mutation probe set — every stale/legacy/contradictory
-//     mutation of the legal B001 MERGED_CLOSED closeout status.json must be
-//     rejected by checkBatchStatus (and the B000 historical invariant must
-//     hold)
+//     mutation of the legal B002 IN_PROGRESS construction status must reject.
 // ---------------------------------------------------------------------------
 
 function runStatusProbes() {
   const base = loadJson("aipt/status.json");
   const probes = [
-    ["current status drift (IN_PROGRESS)", () => checkBatchStatus({ ...base, status: "IN_PROGRESS" })],
-    ["global_wip=1", () => checkBatchStatus({ ...base, global_wip: 1 })],
-    ["previous_batch.status drift (IN_PROGRESS)", () =>
-      checkBatchStatus({ ...base, previous_batch: { batch_id: "UNREGISTERED-AIPT-P0-B000", status: "IN_PROGRESS" } })],
-    ["previous_batch.batch_id drift", () =>
-      checkBatchStatus({ ...base, previous_batch: { batch_id: "UNREGISTERED-AIPT-P0-B002", status: "MERGED_CLOSED" } })],
-    ["next_batch drift", () => checkBatchStatus({ ...base, next_batch: "AIPT-M0-B004" })],
-    ["next_batch_state drift (NOT_AUTHORIZED)", () =>
-      checkBatchStatus({ ...base, next_batch_state: "NOT_AUTHORIZED" })],
-    ["next_batch_authorized=false", () => checkBatchStatus({ ...base, next_batch_authorized: false })],
+    ["current status drift (MERGED_CLOSED)", () => checkBatchStatus({ ...base, status: "MERGED_CLOSED" })],
+    ["global_wip=0", () => checkBatchStatus({ ...base, global_wip: 0 })],
+    ["previous_repo_batch.status drift", () =>
+      checkBatchStatus({ ...base, previous_repo_batch: { ...base.previous_repo_batch, status: "IN_PROGRESS" } })],
+    ["previous_repo_batch.batch_id drift", () =>
+      checkBatchStatus({ ...base, previous_repo_batch: { ...base.previous_repo_batch, batch_id: BATCH } })],
+    ["previous_repo_batch.closeout_commit drift", () =>
+      checkBatchStatus({ ...base, previous_repo_batch: { ...base.previous_repo_batch, closeout_commit: "0".repeat(40) } })],
+    ["external predecessor status drift", () =>
+      checkBatchStatus({ ...base, external_serial_predecessor: { ...base.external_serial_predecessor, status: "IN_PROGRESS" } })],
+    ["external predecessor merge drift", () =>
+      checkBatchStatus({ ...base, external_serial_predecessor: { ...base.external_serial_predecessor, implementation_merge: "0".repeat(40) } })],
+    ["external predecessor tree drift", () =>
+      checkBatchStatus({ ...base, external_serial_predecessor: { ...base.external_serial_predecessor, implementation_tree: "0".repeat(40) } })],
+    ["external predecessor closeout drift", () =>
+      checkBatchStatus({ ...base, external_serial_predecessor: { ...base.external_serial_predecessor, closeout_commit: "0".repeat(40) } })],
+    ["external predecessor CI conclusion drift", () =>
+      checkBatchStatus({ ...base, external_serial_predecessor: { ...base.external_serial_predecessor, closeout_ci_conclusion: "failure" } })],
+    ["next_batch drift", () => checkBatchStatus({ ...base, next_batch: "UNREGISTERED-AIPT-P0-B004" })],
+    ["next_batch_state drift (AUTHORIZED_TO_PREPARE)", () =>
+      checkBatchStatus({ ...base, next_batch_state: "AUTHORIZED_TO_PREPARE" })],
+    ["next_batch_authorized=true", () => checkBatchStatus({ ...base, next_batch_authorized: true })],
     ["next_batch_started=true", () => checkBatchStatus({ ...base, next_batch_started: true })],
     ["legacy next_started key", () => checkBatchStatus({ ...base, next_started: false })],
-    ["extra lifecycle key", () => checkBatchStatus({ ...base, next_batch_active: true })],
+    ["legacy previous_batch key", () => checkBatchStatus({ ...base, previous_batch: { batch_id: BATCH, status: "MERGED_CLOSED" } })],
   ];
   let rejected = 0;
   probes.forEach(([label, fn], i) => {

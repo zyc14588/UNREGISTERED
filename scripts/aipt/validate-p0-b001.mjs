@@ -13,9 +13,9 @@
  * resolution) remain enforced by the still-run validate-p0-b000.mjs step; this
  * validator relies on that gate and focuses on the B001 contract:
  *
- *   1. exact B001 status closeout shape (MERGED_CLOSED; previous batch B000
- *      MERGED_CLOSED; global_wip 0; next AIPT-M0-B003 AUTHORIZED_TO_PREPARE,
- *      authorized true, started false);
+ *   1. exact B002 construction status shape (IN_PROGRESS; previous repository
+ *      batch B001 MERGED_CLOSED; external serial predecessor AIPT-M0-B006
+ *      closed successfully; global_wip 1; B003 NOT_AUTHORIZED and not started);
  *   2. input manifest: fail-closed schema shape — exact allowed key sets for
  *      the top level, game, content_license, aipt_compatibility,
  *      source_binding, source_path_policy, every source_files entry, every
@@ -95,14 +95,14 @@
  *      card text 你的角色现在相信：___; participant response classification
  *      token (HUMAN/PRIVATE/DATA); public persistence false; remote default
  *      false; no stored responses/names/mental-health data;
- *   8. scope + allowlists: source files at accepted hashes; no machine Rule
+ *   8. scope + explicit construction allowlists: source files at accepted hashes; no machine Rule
  *      object / semantic graph / adapter / runtime / mutant definition /
  *      next-batch work / early IDs; aipt/** exactly the accepted regular
  *      files — symlinks and other non-regular entries are collected and
- *      rejected, never silently ignored; scripts/aipt contains exactly
- *      validate-p0-b000.mjs and validate-p0-b001.mjs for this batch (no
- *      adapter/runtime/mutant executable under the allowed script path);
- *      delivery-surface scan for credentials, private absolute paths, private
+ *      rejected, never silently ignored; after S1, aipt/p0-b002 contains
+ *      exactly its four required delivery artifacts and scripts/aipt contains
+ *      exactly the B000, B001 and B002 validators (no adapter/runtime/mutant
+ *      executable under the allowed script path); delivery-surface scan for private
  *      prompt/package markers and actual participant data (classification
  *      metadata allowed);
  *   9. in-memory negative probes, every one required to reject (see
@@ -114,7 +114,7 @@
  *      same source binding, cross-kind path+locator, CLUE id/locator swaps,
  *      RESERVED namespace assigned_count) plus manifest stable_id_coverage
  *      drift (assigned_ids, synthetic_entities_added, zero-kind order) — all
- *      93 probes must reject.
+ *      every probe in the deterministic set must reject.
  *
  * Output is concise and deterministic; exits non-zero with actionable errors
  * on any failure.
@@ -130,7 +130,8 @@ const ROOT = path.resolve(SCRIPT_DIR, "..", "..");
 
 const BATCH = "UNREGISTERED-AIPT-P0-B001";
 const PREV_BATCH = "UNREGISTERED-AIPT-P0-B000";
-const NEXT_BATCH = "AIPT-M0-B003";
+const CURRENT_BATCH = "UNREGISTERED-AIPT-P0-B002";
+const NEXT_BATCH = "UNREGISTERED-AIPT-P0-B003";
 // The participant-data classification token; assembled from fragments so this
 // validator does not flag itself in the B000 delivery-surface scan.
 const HPD = "HUMAN_" + "PRIVATE_" + "DATA";
@@ -244,7 +245,7 @@ function expectThrown(fn, sub) {
 }
 
 // ---------------------------------------------------------------------------
-// 1. Exact B001 status
+// 1. Exact B002 construction status (B001 remains historical)
 // ---------------------------------------------------------------------------
 
 const STATUS_KEYS = [
@@ -252,7 +253,8 @@ const STATUS_KEYS = [
   "current_batch",
   "status",
   "global_wip",
-  "previous_batch",
+  "previous_repo_batch",
+  "external_serial_predecessor",
   "next_batch",
   "next_batch_state",
   "next_batch_authorized",
@@ -260,14 +262,27 @@ const STATUS_KEYS = [
 ];
 
 const EXPECTED_STATUS = {
-  aipt_schema: "aipt.status.v1",
-  current_batch: BATCH,
-  status: "MERGED_CLOSED",
-  global_wip: 0,
-  previous_batch: { batch_id: PREV_BATCH, status: "MERGED_CLOSED" },
+  aipt_schema: "aipt.status.v2",
+  current_batch: CURRENT_BATCH,
+  status: "IN_PROGRESS",
+  global_wip: 1,
+  previous_repo_batch: {
+    batch_id: BATCH,
+    status: "MERGED_CLOSED",
+    closeout_commit: "a37b284bf5ec35895f436abe71d22599edb6da53",
+  },
+  external_serial_predecessor: {
+    batch_id: "AIPT-M0-B006",
+    status: "MERGED_CLOSED",
+    implementation_merge: "35acba9fb629f50087def3b720df304fadfd2158",
+    implementation_tree: "4271a3fb71236a8b003b4d9ddc84727c6fec8d46",
+    closeout_commit: "e1e1a6315ef2308922105dd30fd4bbcf4e3f91c8",
+    closeout_ci_run: 32579049539,
+    closeout_ci_conclusion: "success",
+  },
   next_batch: NEXT_BATCH,
-  next_batch_state: "AUTHORIZED_TO_PREPARE",
-  next_batch_authorized: true,
+  next_batch_state: "NOT_AUTHORIZED",
+  next_batch_authorized: false,
   next_batch_started: false,
 };
 
@@ -287,7 +302,7 @@ function checkStatusObj(s) {
 
 function checkStatus() {
   checkStatusObj(loadJson("aipt/status.json"));
-  pass("status: exact B001 MERGED_CLOSED closeout shape (previous B000 MERGED_CLOSED, global_wip 0, next AIPT-M0-B003 AUTHORIZED_TO_PREPARE, not started)");
+  pass("status: exact B002 IN_PROGRESS construction shape (previous repository batch B001 MERGED_CLOSED; external predecessor AIPT-M0-B006 closed successfully; global_wip 1; B003 NOT_AUTHORIZED, not started)");
 }
 
 // ---------------------------------------------------------------------------
@@ -2091,6 +2106,25 @@ function collectScriptsAiptEntries() {
   return collectEntriesWithKinds(path.join("scripts", "aipt"));
 }
 
+const REQUIRED_HISTORICAL_AIPT_FILES = [
+  "aipt/README.md",
+  "aipt/input-manifest.json",
+  "aipt/p0-b000/identity.json",
+  "aipt/p0-b000/licensing.json",
+  "aipt/p0-b000/premades-v2.json",
+  "aipt/p0-b001/safety-profile.json",
+  "aipt/p0-b001/stable-ids.json",
+  "aipt/p0-b001/visibility.json",
+  "aipt/status.json",
+];
+
+const REQUIRED_B002_AIPT_FILES = [
+  "aipt/p0-b002/README.md",
+  "aipt/p0-b002/rule-id-map.json",
+  "aipt/p0-b002/machine-rules.json",
+  "aipt/p0-b002/semantic-graph.json",
+];
+
 function checkArtifactPaths(entries) {
   const nonRegular = entries.filter((e) => e.kind !== "file");
   if (nonRegular.length > 0) {
@@ -2101,26 +2135,22 @@ function checkArtifactPaths(entries) {
     );
   }
   const files = entries.map((e) => e.rel).sort();
-  const expected = [
-    "aipt/README.md",
-    "aipt/input-manifest.json",
-    "aipt/p0-b000/identity.json",
-    "aipt/p0-b000/licensing.json",
-    "aipt/p0-b000/premades-v2.json",
-    "aipt/p0-b001/safety-profile.json",
-    "aipt/p0-b001/stable-ids.json",
-    "aipt/p0-b001/visibility.json",
-    "aipt/status.json",
-  ].sort();
-  if (JSON.stringify(files) !== JSON.stringify(expected)) {
-    throw new Error(`unexpected AIPT artifact paths: expected exactly ${JSON.stringify(expected)}, got ${JSON.stringify(files)}`);
+  const required = [...REQUIRED_HISTORICAL_AIPT_FILES, ...REQUIRED_B002_AIPT_FILES];
+  const allowed = new Set(required);
+  const missing = required.filter((p) => !files.includes(p));
+  if (missing.length > 0) {
+    throw new Error(`historical AIPT artifacts and all four finalized B002 artifacts must remain present exactly; missing ${JSON.stringify(missing)}`);
+  }
+  const unexpected = files.filter((p) => !allowed.has(p));
+  if (unexpected.length > 0) {
+    throw new Error(
+      `unexpected AIPT artifact paths: B000/B001 historical files and finalized B002 files remain exact at ${JSON.stringify(REQUIRED_B002_AIPT_FILES)}; got unexpected ${JSON.stringify(unexpected)}`,
+    );
   }
 }
 
-/** This batch's validator allowlist: scripts/aipt must contain exactly
- *  validate-p0-b000.mjs and validate-p0-b001.mjs, all regular files — no
- *  adapter/runtime/mutant executable (or any other script) may be added under
- *  the allowed script path. */
+/** After S1 all three validators are required exactly; no adapter/runtime/
+ *  mutant executable (or any other script) may be added under scripts/aipt. */
 function checkScriptsAipt(entries) {
   const nonRegular = entries.filter((e) => e.kind !== "file");
   if (nonRegular.length > 0) {
@@ -2129,10 +2159,17 @@ function checkScriptsAipt(entries) {
     );
   }
   const files = entries.map((e) => e.rel).sort();
-  const expected = ["scripts/aipt/validate-p0-b000.mjs", "scripts/aipt/validate-p0-b001.mjs"].sort();
-  if (JSON.stringify(files) !== JSON.stringify(expected)) {
+  const required = [
+    "scripts/aipt/validate-p0-b000.mjs",
+    "scripts/aipt/validate-p0-b001.mjs",
+    "scripts/aipt/validate-p0-b002.mjs",
+  ];
+  const allowed = new Set(required);
+  const missing = required.filter((p) => !files.includes(p));
+  const unexpected = files.filter((p) => !allowed.has(p));
+  if (missing.length > 0 || unexpected.length > 0) {
     throw new Error(
-      `scripts/aipt must contain exactly validate-p0-b000.mjs and validate-p0-b001.mjs for this batch (an adapter/runtime/mutant executable cannot be added under the allowed script path), got ${JSON.stringify(files)}`,
+      `scripts/aipt must contain exactly the B000+B001+B002 validators (no adapter/runtime/mutant executable); missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)}`,
     );
   }
 }
@@ -2209,7 +2246,7 @@ function checkScan() {
 }
 
 // ---------------------------------------------------------------------------
-// 9. In-memory negative probes — every one must reject (93 probes total,
+// 9. In-memory negative probes — every one must reject,
 //    including stable-id ID/locator/namespace drift and manifest
 //    stable_id_coverage drift; each probe mutates an in-memory clone only)
 // ---------------------------------------------------------------------------
@@ -2238,6 +2275,19 @@ function runProbes() {
             readBytes: (p) => (p === first.path ? drifted : readFileSync(path.join(ROOT, p))),
           }),
         "accepted-digest anchor (source + manifest cannot co-drift)",
+      );
+    }],
+    ["frozen rule source + manifest co-drift", () => {
+      const m = structuredClone(manifest);
+      const target = m.source_files.find((e) => e.path === "campaign/rules/mechanics-fine-v1.md");
+      const drifted = Buffer.from("drifted frozen mechanics source plus matching derived digest");
+      target.sha256 = sha256(drifted);
+      expectThrown(
+        () =>
+          checkSourceDigests([...m.source_files, ...m.registry_refs], {
+            readBytes: (p) => (p === target.path ? drifted : readFileSync(path.join(ROOT, p))),
+          }),
+        "hardcoded frozen-rule digest rejects source and derived manifest co-drift",
       );
     }],
     // --- path policy ---
@@ -2699,25 +2749,42 @@ function runProbes() {
       expectThrown(() => checkManifestObj(m), "reserved_zero_kinds must be exactly [RULE, INVARIANT, MUTATION] in registry order");
     }],
     // --- status ---
-    ["status drift from MERGED_CLOSED", () => {
+    ["status drift from IN_PROGRESS", () => {
       const s = structuredClone(loadJson("aipt/status.json"));
-      s.status = "IN_PROGRESS";
-      expectThrown(() => checkStatusObj(s), "status MERGED_CLOSED");
+      s.status = "MERGED_CLOSED";
+      expectThrown(() => checkStatusObj(s), "status IN_PROGRESS");
     }],
-    ["previous_batch status drift", () => {
+    ["previous repository batch status drift", () => {
       const s = structuredClone(loadJson("aipt/status.json"));
-      s.previous_batch.status = "IN_PROGRESS";
-      expectThrown(() => checkStatusObj(s), "previous batch B000 MERGED_CLOSED");
+      s.previous_repo_batch.status = "IN_PROGRESS";
+      expectThrown(() => checkStatusObj(s), "previous repository batch B001 MERGED_CLOSED");
     }],
     ["global_wip drift", () => {
       const s = structuredClone(loadJson("aipt/status.json"));
-      s.global_wip = 1;
-      expectThrown(() => checkStatusObj(s), "global_wip 0");
+      s.global_wip = 0;
+      expectThrown(() => checkStatusObj(s), "global_wip 1");
+    }],
+    ["external predecessor CI conclusion drift", () => {
+      const s = structuredClone(loadJson("aipt/status.json"));
+      s.external_serial_predecessor.closeout_ci_conclusion = "failure";
+      expectThrown(() => checkStatusObj(s), "external predecessor closeout CI success");
     }],
     // --- artifacts ---
     ["unexpected B001 artifact path", () => {
       const entries = collectAiptEntries().concat([{ rel: "aipt/p0-b001/extra.json", kind: "file" }]);
-      expectThrown(() => checkArtifactPaths(entries), "exact artifact set");
+      expectThrown(() => checkArtifactPaths(entries), "historical artifact set plus explicit B002 allowlist");
+    }],
+    ["Rule object placed under historical p0-b001", () => {
+      const entries = collectAiptEntries().concat([{ rel: "aipt/p0-b001/rule.json", kind: "file" }]);
+      expectThrown(() => checkArtifactPaths(entries), "B001 historical directory cannot receive a Rule object");
+    }],
+    ["machine rules placed outside p0-b002", () => {
+      const entries = collectAiptEntries().concat([{ rel: "aipt/machine-rules.json", kind: "file" }]);
+      expectThrown(() => checkArtifactPaths(entries), "machine-rules.json is allowed only under aipt/p0-b002");
+    }],
+    ["semantic graph placed outside p0-b002", () => {
+      const entries = collectAiptEntries().concat([{ rel: "aipt/p0-b001/semantic-graph.json", kind: "file" }]);
+      expectThrown(() => checkArtifactPaths(entries), "semantic-graph.json is allowed only under aipt/p0-b002");
     }],
     // --- A: schema-shape fail-closed — actual object injections, not just
     //     toggling the existing false flags ---
@@ -2795,9 +2862,17 @@ function runProbes() {
       const entries = collectAiptEntries().concat([{ rel: "aipt/p0-b001/evil-link.json", kind: "symlink" }]);
       expectThrown(() => checkArtifactPaths(entries), "symlinks/non-regular entries under aipt rejected (never silently ignored)");
     }],
+    ["required finalized B002 README missing", () => {
+      const entries = collectAiptEntries().filter((entry) => entry.rel !== "aipt/p0-b002/README.md");
+      expectThrown(() => checkArtifactPaths(entries), "all four finalized B002 artifacts required");
+    }],
+    ["required B002 validator missing", () => {
+      const entries = collectScriptsAiptEntries().filter((entry) => entry.rel !== "scripts/aipt/validate-p0-b002.mjs");
+      expectThrown(() => checkScriptsAipt(entries), "all three validators required after S1");
+    }],
     ["unexpected scripts/aipt/adapter-runtime.mjs entry", () => {
       const entries = collectScriptsAiptEntries().concat([{ rel: "scripts/aipt/adapter-runtime.mjs", kind: "file" }]);
-      expectThrown(() => checkScriptsAipt(entries), "scripts/aipt must contain exactly validate-p0-b000.mjs and validate-p0-b001.mjs");
+      expectThrown(() => checkScriptsAipt(entries), "scripts/aipt contains exactly B000+B001+B002 validators");
     }],
   ];
 
@@ -2848,11 +2923,11 @@ function main() {
   runCheck("safety-profile", checkSafetyProfile);
   runCheck("artifact paths", () => {
     checkArtifactPaths(collectAiptEntries());
-    pass("artifact paths: aipt/** contains exactly the accepted B000 + B001 regular files; symlinks and other non-regular entries are rejected (never silently ignored)");
+    pass("artifact paths: B000+B001 historical files and all four finalized B002 artifacts are required exactly; symlinks and other non-regular entries reject");
   });
   runCheck("scripts/aipt allowlist", () => {
     checkScriptsAipt(collectScriptsAiptEntries());
-    pass("scripts/aipt allowlist: exactly validate-p0-b000.mjs and validate-p0-b001.mjs for this batch — no adapter/runtime/mutant executable can be added under the allowed script path");
+    pass("scripts/aipt allowlist: exactly B000+B001+B002 validators required — no adapter/runtime/mutant executable");
   });
   runCheck("delivery-surface scan", checkScan);
   runProbes();

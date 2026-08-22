@@ -23,7 +23,7 @@ The script uses only the Python standard library.
 
 ## AIPT Content Gate
 
-当前交付批次为 `UNREGISTERED-AIPT-P0-B002`，状态保持 `IN_PROGRESS`、`global_wip: 1`；下一批 `UNREGISTERED-AIPT-P0-B003` 为 `NOT_AUTHORIZED`，未授权且未开始。B002 的 40 条 Rule、10 条 Invariant 与 0 条 Mutation 均为 `PROPOSAL`、`canonical: false`。
+当前交付批次 `UNREGISTERED-AIPT-P0-B002` 已为 `MERGED_CLOSED`、`global_wip: 0`；下一批 `UNREGISTERED-AIPT-P0-B003` 为 `AUTHORIZED_TO_PREPARE`，已获准备授权但未开始。B002 的 40 条 Rule、10 条 Invariant 与 0 条 Mutation 均为 `PROPOSAL`、`canonical: false`。
 
 在 Node.js `v24.19.0` 下运行三个独立、无依赖的标准库验证器：
 

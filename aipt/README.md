@@ -1,6 +1,6 @@
 # AIPT — Identity, Policy, Registry, and Rule Metadata
 
-本目录保存《未登记》AIPT 机器可读交付。当前仓库批次为 `UNREGISTERED-AIPT-P0-B002`，状态保持 `IN_PROGRESS`、`global_wip: 1`；下一批 `UNREGISTERED-AIPT-P0-B003` 为 `NOT_AUTHORIZED`，未授权且未开始。
+本目录保存《未登记》AIPT 机器可读交付。当前仓库批次 `UNREGISTERED-AIPT-P0-B002` 已为 `MERGED_CLOSED`、`global_wip: 0`；下一批 `UNREGISTERED-AIPT-P0-B003` 为 `AUTHORIZED_TO_PREPARE`，已获准备授权但未开始。
 
 ## 工件索引
 

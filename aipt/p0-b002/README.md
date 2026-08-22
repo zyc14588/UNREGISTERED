@@ -1,6 +1,6 @@
 # UNREGISTERED-AIPT-P0-B002 Rule Model
 
-状态：`IN_PROGRESS`。本批次把已冻结的规则 prose 转为可审计的 Rule ID、data-only 机器规则与语义图；所有输出仍为 `PROPOSAL`、`canonical: false`，不构成 CANON 或玩家行动结论。
+状态：`MERGED_CLOSED`。本批次把已冻结的规则 prose 转为可审计的 Rule ID、data-only 机器规则与语义图；所有输出仍为 `PROPOSAL`、`canonical: false`，不构成 CANON 或玩家行动结论。
 
 ## 交付
 
@@ -28,4 +28,4 @@ node scripts/aipt/validate-p0-b001.mjs
 node scripts/aipt/validate-p0-b002.mjs
 ```
 
-B002 严格门使用 Node.js 标准库，锁定源与工件哈希，并运行 35 个内存负向探针。候选阶段仍保持 B002 `IN_PROGRESS`、B003 `NOT_AUTHORIZED`。
+B002 严格门使用 Node.js 标准库，锁定源与工件哈希，并运行 35 个内存负向探针。closeout 后 B002 为 `MERGED_CLOSED`、`global_wip: 0`；B003 仅为 `AUTHORIZED_TO_PREPARE`，尚未开始。

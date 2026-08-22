@@ -13,9 +13,10 @@
  * resolution) remain enforced by the still-run validate-p0-b000.mjs step; this
  * validator relies on that gate and focuses on the B001 contract:
  *
- *   1. exact B002 construction status shape (IN_PROGRESS; previous repository
+ *   1. exact B002 closeout status shape (MERGED_CLOSED; previous repository
  *      batch B001 MERGED_CLOSED; external serial predecessor AIPT-M0-B006
- *      closed successfully; global_wip 1; B003 NOT_AUTHORIZED and not started);
+ *      closed successfully; global_wip 0; B003 AUTHORIZED_TO_PREPARE and not
+ *      started);
  *   2. input manifest: fail-closed schema shape — exact allowed key sets for
  *      the top level, game, content_license, aipt_compatibility,
  *      source_binding, source_path_policy, every source_files entry, every
@@ -245,7 +246,7 @@ function expectThrown(fn, sub) {
 }
 
 // ---------------------------------------------------------------------------
-// 1. Exact B002 construction status (B001 remains historical)
+// 1. Exact B002 MERGED_CLOSED status (B001 remains historical)
 // ---------------------------------------------------------------------------
 
 const STATUS_KEYS = [
@@ -264,8 +265,8 @@ const STATUS_KEYS = [
 const EXPECTED_STATUS = {
   aipt_schema: "aipt.status.v2",
   current_batch: CURRENT_BATCH,
-  status: "IN_PROGRESS",
-  global_wip: 1,
+  status: "MERGED_CLOSED",
+  global_wip: 0,
   previous_repo_batch: {
     batch_id: BATCH,
     status: "MERGED_CLOSED",
@@ -281,8 +282,8 @@ const EXPECTED_STATUS = {
     closeout_ci_conclusion: "success",
   },
   next_batch: NEXT_BATCH,
-  next_batch_state: "NOT_AUTHORIZED",
-  next_batch_authorized: false,
+  next_batch_state: "AUTHORIZED_TO_PREPARE",
+  next_batch_authorized: true,
   next_batch_started: false,
 };
 
@@ -302,7 +303,7 @@ function checkStatusObj(s) {
 
 function checkStatus() {
   checkStatusObj(loadJson("aipt/status.json"));
-  pass("status: exact B002 IN_PROGRESS construction shape (previous repository batch B001 MERGED_CLOSED; external predecessor AIPT-M0-B006 closed successfully; global_wip 1; B003 NOT_AUTHORIZED, not started)");
+  pass("status: exact B002 MERGED_CLOSED closeout shape (previous repository batch B001 MERGED_CLOSED; external predecessor AIPT-M0-B006 closed successfully; global_wip 0; B003 AUTHORIZED_TO_PREPARE, not started)");
 }
 
 // ---------------------------------------------------------------------------
@@ -2749,10 +2750,10 @@ function runProbes() {
       expectThrown(() => checkManifestObj(m), "reserved_zero_kinds must be exactly [RULE, INVARIANT, MUTATION] in registry order");
     }],
     // --- status ---
-    ["status drift from IN_PROGRESS", () => {
+    ["status drift from MERGED_CLOSED", () => {
       const s = structuredClone(loadJson("aipt/status.json"));
-      s.status = "MERGED_CLOSED";
-      expectThrown(() => checkStatusObj(s), "status IN_PROGRESS");
+      s.status = "IN_PROGRESS";
+      expectThrown(() => checkStatusObj(s), "status MERGED_CLOSED");
     }],
     ["previous repository batch status drift", () => {
       const s = structuredClone(loadJson("aipt/status.json"));
@@ -2761,8 +2762,8 @@ function runProbes() {
     }],
     ["global_wip drift", () => {
       const s = structuredClone(loadJson("aipt/status.json"));
-      s.global_wip = 0;
-      expectThrown(() => checkStatusObj(s), "global_wip 1");
+      s.global_wip = 1;
+      expectThrown(() => checkStatusObj(s), "global_wip 0");
     }],
     ["external predecessor CI conclusion drift", () => {
       const s = structuredClone(loadJson("aipt/status.json"));

@@ -1,8 +1,8 @@
 {
   "aipt_schema": "aipt.status.v2",
   "current_batch": "UNREGISTERED-AIPT-P0-B002",
-  "status": "IN_PROGRESS",
-  "global_wip": 1,
+  "status": "MERGED_CLOSED",
+  "global_wip": 0,
   "previous_repo_batch": {
     "batch_id": "UNREGISTERED-AIPT-P0-B001",
     "status": "MERGED_CLOSED",
@@ -18,7 +18,7 @@
     "closeout_ci_conclusion": "success"
   },
   "next_batch": "UNREGISTERED-AIPT-P0-B003",
-  "next_batch_state": "NOT_AUTHORIZED",
-  "next_batch_authorized": false,
+  "next_batch_state": "AUTHORIZED_TO_PREPARE",
+  "next_batch_authorized": true,
   "next_batch_started": false
 }

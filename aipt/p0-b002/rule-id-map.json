@@ -1,0 +1,1229 @@
+{
+  "aipt_schema": "aipt.rule-id-map.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B002",
+  "authority_scope": "zyc14588/UNREGISTERED first-roster and Task-0 proposal rules only",
+  "lifecycle": {
+    "lifecycle_status": "PROPOSAL",
+    "canonical": false,
+    "promotes_source_lifecycle": false
+  },
+  "source_manifest": {
+    "path": "aipt/input-manifest.json",
+    "sha256": "0b5f13c4dbfe429fc07a59a67b2d1c10db9ba74d205f1b3e7a9a1e896577608a",
+    "source_order": [
+      {
+        "manifest_order": 11,
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      {
+        "manifest_order": 12,
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      {
+        "manifest_order": 13,
+        "path": "campaign/rules/logic-map-v1.md",
+        "sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      }
+    ]
+  },
+  "allocation_policy": {
+    "identity_unit": "ONE_LOGICAL_RULE_NOT_EVERY_PROSE_MENTION",
+    "ordering": [
+      "primary_source_manifest_order",
+      "primary_source_document_order",
+      "kind"
+    ],
+    "primary_source_precedence": [
+      "campaign/rules/mechanics-fine-v1.md when it explicitly refines or supersedes vertical-slice-v0.md",
+      "campaign/rules/vertical-slice-v0.md for remaining baseline runtime rules",
+      "campaign/rules/logic-map-v1.md for convergence invariants only"
+    ],
+    "mutation_allocation_allowed": false,
+    "excluded_scope": [
+      "future tasks and finale",
+      "mechanics-fine-v1 C2 custom-character construction",
+      "mechanics-fine-v1 D5 Task-1 hard-deadline parameters",
+      "enemy samples",
+      "adapters and runtime code",
+      "mutants and mutation definitions",
+      "player decisions, dialogue, feelings, or growth conclusions"
+    ]
+  },
+  "historical_namespace_reservation": {
+    "path": "aipt/p0-b001/stable-ids.json",
+    "sha256": "c7e296bf7f7595ec17e67e44fef60ac38e979d4906ab31d1d9081e6bed53dba6",
+    "aipt_schema": "aipt.stable-ids.v1",
+    "batch_id": "UNREGISTERED-AIPT-P0-B001",
+    "unchanged_by_this_batch": true,
+    "namespaces": {
+      "UNR-RULE": {
+        "state": "RESERVED",
+        "assigned_count": 0,
+        "reserved_count": 0
+      },
+      "UNR-INVARIANT": {
+        "state": "RESERVED",
+        "assigned_count": 0,
+        "reserved_count": 0
+      },
+      "UNR-MUTATION": {
+        "state": "RESERVED",
+        "assigned_count": 0,
+        "reserved_count": 0
+      }
+    },
+    "statement": "P0-B001 remains historical reserved-zero authority and is not rewritten; all assignments below are newly authorized only by P0-B002."
+  },
+  "namespaces": {
+    "UNR-RULE": {
+      "entity_kind": "RULE",
+      "state": "ASSIGNED_PROPOSAL",
+      "assigned_count": 40,
+      "first_id": "UNR-RULE-0001",
+      "last_id": "UNR-RULE-0040"
+    },
+    "UNR-INVARIANT": {
+      "entity_kind": "INVARIANT",
+      "state": "ASSIGNED_PROPOSAL",
+      "assigned_count": 10,
+      "first_id": "UNR-INVARIANT-0001",
+      "last_id": "UNR-INVARIANT-0010"
+    },
+    "UNR-MUTATION": {
+      "entity_kind": "MUTATION",
+      "state": "RESERVED",
+      "assigned_count": 0,
+      "first_id": null,
+      "last_id": null
+    }
+  },
+  "interpretation_notes": [
+    "A supporting or superseded source reference never creates a second identity.",
+    "The logic-map growth row retains a legacy skill cap of 70, while mechanics-fine-v1 C1 is the effective parameter authority at cap 65; UNR-INVARIANT-0010 binds the convergence concept, not the legacy number."
+  ],
+  "allocations": [
+    {
+      "id": "UNR-RULE-0001",
+      "kind": "RULE",
+      "slug": "check-trigger",
+      "label": "判定触发条件",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 14, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.1 触发",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0002",
+      "kind": "RULE",
+      "slug": "ability-input-and-untrained-value",
+      "label": "能力输入与缺训判定值",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 18, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.2 输入（三层能力）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0003",
+      "kind": "RULE",
+      "slug": "numeric-modifiers-and-state-penalties",
+      "label": "修正值上限与状态减值",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 48, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "- 主要表达：修正值 −20/−10/0/+10/+20（上限 ±20，桌上 5–10 秒判定）",
+        "locator_type": "EXACT_TEXT",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0004",
+      "kind": "RULE",
+      "slug": "advantage-disadvantage-tens-die",
+      "label": "优势劣势十位骰",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 49, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "- 优势/劣势：额外一颗十位骰，取低（优势）或取高（劣势），个位骰共用",
+        "locator_type": "EXACT_TEXT",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0005",
+      "kind": "RULE",
+      "slug": "d100-five-tier-resolution",
+      "label": "d100 五级结果与固定判定顺序",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 53, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.4 五级结果（平台规范锁定）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0006",
+      "kind": "RULE",
+      "slug": "catastrophe-warning-conditions",
+      "label": "灾难档预警条件",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 65, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "**预警条件**（满足任一）：压力≥7 ｜ 污染≥1 ｜ 警报层级≥2 ｜ 被\"它\"注意。",
+        "locator_type": "EXACT_TEXT",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0007",
+      "kind": "RULE",
+      "slug": "opposed-checks",
+      "label": "对抗判定与同档裁决",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 67, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.5 对抗",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0008",
+      "kind": "RULE",
+      "slug": "assistance",
+      "label": "队友协助",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 72, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.6 协助",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0009",
+      "kind": "RULE",
+      "slug": "retry-and-push",
+      "label": "重试与加压",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 76, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.7 重试与加压",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0010",
+      "kind": "RULE",
+      "slug": "information-checks",
+      "label": "信息型检定不锁核心线索",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 81, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 1.8 信息型检定",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0011",
+      "kind": "RULE",
+      "slug": "trained-skill-list",
+      "label": "三十五项训练技能域",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 101, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 2.2 训练技能（35 项，GM 已确认）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0012",
+      "kind": "RULE",
+      "slug": "specialty-advantage",
+      "label": "专业特长优势",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 115, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 2.3 专业特长",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0013",
+      "kind": "RULE",
+      "slug": "reversal-window",
+      "label": "致命伤三层逆转窗口",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 128, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "## 4. 逆转窗口（三层，平台规范）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0014",
+      "kind": "RULE",
+      "slug": "infiltration-loop",
+      "label": "潜入闭环总流程",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 145, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 6.0 总流程（gm-procedure 八要素模板）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0015",
+      "kind": "RULE",
+      "slug": "mission-hard-deadline",
+      "label": "任务内置硬时限",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 176, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 6.3.3 硬时限",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0016",
+      "kind": "RULE",
+      "slug": "anomaly-compliance-pipeline",
+      "label": "异常规则违规处理管线",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 188, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "## 7. 异常规则遵守（违规管线，平台规范）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0017",
+      "kind": "RULE",
+      "slug": "area-conflict-loop",
+      "label": "区域制冲突八结构循环",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 194, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 8.1 八结构清单（conflict-engine 模板）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0018",
+      "kind": "RULE",
+      "slug": "shared-noncombat-conflict-language",
+      "label": "非战斗冲突共享结果语言",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 11, "document_order": 212, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/vertical-slice-v0.md",
+        "locator": "### 8.3 非战斗冲突",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0019",
+      "kind": "RULE",
+      "slug": "stress-track",
+      "label": "压力轨与崩溃",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 9, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A1 压力（Scene–Session 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "| 压力 | 0–10 | 目睹异常、高压行动、加压、恐怖暴露 | ≥7 触发预警条件 | 据点休整/安抚 1d3；任务外回 0 |",
+          "locator_type": "MARKDOWN_TABLE_ROW",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0020",
+      "kind": "RULE",
+      "slug": "fatigue-track",
+      "label": "疲劳轨",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 22, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A2 疲劳（Expedition 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "| 疲劳 | 0–10 | 长时间行动、负重超载、熬夜、奔跑 | 每满 2 点疲劳，行动判定 −10 | 睡眠/休息每 4 小时 −1 |",
+          "locator_type": "MARKDOWN_TABLE_ROW",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0021",
+      "kind": "RULE",
+      "slug": "wound-track",
+      "label": "伤口轨与流血",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 34, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A3 伤口（Scene–Expedition 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "| 伤口 | 部位：轻/重/致命 | 攻击、陷阱、事故 | 轻伤相关判定 −10；重伤 −20 且流血；致命进逆转窗口 | 急救临时缓解，短战役内不彻底恢复 |",
+          "locator_type": "MARKDOWN_TABLE_ROW",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0022",
+      "kind": "RULE",
+      "slug": "pollution-track",
+      "label": "污染轨与永久代价",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 45, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A4 污染（Campaign 尺度，永久——收敛主干）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "| 污染 | 0–10 永久 | 违规暴露、目睹真相、代价逆转、实体接触 | 每点污染＝一条\"污染条\"（GM 给该角色角色规则知识掺入一条可能为假的信息，玩家不知道哪条假）；≥5 角色规则知识严重不可靠；10＝角色退场（不再是自己） | 不可逆；平台规范：极稀缺资源可在规则窗口内缓解，但留残留后果 |",
+          "locator_type": "MARKDOWN_TABLE_ROW",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0023",
+      "kind": "RULE",
+      "slug": "plan-points",
+      "label": "预案点",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 58, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A5 预案点（Expedition 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "## 5. 预案资源",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0024",
+      "kind": "RULE",
+      "slug": "bonds",
+      "label": "羁绊使用与修复",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 63, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A6 羁绊（Campaign 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "## 4.5 羁绊（双向，机制收益）",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0025",
+      "kind": "RULE",
+      "slug": "equipment-load",
+      "label": "装备负载与超载",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 71, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A7 装备负载（Expedition 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.2 计划",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0026",
+      "kind": "RULE",
+      "slug": "ledger-and-reward",
+      "label": "账本与任务报酬",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 78, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### A8 账本与报酬（Campaign 尺度）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.5 结算",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0027",
+      "kind": "RULE",
+      "slug": "combat-turn-and-initiative",
+      "label": "战斗回合与先手",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 86, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B1 回合与先手",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "- **Order**：区域回合；先手＝敏捷+相关战斗技能的对抗，高者先（PROPOSAL）",
+          "locator_type": "EXACT_TEXT",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0028",
+      "kind": "RULE",
+      "slug": "combat-attack",
+      "label": "攻击判定与结果效果",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 90, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B2 攻击",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "- **Resolution**：d100 五级结果；攻击＝成功等级＋武器＋距离＋护具＋具体伤势",
+          "locator_type": "EXACT_TEXT",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0029",
+      "kind": "RULE",
+      "slug": "harm-and-armor",
+      "label": "武器伤档、护具与伤势映射",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 95, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B3 伤势与护具",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "- **Harm**：部位伤（轻/重/致命）＋压力",
+          "locator_type": "EXACT_TEXT",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0030",
+      "kind": "RULE",
+      "slug": "silent-takedown",
+      "label": "无声击倒",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 101, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B4 无声击倒",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "- **无声击倒**：无声击倒 vs 守卫警觉，成功＝无警报清除（无双潜入路线核心）",
+          "locator_type": "EXACT_TEXT",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0031",
+      "kind": "RULE",
+      "slug": "gunfire-cost",
+      "label": "交火的警报与增援代价",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 106, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B5 交火代价",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "- **交火代价**：每次开火警报层级 +1（消音器＝暴露事件而非立即升级，PROPOSAL）",
+          "locator_type": "EXACT_TEXT",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0032",
+      "kind": "RULE",
+      "slug": "chase",
+      "label": "追逐与脱追",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 110, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### B6 追逐",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 8.3 非战斗冲突",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0033",
+      "kind": "RULE",
+      "slug": "cognitive-growth",
+      "label": "认知成长与危险增强",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 116, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### C1 成长（知识库配方1 解法A：认知成长替代数值成长）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-RULE-0034",
+      "kind": "RULE",
+      "slug": "reconnaissance",
+      "label": "侦查渠道、耗时与结果",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 133, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D1 侦查",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.1 情报收集（侦查）",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0035",
+      "kind": "RULE",
+      "slug": "intel-card-layers",
+      "label": "情报卡三层",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 137, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D2 情报卡三层",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.1 情报收集（侦查）",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0036",
+      "kind": "RULE",
+      "slug": "patrol-clock",
+      "label": "区域巡逻时钟",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 141, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D3 巡逻时钟",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.3.1 巡逻时钟",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0037",
+      "kind": "RULE",
+      "slug": "alarm-level",
+      "label": "警报层级与封锁",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 145, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D4 警报层级",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.3.2 警报层级（0–3）",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0038",
+      "kind": "RULE",
+      "slug": "settlement",
+      "label": "结算文本五段",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 153, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D6 结算",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.5 结算",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0039",
+      "kind": "RULE",
+      "slug": "safehouse-rest",
+      "label": "据点休整",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 157, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D7 据点休整",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "## 9. 据点休整（恢复循环草案）",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-RULE-0040",
+      "kind": "RULE",
+      "slug": "time-and-movement",
+      "label": "流程时间、移动与撤离澄清",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 12, "document_order": 161, "kind": "RULE" },
+      "primary_source": {
+        "path": "campaign/rules/mechanics-fine-v1.md",
+        "locator": "### D8 流程澄清与时间单位（2026-08-15 solo 复测校准，PROPOSAL）",
+        "locator_type": "MARKDOWN_HEADING",
+        "source_sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": [
+        {
+          "path": "campaign/rules/vertical-slice-v0.md",
+          "locator": "### 6.4 撤离",
+          "locator_type": "MARKDOWN_HEADING",
+          "source_sha256": "e4fa4070ee48ed97e7483d844f04f233967cb04ea2c2abfd6672af4ad07433c2",
+          "lifecycle_status": "PROPOSAL"
+        }
+      ]
+    },
+    {
+      "id": "UNR-INVARIANT-0001",
+      "kind": "INVARIANT",
+      "slug": "judgement-convergence",
+      "label": "判定语言唯一收敛",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 13, "document_order": 12, "kind": "INVARIANT" },
+      "primary_source": {
+        "path": "campaign/rules/logic-map-v1.md",
+        "locator": "| 1 | 判定 | d100 下掷五档，判定顺序＝灾难优先→卓越→成功→带代价→失败推进（vertical §1.4） | 技能/素质/对抗/战斗/追逐/侦查/无声击倒 全部走此节点；无第二套判定 ✓ |",
+        "locator_type": "MARKDOWN_TABLE_ROW",
+        "source_sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-INVARIANT-0002",
+      "kind": "INVARIANT",
+      "slug": "time-convergence",
+      "label": "时间轴唯一收敛",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 13, "document_order": 13, "kind": "INVARIANT" },
+      "primary_source": {
+        "path": "campaign/rules/logic-map-v1.md",
+        "locator": "| 2 | 时间 | 任务时间轴，单位：1 班＝30 分钟 | 硬时限（D5）／巡逻班次（D3）／交接班窗口／反应窗口（管线）／侦查耗时（D1）／休整 共用同一轴与单位 ✓ |",
+        "locator_type": "MARKDOWN_TABLE_ROW",
+        "source_sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-INVARIANT-0003",
+      "kind": "INVARIANT",
+      "slug": "exposure-convergence",
+      "label": "暴露计数器唯一收敛",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 13, "document_order": 14, "kind": "INVARIANT" },
+      "primary_source": {
+        "path": "campaign/rules/logic-map-v1.md",
+        "locator": "| 3 | 暴露 | 任务内暴露计数器（0 起） | 带代价成功／失败推进／开火(消音)／侦查带代价／无声击倒带代价／违规管线\"暴露\"段 全部 +1；效果唯一：推进巡逻时钟＋累积警报 ✓ |",
+        "locator_type": "MARKDOWN_TABLE_ROW",
+        "source_sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-INVARIANT-0004",
+      "kind": "INVARIANT",
+      "slug": "short-term-cost-menu",
+      "label": "短期代价菜单闭合",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 13, "document_order": 15, "kind": "INVARIANT" },
+      "primary_source": {
+        "path": "campaign/rules/logic-map-v1.md",
+        "locator": "| 4 | 短期代价菜单 | {暴露+1, 时间+30min, 资源−1, 压力+1} | 带代价成功、侦查带代价、无声击倒等短期代价只从菜单选；**永久代价不在此列**（节点 5）✓ |",
+        "locator_type": "MARKDOWN_TABLE_ROW",
+        "source_sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-INVARIANT-0005",
+      "kind": "INVARIANT",
+      "slug": "permanent-cost-convergence",
+      "label": "永久代价只走污染轨",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 13, "document_order": 16, "kind": "INVARIANT" },
+      "primary_source": {
+        "path": "campaign/rules/logic-map-v1.md",
+        "locator": "| 5 | 永久代价 | 污染轨（0–10，污染条）——全战役永久代价唯一通道 | 违规严重度／逆转窗口②／实体接触／任务1 记名＝污染 1 格／任务2 记忆重写＝污染条(记忆型)／任务3 村民化＝污染条(身份型)／终局并入规则＝污染满格；失去记忆/身份/感官均表达为污染条 ✓ |",
+        "locator_type": "MARKDOWN_TABLE_ROW",
+        "source_sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-INVARIANT-0006",
+      "kind": "INVARIANT",
+      "slug": "alarm-convergence",
+      "label": "警报轨唯一收敛",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 13, "document_order": 17, "kind": "INVARIANT" },
+      "primary_source": {
+        "path": "campaign/rules/logic-map-v1.md",
+        "locator": "| 6 | 警报 | 警报层级 0–3（唯一轨） | 开火/暴露计数/尸体 触发；封锁＝撤离 −20 状态减值（vertical §6.3.2＝fine D4）✓ |",
+        "locator_type": "MARKDOWN_TABLE_ROW",
+        "source_sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-INVARIANT-0007",
+      "kind": "INVARIANT",
+      "slug": "warning-convergence",
+      "label": "预警条件唯一收敛",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 13, "document_order": 18, "kind": "INVARIANT" },
+      "primary_source": {
+        "path": "campaign/rules/logic-map-v1.md",
+        "locator": "| 7 | 预警 | 压力≥7 或 污染≥1 或 警报≥2 或 被注意 → 激活灾难档 | 五档表唯一引用；压力崩溃（A1）不重复定义 ✓ |",
+        "locator_type": "MARKDOWN_TABLE_ROW",
+        "source_sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-INVARIANT-0008",
+      "kind": "INVARIANT",
+      "slug": "information-convergence",
+      "label": "信息三层唯一收敛",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 13, "document_order": 19, "kind": "INVARIANT" },
+      "primary_source": {
+        "path": "campaign/rules/logic-map-v1.md",
+        "locator": "| 8 | 信息 | 情报卡三层（公开/半公开/暗层）↔ 平台规则三层模型第②③层 | 世界内文本永远是游戏数据；暗层仅经角色规则知识可达（D2）✓ |",
+        "locator_type": "MARKDOWN_TABLE_ROW",
+        "source_sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-INVARIANT-0009",
+      "kind": "INVARIANT",
+      "slug": "ledger-convergence",
+      "label": "账本实体唯一收敛",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 13, "document_order": 20, "kind": "INVARIANT" },
+      "primary_source": {
+        "path": "campaign/rules/logic-map-v1.md",
+        "locator": "| 9 | 账本 | 管理方账本（结算五段文本的实体） | 报酬/代价登记/无双成就/终局偷\"结算\"＝抹除账本条目（fine A8 ↔ tasks 终局 §5.2）✓ |",
+        "locator_type": "MARKDOWN_TABLE_ROW",
+        "source_sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    },
+    {
+      "id": "UNR-INVARIANT-0010",
+      "kind": "INVARIANT",
+      "slug": "growth-convergence",
+      "label": "认知成长唯一收敛",
+      "lifecycle_status": "PROPOSAL",
+      "canonical": false,
+      "status": "ACTIVE_PROPOSAL",
+      "allocation_order_key": { "manifest_order": 13, "document_order": 21, "kind": "INVARIANT" },
+      "primary_source": {
+        "path": "campaign/rules/logic-map-v1.md",
+        "locator": "| 10 | 成长 | 认知成长（技能 +1d3 上限70／异常学 +2 上限80／横向资源） | 无等级、无素质成长、污染不可移除（fine C1 ↔ 决策 #32）✓ |",
+        "locator_type": "MARKDOWN_TABLE_ROW",
+        "source_sha256": "7ba536f1d235981b32a8a8f27c7429d6b53ead6daa4c0f3e82e465584a89f1b4",
+        "lifecycle_status": "PROPOSAL"
+      },
+      "supporting_sources": [],
+      "superseded_source_refs": []
+    }
+  ]
+}

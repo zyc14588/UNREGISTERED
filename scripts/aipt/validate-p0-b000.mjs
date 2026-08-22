@@ -42,7 +42,7 @@
  *   8. static check of the AIPT Content Gate workflow, including a hardened
  *      top-level permissions block parse (blank/comment-safe, runs until the
  *      next top-level key), rejection of any permission entry valued write,
- *      and the requirement that both validator commands run as separate
+ *      and the requirement that all three validator commands run as separate
  *      steps — immutable action pins, Node.js 24.19.0, contents:read,
  *      persist-credentials:false, ubuntu-24.04 and the no-install/no-cache/
  *      no-token/no-remote-call rules are unchanged;
@@ -589,12 +589,13 @@ const REQUIRED_B001_ARTIFACTS = [
   "aipt/p0-b001/safety-profile.json",
 ];
 
-const ALLOWED_B002_ARTIFACTS = new Set([
+const REQUIRED_B002_ARTIFACTS = [
   "aipt/p0-b002/README.md",
   "aipt/p0-b002/rule-id-map.json",
   "aipt/p0-b002/machine-rules.json",
   "aipt/p0-b002/semantic-graph.json",
-]);
+];
+const ALLOWED_B002_ARTIFACTS = new Set(REQUIRED_B002_ARTIFACTS);
 
 function checkBatchStatus(s) {
   if (!s || typeof s !== "object") throw new Error("status.json: missing status object");
@@ -623,8 +624,14 @@ function checkStatusAndArtifacts() {
       throw new Error(`required B001 artifact missing: ${r}`);
     }
   }
-  // B002 construction is optional at S0 and then may appear only at the four
-  // explicitly leased artifact paths. All later-batch paths remain rejected.
+  // S1 freezes the complete B002 delivery surface: all four artifacts are
+  // required and no other construction or later-batch path may appear.
+  for (const r of REQUIRED_B002_ARTIFACTS) {
+    const abs = path.join(ROOT, r);
+    if (!existsSync(abs) || !statSync(abs).isFile()) {
+      throw new Error(`required B002 artifact missing after S1 finalization: ${r}`);
+    }
+  }
   for (const f of walk(path.join(ROOT, "aipt"))) {
     const r = relPath(f);
     if (r.startsWith("aipt/p0-b002/") && !ALLOWED_B002_ARTIFACTS.has(r)) {
@@ -1223,9 +1230,8 @@ function checkWorkflow() {
   require(/^\s*timeout-minutes:\s*5\s*$/m.test(text), "job must set timeout-minutes: 5");
   require(text.includes("node --version") && text.includes("v24.19.0"), "must explicitly assert node --version is v24.19.0");
   require(text.includes("node scripts/aipt/validate-p0-b000.mjs"), "must run node scripts/aipt/validate-p0-b000.mjs");
-  // B000 and B001 must run as separate, clearly named steps. During B002
-  // construction the B002 validator step is the only optional third command;
-  // S1 makes it required through the new B002 validator itself.
+  // B000, B001 and B002 must run exactly once as separate, clearly named
+  // steps after S1 finalization.
   const validatorRuns = lines
     .map((l) => l.trim())
     .filter((l) => /^run:\s*node scripts\/aipt\/validate-p0-b\d+\.mjs\s*$/.test(l));
@@ -1235,11 +1241,10 @@ function checkWorkflow() {
     "run: node scripts/aipt/validate-p0-b002.mjs",
   ]);
   require(
-    (validatorRuns.length === 2 || validatorRuns.length === 3) &&
-      validatorRuns.some((r) => r.includes("validate-p0-b000.mjs")) &&
-      validatorRuns.some((r) => r.includes("validate-p0-b001.mjs")) &&
-      validatorRuns.every((r) => allowedValidatorRuns.has(r)),
-    `must run B000 and B001 as separate steps, with only B002 allowed as an optional construction-time third step; got ${JSON.stringify(validatorRuns)}`,
+    validatorRuns.length === 3 &&
+      new Set(validatorRuns).size === 3 &&
+      [...allowedValidatorRuns].every((run) => validatorRuns.includes(run)),
+    `must run B000, B001 and B002 exactly once as three separate steps; got ${JSON.stringify(validatorRuns)}`,
   );
   const forbidden = [];
   if (/\bnpm\s+(install|ci|i)\b/.test(text)) forbidden.push("npm install");
@@ -1251,7 +1256,7 @@ function checkWorkflow() {
   if (/\b(curl|wget)\b/.test(text) || /\bgit\s+(clone|push|pull|fetch)\b/.test(text)) forbidden.push("remote calls");
   require(forbidden.length === 0, `forbidden workflow content detected: ${forbidden.join(", ")}`);
   if (fails.length) throw new Error(fails.join("; "));
-  pass("workflow: AIPT Content Gate static structure OK (B000+B001 required, B002 construction step optional until S1; immutable pins, Node 24.19.0, contents:read, no install/cache/token/remote calls)");
+  pass("workflow: AIPT Content Gate static structure OK (B000+B001+B002 required exactly once; immutable pins, Node 24.19.0, contents:read, no install/cache/token/remote calls)");
 }
 
 // ---------------------------------------------------------------------------

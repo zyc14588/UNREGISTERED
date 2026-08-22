@@ -99,11 +99,10 @@
  *      object / semantic graph / adapter / runtime / mutant definition /
  *      next-batch work / early IDs; aipt/** exactly the accepted regular
  *      files — symlinks and other non-regular entries are collected and
- *      rejected, never silently ignored; scripts/aipt contains exactly
- *      validate-p0-b000.mjs and validate-p0-b001.mjs for this batch (no
- *      adapter/runtime/mutant executable under the allowed script path);
- *      only the four P0-B002 artifact paths and its one validator path may be
- *      added during construction; delivery-surface scan for private
+ *      rejected, never silently ignored; after S1, aipt/p0-b002 contains
+ *      exactly its four required delivery artifacts and scripts/aipt contains
+ *      exactly the B000, B001 and B002 validators (no adapter/runtime/mutant
+ *      executable under the allowed script path); delivery-surface scan for private
  *      prompt/package markers and actual participant data (classification
  *      metadata allowed);
  *   9. in-memory negative probes, every one required to reject (see
@@ -2119,7 +2118,7 @@ const REQUIRED_HISTORICAL_AIPT_FILES = [
   "aipt/status.json",
 ];
 
-const ALLOWED_B002_AIPT_FILES = [
+const REQUIRED_B002_AIPT_FILES = [
   "aipt/p0-b002/README.md",
   "aipt/p0-b002/rule-id-map.json",
   "aipt/p0-b002/machine-rules.json",
@@ -2136,22 +2135,22 @@ function checkArtifactPaths(entries) {
     );
   }
   const files = entries.map((e) => e.rel).sort();
-  const allowed = new Set([...REQUIRED_HISTORICAL_AIPT_FILES, ...ALLOWED_B002_AIPT_FILES]);
-  const missingHistorical = REQUIRED_HISTORICAL_AIPT_FILES.filter((p) => !files.includes(p));
-  if (missingHistorical.length > 0) {
-    throw new Error(`historical AIPT artifacts must remain present exactly; missing ${JSON.stringify(missingHistorical)}`);
+  const required = [...REQUIRED_HISTORICAL_AIPT_FILES, ...REQUIRED_B002_AIPT_FILES];
+  const allowed = new Set(required);
+  const missing = required.filter((p) => !files.includes(p));
+  if (missing.length > 0) {
+    throw new Error(`historical AIPT artifacts and all four finalized B002 artifacts must remain present exactly; missing ${JSON.stringify(missing)}`);
   }
   const unexpected = files.filter((p) => !allowed.has(p));
   if (unexpected.length > 0) {
     throw new Error(
-      `unexpected AIPT artifact paths: B000/B001 historical files remain exact and B002 construction is allowed only at ${JSON.stringify(ALLOWED_B002_AIPT_FILES)}; got unexpected ${JSON.stringify(unexpected)}`,
+      `unexpected AIPT artifact paths: B000/B001 historical files and finalized B002 files remain exact at ${JSON.stringify(REQUIRED_B002_AIPT_FILES)}; got unexpected ${JSON.stringify(unexpected)}`,
     );
   }
 }
 
-/** Historical validators remain required. The only optional construction-time
- *  addition is validate-p0-b002.mjs; no adapter/runtime/mutant executable (or
- *  any other script) may be added under scripts/aipt. */
+/** After S1 all three validators are required exactly; no adapter/runtime/
+ *  mutant executable (or any other script) may be added under scripts/aipt. */
 function checkScriptsAipt(entries) {
   const nonRegular = entries.filter((e) => e.kind !== "file");
   if (nonRegular.length > 0) {
@@ -2160,13 +2159,17 @@ function checkScriptsAipt(entries) {
     );
   }
   const files = entries.map((e) => e.rel).sort();
-  const required = ["scripts/aipt/validate-p0-b000.mjs", "scripts/aipt/validate-p0-b001.mjs"];
-  const allowed = new Set([...required, "scripts/aipt/validate-p0-b002.mjs"]);
+  const required = [
+    "scripts/aipt/validate-p0-b000.mjs",
+    "scripts/aipt/validate-p0-b001.mjs",
+    "scripts/aipt/validate-p0-b002.mjs",
+  ];
+  const allowed = new Set(required);
   const missing = required.filter((p) => !files.includes(p));
   const unexpected = files.filter((p) => !allowed.has(p));
   if (missing.length > 0 || unexpected.length > 0) {
     throw new Error(
-      `scripts/aipt must retain B000+B001 and may add only validate-p0-b002.mjs during construction (no adapter/runtime/mutant executable); missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)}`,
+      `scripts/aipt must contain exactly the B000+B001+B002 validators (no adapter/runtime/mutant executable); missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)}`,
     );
   }
 }
@@ -2859,9 +2862,17 @@ function runProbes() {
       const entries = collectAiptEntries().concat([{ rel: "aipt/p0-b001/evil-link.json", kind: "symlink" }]);
       expectThrown(() => checkArtifactPaths(entries), "symlinks/non-regular entries under aipt rejected (never silently ignored)");
     }],
+    ["required finalized B002 README missing", () => {
+      const entries = collectAiptEntries().filter((entry) => entry.rel !== "aipt/p0-b002/README.md");
+      expectThrown(() => checkArtifactPaths(entries), "all four finalized B002 artifacts required");
+    }],
+    ["required B002 validator missing", () => {
+      const entries = collectScriptsAiptEntries().filter((entry) => entry.rel !== "scripts/aipt/validate-p0-b002.mjs");
+      expectThrown(() => checkScriptsAipt(entries), "all three validators required after S1");
+    }],
     ["unexpected scripts/aipt/adapter-runtime.mjs entry", () => {
       const entries = collectScriptsAiptEntries().concat([{ rel: "scripts/aipt/adapter-runtime.mjs", kind: "file" }]);
-      expectThrown(() => checkScriptsAipt(entries), "scripts/aipt retains B000+B001 and allows only the B002 validator as an optional construction addition");
+      expectThrown(() => checkScriptsAipt(entries), "scripts/aipt contains exactly B000+B001+B002 validators");
     }],
   ];
 
@@ -2912,11 +2923,11 @@ function main() {
   runCheck("safety-profile", checkSafetyProfile);
   runCheck("artifact paths", () => {
     checkArtifactPaths(collectAiptEntries());
-    pass("artifact paths: B000+B001 historical files remain exact; only four explicit B002 construction artifacts may be added; symlinks and other non-regular entries reject");
+    pass("artifact paths: B000+B001 historical files and all four finalized B002 artifacts are required exactly; symlinks and other non-regular entries reject");
   });
   runCheck("scripts/aipt allowlist", () => {
     checkScriptsAipt(collectScriptsAiptEntries());
-    pass("scripts/aipt allowlist: B000+B001 required; only validate-p0-b002.mjs may be added during construction — no adapter/runtime/mutant executable");
+    pass("scripts/aipt allowlist: exactly B000+B001+B002 validators required — no adapter/runtime/mutant executable");
   });
   runCheck("delivery-surface scan", checkScan);
   runProbes();

@@ -26,8 +26,9 @@
  *      orphans, SUPERSEDES acyclic, no mutation/CANON promotion;
  *   5. security/surface contracts — credentials, private absolute paths,
  *      participant payloads, path traversal, symlinks/non-regular artifacts,
- *      unexpected p0-b002/scripts/aipt artifacts, adapters/runtimes/mutants,
- *      and any B003 artifact are all rejected;
+ *      unexpected p0-b002/scripts/aipt artifacts and executable
+ *      adapters/runtimes/mutants are rejected; B003 is limited to its exact
+ *      data/validator allowlist;
  *   6. comprehensive in-memory adversarial probes, every one required to reject.
  *
  * Output is concise and deterministic; exits non-zero with actionable errors
@@ -1653,6 +1654,7 @@ const REQUIRED_SCRIPTS_AIPT = [
   "scripts/aipt/validate-p0-b000.mjs",
   "scripts/aipt/validate-p0-b001.mjs",
   "scripts/aipt/validate-p0-b002.mjs",
+  "scripts/aipt/validate-p0-b003.mjs",
 ];
 
 function collectEntriesWithKinds(dir) {
@@ -1715,12 +1717,12 @@ function checkScriptsAipt(entries, opts = {}) {
     );
   }
   const files = entries.map((e) => e.rel).sort();
-  const allowed = new Set([...REQUIRED_SCRIPTS_AIPT, "scripts/aipt/validate-p0-b003.mjs"]);
+  const allowed = new Set(REQUIRED_SCRIPTS_AIPT);
   const missing = REQUIRED_SCRIPTS_AIPT.filter((p) => !files.includes(p));
   const unexpected = files.filter((p) => !allowed.has(p));
   if (missing.length > 0 || unexpected.length > 0) {
     throw new Error(
-      `scripts/aipt must retain ${JSON.stringify(REQUIRED_SCRIPTS_AIPT)} and may add only validate-p0-b003.mjs; missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)} (no adapter/runtime/mutant executable)`,
+      `scripts/aipt must contain exactly ${JSON.stringify(REQUIRED_SCRIPTS_AIPT)}; missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)} (no adapter/runtime/mutant executable)`,
     );
   }
 }

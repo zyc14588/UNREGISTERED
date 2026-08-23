@@ -1,6 +1,6 @@
-# AIPT — Identity, Policy, Registry, and Rule Metadata
+# AIPT — Identity, Policy, Registry, Rule Metadata, and Adapter Contract
 
-本目录保存《未登记》AIPT 机器可读交付。当前仓库批次 `UNREGISTERED-AIPT-P0-B002` 已为 `MERGED_CLOSED`、`global_wip: 0`；下一批 `UNREGISTERED-AIPT-P0-B003` 为 `AUTHORIZED_TO_PREPARE`，已获准备授权但未开始。
+本目录保存《未登记》AIPT 机器可读交付。当前仓库批次 `UNREGISTERED-AIPT-P0-B003` 为 `IN_PROGRESS`、`global_wip: 1`；直接仓库前序 `UNREGISTERED-AIPT-P0-B002` 已 `MERGED_CLOSED`。下一批 `AIPT-M0-B007` 为 `NOT_AUTHORIZED`、`started: false`。
 
 ## 工件索引
 
@@ -16,8 +16,14 @@
 - [`p0-b002/rule-id-map.json`](p0-b002/rule-id-map.json) — 40 个 Rule ID、10 个 Invariant ID、0 个 Mutation ID。
 - [`p0-b002/machine-rules.json`](p0-b002/machine-rules.json) — 40 条 data-only、deterministic、`ACTIVE_PROPOSAL` 机器规则。
 - [`p0-b002/semantic-graph.json`](p0-b002/semantic-graph.json) — 10 个概念节点、40 个 Rule ref、10 个 Invariant ref、105 条有类型边。
+- [`p0-b003/README.md`](p0-b003/README.md) — B003 Candidate 范围、摘要与验证入口。
+- [`p0-b003/compatibility.json`](p0-b003/compatibility.json) — AIPT commit/protocol/schema/SDK 兼容声明。
+- [`p0-b003/game-adapter.json`](p0-b003/game-adapter.json) — first roster + Task 0 的 data-only game adapter 契约。
+- [`p0-b003/human-guide-map.json`](p0-b003/human-guide-map.json) — 两个 Human Guide shard 的 reference-only 索引。
+- [`p0-b003/NON_CANON_TEST_FIXTURE/clean/manifest.json`](p0-b003/NON_CANON_TEST_FIXTURE/clean/manifest.json) — 确定性 clean baseline。
+- [`p0-b003/NON_CANON_TEST_FIXTURE/mutants/manifest.json`](p0-b003/NON_CANON_TEST_FIXTURE/mutants/manifest.json) — 三个 NON_CANON overlay/oracle 的固定索引。
 
-所有 B002 规则输出均为 `PROPOSAL`、`canonical: false`。它们只覆盖 first roster 与 Task 0 最小闭环，不是运行时、适配器或后续批次实现。
+所有 B002 规则输出仍为 `PROPOSAL`、`canonical: false`。B003 只增加 PLAYTESTABLE_DRAFT adapter/validation 契约和测试工件；它不是完整 runtime，不构成 release evidence，也不修改 B002 规则 Authority。
 
 人类可读政策摘要见 [`../LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md`](../LICENSES/UNREGISTERED-CONTENT-POLICY-1.0.md)（POLICY SUMMARY / NOT FINAL LICENSE TEXT）。本目录元数据不构成许可证文本、不授予权利，也不改变其他文件的许可状态。
 
@@ -29,9 +35,11 @@
 node scripts/aipt/validate-p0-b000.mjs
 node scripts/aipt/validate-p0-b001.mjs
 node scripts/aipt/validate-p0-b002.mjs
+node scripts/aipt/validate-p0-b003.mjs
 ```
 
 - B000 门：仓库 JSON/相对链接、身份、许可、状态、交付面与 workflow 静态约束。
 - B001 门：冻结输入、稳定 ID、可见性、安全配置、最终工件表面与 100 个负向探针。
 - B002 门：冻结哈希、Rule ID、机器规则、语义图、安全表面与 35 个负向探针。
-- CI：[`AIPT Content Gate`](../.github/workflows/aipt-content-gate.yml) 在 `ubuntu-24.04` / Node.js `24.19.0` 上以三个独立步骤运行以上命令。
+- B003 门：兼容性、clean fixture、三个受限 overlay/detector、Human Guide、game adapter、严格表面与 30 个负向探针。
+- CI：[`AIPT Content Gate`](../.github/workflows/aipt-content-gate.yml) 在 `ubuntu-24.04` / Node.js `24.19.0` 上以四个独立步骤运行以上命令。

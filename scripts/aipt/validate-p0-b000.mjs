@@ -42,7 +42,7 @@
  *   8. static check of the AIPT Content Gate workflow, including a hardened
  *      top-level permissions block parse (blank/comment-safe, runs until the
  *      next top-level key), rejection of any permission entry valued write,
- *      and the requirement that all three validator commands run as separate
+ *      and the requirement that all four validator commands run as separate
  *      steps — immutable action pins, Node.js 24.19.0, contents:read,
  *      persist-credentials:false, ubuntu-24.04 and the no-install/no-cache/
  *      no-token/no-remote-call rules are unchanged;
@@ -51,10 +51,10 @@
  *      MERGED_CLOSED closeout shape rejects every stale, legacy, or
  *      contradictory mutation (9b).
  *
- * B000 and B001 are historical MERGED_CLOSED batches. The current repository
- * lifecycle is B002 MERGED_CLOSED with global_wip 0; B003 is authorized to
- * prepare but not started. The required B001 artifacts remain frozen, while
- * only the explicit B002 delivery paths are allowed.
+ * B000, B001, and B002 are historical MERGED_CLOSED batches. The current
+ * repository lifecycle is B003 IN_PROGRESS with global_wip 1; AIPT-M0-B007
+ * remains NOT_AUTHORIZED and not started. Historical artifacts remain frozen,
+ * while B003 is restricted to its explicit data/validator surface.
  *
  * Output is concise and deterministic; exits non-zero with actionable errors
  * on any failure.
@@ -691,7 +691,7 @@ function checkStatusAndArtifacts() {
       throw new Error(`P0-B002 rule authority artifact outside aipt/p0-b002/**: ${r}`);
     }
     if (/run[-_]?manifest/i.test(path.basename(f))) {
-      throw new Error(`AIPT run manifest present: ${r} (not allowed: ${CURRENT_BATCH} is MERGED_CLOSED and ${NEXT_BATCH} is authorized to prepare but not started)`);
+      throw new Error(`AIPT run manifest present: ${r} (not allowed: ${CURRENT_BATCH} defers integration-pair binding and ${NEXT_BATCH} is NOT_AUTHORIZED and not started)`);
     }
   }
   pass(`status: ${CURRENT_BATCH} IN_PROGRESS; direct predecessor ${B002_BATCH} MERGED_CLOSED; AIPT-M0-B006 retained as historical external ancestry; global_wip=1; next ${NEXT_BATCH} NOT_AUTHORIZED and not started; historical artifacts frozen; B003 surface explicit`);
@@ -1279,8 +1279,8 @@ function checkWorkflow() {
   require(/^\s*timeout-minutes:\s*5\s*$/m.test(text), "job must set timeout-minutes: 5");
   require(text.includes("node --version") && text.includes("v24.19.0"), "must explicitly assert node --version is v24.19.0");
   require(text.includes("node scripts/aipt/validate-p0-b000.mjs"), "must run node scripts/aipt/validate-p0-b000.mjs");
-  // B000, B001 and B002 must run exactly once as separate, clearly named
-  // steps after S1 finalization.
+  // B000, B001, B002 and B003 must run exactly once as separate, clearly
+  // named steps at the B003 Candidate.
   const validatorRuns = lines
     .map((l) => l.trim())
     .filter((l) => /^run:\s*node scripts\/aipt\/validate-p0-b\d+\.mjs\s*$/.test(l));
@@ -1288,12 +1288,13 @@ function checkWorkflow() {
     "run: node scripts/aipt/validate-p0-b000.mjs",
     "run: node scripts/aipt/validate-p0-b001.mjs",
     "run: node scripts/aipt/validate-p0-b002.mjs",
+    "run: node scripts/aipt/validate-p0-b003.mjs",
   ]);
   require(
-    validatorRuns.length === 3 &&
-      new Set(validatorRuns).size === 3 &&
+    validatorRuns.length === 4 &&
+      new Set(validatorRuns).size === 4 &&
       [...allowedValidatorRuns].every((run) => validatorRuns.includes(run)),
-    `must run B000, B001 and B002 exactly once as three separate steps; got ${JSON.stringify(validatorRuns)}`,
+    `must run B000, B001, B002 and B003 exactly once as four separate steps; got ${JSON.stringify(validatorRuns)}`,
   );
   const forbidden = [];
   if (/\bnpm\s+(install|ci|i)\b/.test(text)) forbidden.push("npm install");
@@ -1305,7 +1306,7 @@ function checkWorkflow() {
   if (/\b(curl|wget)\b/.test(text) || /\bgit\s+(clone|push|pull|fetch)\b/.test(text)) forbidden.push("remote calls");
   require(forbidden.length === 0, `forbidden workflow content detected: ${forbidden.join(", ")}`);
   if (fails.length) throw new Error(fails.join("; "));
-  pass("workflow: AIPT Content Gate static structure OK (B000+B001+B002 required exactly once; immutable pins, Node 24.19.0, contents:read, no install/cache/token/remote calls)");
+  pass("workflow: AIPT Content Gate static structure OK (B000+B001+B002+B003 required exactly once; immutable pins, Node 24.19.0, contents:read, no install/cache/token/remote calls)");
 }
 
 // ---------------------------------------------------------------------------

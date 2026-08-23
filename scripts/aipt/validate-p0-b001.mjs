@@ -13,10 +13,10 @@
  * resolution) remain enforced by the still-run validate-p0-b000.mjs step; this
  * validator relies on that gate and focuses on the B001 contract:
  *
- *   1. exact B002 closeout status shape (MERGED_CLOSED; previous repository
- *      batch B001 MERGED_CLOSED; external serial predecessor AIPT-M0-B006
- *      closed successfully; global_wip 0; B003 AUTHORIZED_TO_PREPARE and not
- *      started);
+ *   1. exact B003 construction/Candidate status shape (IN_PROGRESS; direct
+ *      repository predecessor B002 MERGED_CLOSED; external serial ancestor
+ *      AIPT-M0-B006 closed successfully; global_wip 1; AIPT-M0-B007
+ *      NOT_AUTHORIZED and not started);
  *   2. input manifest: fail-closed schema shape — exact allowed key sets for
  *      the top level, game, content_license, aipt_compatibility,
  *      source_binding, source_path_policy, every source_files entry, every
@@ -2190,7 +2190,7 @@ function checkArtifactPaths(entries) {
   }
 }
 
-/** After S1 all three validators are required exactly; no adapter/runtime/
+/** At the B003 Candidate all four validators are required exactly; no adapter/runtime/
  *  mutant executable (or any other script) may be added under scripts/aipt. */
 function checkScriptsAipt(entries) {
   const nonRegular = entries.filter((e) => e.kind !== "file");
@@ -2204,13 +2204,14 @@ function checkScriptsAipt(entries) {
     "scripts/aipt/validate-p0-b000.mjs",
     "scripts/aipt/validate-p0-b001.mjs",
     "scripts/aipt/validate-p0-b002.mjs",
+    "scripts/aipt/validate-p0-b003.mjs",
   ];
-  const allowed = new Set([...required, "scripts/aipt/validate-p0-b003.mjs"]);
+  const allowed = new Set(required);
   const missing = required.filter((p) => !files.includes(p));
   const unexpected = files.filter((p) => !allowed.has(p));
   if (missing.length > 0 || unexpected.length > 0) {
     throw new Error(
-      `scripts/aipt must retain B000+B001+B002 and may add only validate-p0-b003.mjs; missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)}`,
+      `scripts/aipt must contain exactly B000+B001+B002+B003 validators; missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)}`,
     );
   }
 }
@@ -2968,7 +2969,7 @@ function main() {
   });
   runCheck("scripts/aipt allowlist", () => {
     checkScriptsAipt(collectScriptsAiptEntries());
-    pass("scripts/aipt allowlist: B000+B001+B002 required; only the B003 validator may be added — no adapter/runtime/mutant executable");
+    pass("scripts/aipt allowlist: B000+B001+B002+B003 required exactly — no adapter/runtime/mutant executable");
   });
   runCheck("delivery-surface scan", checkScan);
   runProbes();

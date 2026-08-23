@@ -1,0 +1,28 @@
+{
+  "aipt_schema": "aipt.mutant-oracle.v1",
+  "mutant_id": "UNR-MUTATION-0003",
+  "kind": "STATE_REPLAY_INCONSISTENCY",
+  "markers": [
+    "NON_CANON",
+    "TEST_FIXTURE",
+    "MUTANT"
+  ],
+  "base_commit": "62daf4a6de3f5560d3b2ea8ac7527654a6da616c",
+  "expected_detector": "AIPT_REPLAY_HASH_MISMATCH",
+  "max_detection_runs": 1,
+  "minimal_evidence": {
+    "clean_final_state_canonical_sha256": "4c22dea6f59ca1c4d3c880e0443a758c65ec85d4a147b242afec9f8b534f5875",
+    "clean_replay_raw_sha256": "be692ae4bfb9646d7654ba6c364d22de20b7d1ec54a641b46d0b34dc6253b716",
+    "original_final_state_hash": "4c22dea6f59ca1c4d3c880e0443a758c65ec85d4a147b242afec9f8b534f5875",
+    "mutated_pointer": "/final_state_hash",
+    "mutated_value": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "false_positive_boundary": {
+    "clean_replay_a": "MATCHES_CLEAN_FINAL_STATE",
+    "clean_replay_b": "MATCHES_CLEAN_FINAL_STATE",
+    "clean_result": "NO_DETECTION",
+    "overlay_result": "DETERMINISTIC_HASH_MISMATCH",
+    "statement": "Both clean replay records and the clean assertion agree with the clean final state; only applying this overlay creates the deterministic mismatch."
+  },
+  "expected_detection_run": 1
+}

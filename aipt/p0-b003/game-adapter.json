@@ -1,0 +1,122 @@
+{
+  "aipt_schema": "aipt.game-adapter.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B003",
+  "identity": {
+    "game": "UNREGISTERED",
+    "readiness": "PLAYTESTABLE_DRAFT",
+    "scope": "FIRST_ROSTER_TASK0"
+  },
+  "compatibility_ref": {
+    "path": "aipt/p0-b003/compatibility.json",
+    "sha256": "cfe8f112a5bbff6a95286953f2d9cfd5629ed1fe1f58d0a578ae17ee87a52d06"
+  },
+  "rule_authority": {
+    "rule_id_map": {
+      "path": "aipt/p0-b002/rule-id-map.json",
+      "sha256": "321550a1bb91066c263e5857c8095878d708af3f296430bc00011d70f5bb242c",
+      "rule_count": 40,
+      "invariant_count": 10
+    },
+    "machine_rules": {
+      "path": "aipt/p0-b002/machine-rules.json",
+      "sha256": "139d095fe54926e1599edf208b65f7a89061f1cda6d8b492f83b5e47c0693c78",
+      "active_rule_count": 40
+    },
+    "semantic_graph": {
+      "path": "aipt/p0-b002/semantic-graph.json",
+      "sha256": "8c9ad9ade247ac6195019b7225725c70cd26b55270979d31c7b3701d02092562",
+      "concept_count": 10,
+      "invariant_ref_count": 10
+    }
+  },
+  "identity_authority": {
+    "stable_ids": {
+      "path": "aipt/p0-b001/stable-ids.json",
+      "sha256": "c7e296bf7f7595ec17e67e44fef60ac38e979d4906ab31d1d9081e6bed53dba6",
+      "character_ids": [
+        "UNR-CHAR-0001",
+        "UNR-CHAR-0002",
+        "UNR-CHAR-0003",
+        "UNR-CHAR-0004"
+      ]
+    },
+    "visibility": {
+      "path": "aipt/p0-b001/visibility.json",
+      "sha256": "e232a2f95c6359cf54dd5f4147c72e0c3433614e00555226cd2993716f7bbb70"
+    },
+    "safety_profile": {
+      "path": "aipt/p0-b001/safety-profile.json",
+      "sha256": "dea0b7a62ba8ac81cb9314546afebca400642d9923f9ae928d97c9a40a29304f"
+    }
+  },
+  "fixture": {
+    "clean_manifest": {
+      "path": "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/manifest.json",
+      "sha256": "e52d53541afd15b86dcf79e1e89baa74b8f2c494e342bc02ee8863b0e9ce8faa"
+    }
+  },
+  "mutants": {
+    "id_map": {
+      "path": "aipt/p0-b003/mutation-id-map.json",
+      "sha256": "ea2dfaf379e9f99e6a3e2ae292d9cbf5787e45d9f7270e894728dbbb66cc50ae"
+    },
+    "manifest": {
+      "path": "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/manifest.json",
+      "sha256": "8904b4c884b046d1dd5637aaec4deb1c518db2297b9cae3af4375ddb11894841"
+    },
+    "count": 3,
+    "mutation_ids": [
+      "UNR-MUTATION-0001",
+      "UNR-MUTATION-0002",
+      "UNR-MUTATION-0003"
+    ]
+  },
+  "human_guide": {
+    "map": {
+      "path": "aipt/p0-b003/human-guide-map.json",
+      "sha256": "3e0dcc3106afaa10307ed42894c2e761a14783070dcd540bc383a7679f31b867"
+    }
+  },
+  "character_seat_mapping": [
+    {
+      "character_id": "UNR-CHAR-0001",
+      "seat_id": "seat-01"
+    },
+    {
+      "character_id": "UNR-CHAR-0002",
+      "seat_id": "seat-02"
+    },
+    {
+      "character_id": "UNR-CHAR-0003",
+      "seat_id": "seat-03"
+    },
+    {
+      "character_id": "UNR-CHAR-0004",
+      "seat_id": "seat-04"
+    }
+  ],
+  "persona_binding": {
+    "model": "PERSONA_SEPARATE_FROM_CHARACTER",
+    "concrete_persona_profiles": "DEFERRED_TO_AIPT_RUN_MANIFEST"
+  },
+  "ambiguity_policy": {
+    "task0_unresolved_blocking_threshold": 2,
+    "configuration_layer": "UNREGISTERED_GAME_MAPPING",
+    "aipt_core_parameter": false
+  },
+  "lifecycle": {
+    "source_rules": "PROPOSAL",
+    "canonical": false,
+    "runtime_eligibility": "PLAYTESTABLE_DRAFT_ONLY",
+    "release_evidence_eligible": false
+  },
+  "commit_pair": {
+    "binding": "DEFERRED_TO_INT_AIPT_UNREGISTERED_001"
+  },
+  "delivery_boundaries": {
+    "executable_code": false,
+    "aipt_schema_copied": false,
+    "sdk_vendored": false,
+    "model_prompt_embedded": false
+  }
+}

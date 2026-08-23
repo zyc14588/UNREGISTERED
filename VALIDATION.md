@@ -23,7 +23,7 @@ The script uses only the Python standard library.
 
 ## AIPT Content Gate
 
-当前交付批次 `UNREGISTERED-AIPT-P0-B003` 为 `IN_PROGRESS`、`global_wip: 1`；直接仓库前序 B002 已 `MERGED_CLOSED`。B002 的 40 条 Rule、10 条 Invariant 与历史 0 条 Mutation 均保持冻结；B003 另分配 3 个仅用于 `NON_CANON TEST_FIXTURE` 的 Mutation ID。下一批 `AIPT-M0-B007` 仍为 `NOT_AUTHORIZED`、`started: false`。
+当前交付批次 `UNREGISTERED-AIPT-P0-B003` 已 `MERGED_CLOSED`、`global_wip: 0`；implementation merge 为 `5d25dad0dbcb648de565ea723027f999ec5b3a37`，其 post-merge AIPT Content Gate `32621232115` 为 `success`。直接仓库前序 B002 的 40 条 Rule、10 条 Invariant 与历史 0 条 Mutation 均保持冻结；B003 另分配 3 个仅用于 `NON_CANON TEST_FIXTURE` 的 Mutation ID。下一批 `AIPT-M0-B007` 为 `AUTHORIZED_TO_PREPARE`、`next_batch_authorized: true`、`started: false`；本仓库未开始其 implementation。
 
 在 Node.js `v24.19.0` 下运行四个独立、无依赖的标准库验证器：
 

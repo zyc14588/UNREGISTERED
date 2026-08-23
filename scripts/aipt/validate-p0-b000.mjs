@@ -47,14 +47,14 @@
  *      persist-credentials:false, ubuntu-24.04 and the no-install/no-cache/
  *      no-token/no-remote-call rules are unchanged;
  *   9. eight in-memory negative probes, all of which must be rejected; plus an
- *      in-memory status-mutation probe set proving the status.json B002
+ *      in-memory status-mutation probe set proving the status.json B003
  *      MERGED_CLOSED closeout shape rejects every stale, legacy, or
  *      contradictory mutation (9b).
  *
  * B000, B001, and B002 are historical MERGED_CLOSED batches. The current
- * repository lifecycle is B003 IN_PROGRESS with global_wip 1; AIPT-M0-B007
- * remains NOT_AUTHORIZED and not started. Historical artifacts remain frozen,
- * while B003 is restricted to its explicit data/validator surface.
+ * repository lifecycle is B003 MERGED_CLOSED with global_wip 0; AIPT-M0-B007
+ * is AUTHORIZED_TO_PREPARE but not started. Historical artifacts and the B003
+ * implementation surface remain frozen.
  *
  * Output is concise and deterministic; exits non-zero with actionable errors
  * on any failure.
@@ -540,7 +540,7 @@ function checkForbiddenKeys(obj, fileLabel) {
   }
 }
 
-/** Legal B003 construction status for aipt/status.json: exactly these keys and
+/** Legal B003 closeout status for aipt/status.json: exactly these keys and
  *  values. B002 is the direct repository predecessor; B006 is retained only as
  *  historical external ancestry. */
 const STATUS_KEYS_B003 = [
@@ -559,8 +559,8 @@ const STATUS_KEYS_B003 = [
 const EXPECTED_STATUS_B003 = {
   aipt_schema: "aipt.status.v3",
   current_batch: CURRENT_BATCH,
-  status: "IN_PROGRESS",
-  global_wip: 1,
+  status: "MERGED_CLOSED",
+  global_wip: 0,
   previous_repo_batch: {
     batch_id: B002_BATCH,
     status: "MERGED_CLOSED",
@@ -581,8 +581,8 @@ const EXPECTED_STATUS_B003 = {
     closeout_ci_conclusion: "success",
   },
   next_batch: NEXT_BATCH,
-  next_batch_state: "NOT_AUTHORIZED",
-  next_batch_authorized: false,
+  next_batch_state: "AUTHORIZED_TO_PREPARE",
+  next_batch_authorized: true,
   next_batch_started: false,
 };
 
@@ -691,10 +691,10 @@ function checkStatusAndArtifacts() {
       throw new Error(`P0-B002 rule authority artifact outside aipt/p0-b002/**: ${r}`);
     }
     if (/run[-_]?manifest/i.test(path.basename(f))) {
-      throw new Error(`AIPT run manifest present: ${r} (not allowed: ${CURRENT_BATCH} defers integration-pair binding and ${NEXT_BATCH} is NOT_AUTHORIZED and not started)`);
+      throw new Error(`AIPT run manifest present: ${r} (not allowed: ${CURRENT_BATCH} defers integration-pair binding and ${NEXT_BATCH} is only AUTHORIZED_TO_PREPARE, not started)`);
     }
   }
-  pass(`status: ${CURRENT_BATCH} IN_PROGRESS; direct predecessor ${B002_BATCH} MERGED_CLOSED; AIPT-M0-B006 retained as historical external ancestry; global_wip=1; next ${NEXT_BATCH} NOT_AUTHORIZED and not started; historical artifacts frozen; B003 surface explicit`);
+  pass(`status: ${CURRENT_BATCH} MERGED_CLOSED; direct predecessor ${B002_BATCH} MERGED_CLOSED; AIPT-M0-B006 retained as historical external ancestry; global_wip=0; next ${NEXT_BATCH} AUTHORIZED_TO_PREPARE and not started; historical and B003 implementation surfaces frozen`);
 }
 
 // ---------------------------------------------------------------------------
@@ -1280,7 +1280,7 @@ function checkWorkflow() {
   require(text.includes("node --version") && text.includes("v24.19.0"), "must explicitly assert node --version is v24.19.0");
   require(text.includes("node scripts/aipt/validate-p0-b000.mjs"), "must run node scripts/aipt/validate-p0-b000.mjs");
   // B000, B001, B002 and B003 must run exactly once as separate, clearly
-  // named steps at the B003 Candidate.
+  // named steps at the B003 frozen delivery.
   const validatorRuns = lines
     .map((l) => l.trim())
     .filter((l) => /^run:\s*node scripts\/aipt\/validate-p0-b\d+\.mjs\s*$/.test(l));
@@ -1375,14 +1375,14 @@ function runProbes() {
 
 // ---------------------------------------------------------------------------
 // 9b. In-memory status-mutation probe set — every stale/legacy/contradictory
-//     mutation of the legal B003 construction status must reject.
+//     mutation of the legal B003 closeout status must reject.
 // ---------------------------------------------------------------------------
 
 function runStatusProbes() {
   const base = loadJson("aipt/status.json");
   const probes = [
-    ["current status drift (MERGED_CLOSED)", () => checkBatchStatus({ ...base, status: "MERGED_CLOSED" })],
-    ["global_wip=0", () => checkBatchStatus({ ...base, global_wip: 0 })],
+    ["current status drift (IN_PROGRESS)", () => checkBatchStatus({ ...base, status: "IN_PROGRESS" })],
+    ["global_wip=1", () => checkBatchStatus({ ...base, global_wip: 1 })],
     ["previous_repo_batch.status drift", () =>
       checkBatchStatus({ ...base, previous_repo_batch: { ...base.previous_repo_batch, status: "IN_PROGRESS" } })],
     ["previous_repo_batch.batch_id drift", () =>
@@ -1400,9 +1400,9 @@ function runStatusProbes() {
     ["historical ancestry CI conclusion drift", () =>
       checkBatchStatus({ ...base, historical_external_ancestry: { ...base.historical_external_ancestry, closeout_ci_conclusion: "failure" } })],
     ["next_batch drift", () => checkBatchStatus({ ...base, next_batch: "UNREGISTERED-AIPT-P0-B004" })],
-    ["next_batch_state drift (AUTHORIZED_TO_PREPARE)", () =>
-      checkBatchStatus({ ...base, next_batch_state: "AUTHORIZED_TO_PREPARE" })],
-    ["next_batch_authorized=true", () => checkBatchStatus({ ...base, next_batch_authorized: true })],
+    ["next_batch_state drift (NOT_AUTHORIZED)", () =>
+      checkBatchStatus({ ...base, next_batch_state: "NOT_AUTHORIZED" })],
+    ["next_batch_authorized=false", () => checkBatchStatus({ ...base, next_batch_authorized: false })],
     ["next_batch_started=true", () => checkBatchStatus({ ...base, next_batch_started: true })],
     ["legacy next_started key", () => checkBatchStatus({ ...base, next_started: false })],
     ["legacy previous_batch key", () => checkBatchStatus({ ...base, previous_batch: { batch_id: BATCH, status: "MERGED_CLOSED" } })],

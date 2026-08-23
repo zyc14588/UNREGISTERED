@@ -1,10 +1,10 @@
 # AIPT — Identity, Policy, Registry, Rule Metadata, and Adapter Contract
 
-本目录保存《未登记》AIPT 机器可读交付。当前仓库批次 `UNREGISTERED-AIPT-P0-B003` 为 `IN_PROGRESS`、`global_wip: 1`；直接仓库前序 `UNREGISTERED-AIPT-P0-B002` 已 `MERGED_CLOSED`。下一批 `AIPT-M0-B007` 为 `NOT_AUTHORIZED`、`started: false`。
+本目录保存《未登记》AIPT 机器可读交付。当前仓库批次 `UNREGISTERED-AIPT-P0-B003` 已 `MERGED_CLOSED`、`global_wip: 0`；直接仓库前序 `UNREGISTERED-AIPT-P0-B002` 的 immutable identity 保持不变，外部历史祖先 `AIPT-M0-B006` 的 provenance 继续保留。下一批 `AIPT-M0-B007` 为 `AUTHORIZED_TO_PREPARE`、`next_batch_authorized: true`、`started: false`，且未在本仓库开始 implementation。
 
 ## 工件索引
 
-- [`status.json`](status.json) — 当前 B002 生命周期、已关闭的仓库前序 B001，以及已关闭的外部串行前序 AIPT-M0-B006。
+- [`status.json`](status.json) — 当前 B003 closeout 生命周期、已关闭的直接仓库前序 B002、已关闭的外部历史祖先 AIPT-M0-B006，以及仅获准准备但尚未开始的 AIPT-M0-B007。
 - [`input-manifest.json`](input-manifest.json) — B001 冻结输入清单：14 个源文件和 3 个 registry 引用。
 - [`p0-b000/identity.json`](p0-b000/identity.json) — 正式名称、旧代号历史标记与 `package_id`。
 - [`p0-b000/licensing.json`](p0-b000/licensing.json) — 政策名称、引用标识、状态和 fail-closed 路径范围。
@@ -16,7 +16,7 @@
 - [`p0-b002/rule-id-map.json`](p0-b002/rule-id-map.json) — 40 个 Rule ID、10 个 Invariant ID、0 个 Mutation ID。
 - [`p0-b002/machine-rules.json`](p0-b002/machine-rules.json) — 40 条 data-only、deterministic、`ACTIVE_PROPOSAL` 机器规则。
 - [`p0-b002/semantic-graph.json`](p0-b002/semantic-graph.json) — 10 个概念节点、40 个 Rule ref、10 个 Invariant ref、105 条有类型边。
-- [`p0-b003/README.md`](p0-b003/README.md) — B003 Candidate 范围、摘要与验证入口。
+- [`p0-b003/README.md`](p0-b003/README.md) — B003 已关闭范围、摘要与验证入口。
 - [`p0-b003/compatibility.json`](p0-b003/compatibility.json) — AIPT commit/protocol/schema/SDK 兼容声明。
 - [`p0-b003/game-adapter.json`](p0-b003/game-adapter.json) — first roster + Task 0 的 data-only game adapter 契约。
 - [`p0-b003/human-guide-map.json`](p0-b003/human-guide-map.json) — 两个 Human Guide shard 的 reference-only 索引。

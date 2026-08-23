@@ -1,6 +1,6 @@
 # UNREGISTERED-AIPT-P0-B003 Adapter and Mutant Validation
 
-状态：`IN_PROGRESS`（Candidate，未合并）。本批次为 first roster + Task 0 提供 data-only game adapter 契约、确定性 clean fixture、三个 `NON_CANON TEST_FIXTURE` Mutant overlay/oracle，以及 Human Guide 映射。它不启动游戏 runtime，不复制 AIPT schema/SDK，不提升任何规则或战役内容为 CANON。
+状态：`MERGED_CLOSED`。implementation merge `5d25dad0dbcb648de565ea723027f999ec5b3a37` 及其 post-merge AIPT Content Gate `32621232115` 均已通过。本批次为 first roster + Task 0 提供 data-only game adapter 契约、确定性 clean fixture、三个 `NON_CANON TEST_FIXTURE` Mutant overlay/oracle，以及 Human Guide 映射。它不启动游戏 runtime，不复制 AIPT schema/SDK，不提升任何规则或战役内容为 CANON。
 
 ## 中央契约
 
@@ -31,7 +31,7 @@ Human Guide shards：
 - 规则来源：`PROPOSAL`；运行资格：`PLAYTESTABLE_DRAFT_ONLY`；`release_evidence_eligible: false`。
 - Persona 与 Character 分离；具体 Persona profile 延迟到 AIPT Run Manifest。
 - commit pair 绑定延迟到 `INT-AIPT-UNREGISTERED-001`。
-- 下一批 `AIPT-M0-B007` 为 `NOT_AUTHORIZED`、`started: false`。
+- 下一批 `AIPT-M0-B007` 为 `AUTHORIZED_TO_PREPARE`、`next_batch_authorized: true`、`started: false`；它属于另一仓库，本次未创建其分支或开始 implementation。
 
 使用 Node.js `v24.19.0`，无需依赖、安装、网络、模型或 subprocess：
 

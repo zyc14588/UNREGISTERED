@@ -1,0 +1,38 @@
+{
+  "aipt_schema": "aipt.noncanon-patch-overlay.v1",
+  "mutant_id": "UNR-MUTATION-0001",
+  "kind": "HIDDEN_INFORMATION_LEAK",
+  "markers": [
+    "NON_CANON",
+    "TEST_FIXTURE",
+    "MUTANT"
+  ],
+  "base_commit": "62daf4a6de3f5560d3b2ea8ac7527654a6da616c",
+  "target": {
+    "path": "aipt/p0-b001/visibility.json",
+    "preimage_sha256": "e232a2f95c6359cf54dd5f4147c72e0c3433614e00555226cd2993716f7bbb70"
+  },
+  "operations": [
+    {
+      "op": "replace",
+      "path": "/mappings/4/principals",
+      "value": [
+        "GM",
+        "CHARACTER:UNR-CHAR-0001",
+        "CHARACTER:UNR-CHAR-0002"
+      ]
+    }
+  ],
+  "postimage_sha256": "bf97d429184ed4db100584115e395636884922afce6d7455264fa00bf95391a0",
+  "digest_rules": {
+    "preimage_sha256": "SHA256_EXACT_FILE_BYTES",
+    "postimage_sha256": "SHA256_AIPT_CANONICAL_JSON_BYTES",
+    "canonical_json": {
+      "encoding": "UTF-8",
+      "object_keys": "RECURSIVELY_SORTED",
+      "array_order": "PRESERVED",
+      "whitespace": "NONE",
+      "trailing_newline": false
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "aipt_schema": "aipt.mutant-oracle.v1",
+  "mutant_id": "UNR-MUTATION-0002",
+  "kind": "PROSE_MACHINE_DIVERGENCE",
+  "markers": [
+    "NON_CANON",
+    "TEST_FIXTURE",
+    "MUTANT"
+  ],
+  "base_commit": "62daf4a6de3f5560d3b2ea8ac7527654a6da616c",
+  "expected_detector": "UNREGISTERED_PROSE_MACHINE_DIVERGENCE",
+  "expected_detection_run": 1,
+  "max_detection_runs": 1,
+  "minimal_evidence": {
+    "rule_id": "UNR-RULE-0020",
+    "machine_target_path": "aipt/p0-b002/machine-rules.json",
+    "machine_json_pointer": "/rules/19/resolution/3/change/amount",
+    "primary_prose_source": {
+      "path": "campaign/rules/mechanics-fine-v1.md",
+      "sha256": "69c6effd923b18b8bbb83331489fbd8f7949197501ab897a92e9338fdb62c37a",
+      "locator": "### A2 疲劳（Expedition 尺度）",
+      "locator_type": "MARKDOWN_HEADING",
+      "frozen_supporting_table_row": "| Pressure | 每满 2 点＝所有行动判定 **−10 状态减值**（与伤口叠加、不占修正上限） |"
+    },
+    "expected_prose_value": -10,
+    "mutated_machine_value": -5
+  },
+  "false_positive_boundary": {
+    "clean_machine_value": -10,
+    "frozen_prose_value": -10,
+    "clean_result": "NO_DETECTION",
+    "overlay_machine_value": -5,
+    "overlay_result": "DETECTION_REQUIRED",
+    "statement": "The clean machine rule agrees with the frozen prose; only applying this overlay creates the contradiction."
+  }
+}

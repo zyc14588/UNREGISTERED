@@ -1,0 +1,24 @@
+{
+  "protocol_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "fixture_id": "unregistered-task0-clean-v1",
+  "state_id": "task0-after-recon",
+  "fields": [
+    {
+      "field_id": "mission-clock-minutes",
+      "value": 30,
+      "visibility": {
+        "label": "PUBLIC",
+        "authorized_seat_ids": ["seat-01", "seat-02", "seat-03", "seat-04"]
+      }
+    },
+    {
+      "field_id": "owner-only-fixture-flag",
+      "value": "present",
+      "visibility": {
+        "label": "TABLE_HIDDEN_REMOTE_ALLOWED",
+        "authorized_seat_ids": ["seat-01"]
+      }
+    }
+  ]
+}

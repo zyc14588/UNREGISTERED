@@ -1,0 +1,12 @@
+{
+  "protocol_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "fixture_id": "unregistered-task0-clean-v1",
+  "event_id": "task0-recon-event-001",
+  "transition_id": "task0-recon-transition-001",
+  "event_type": "state_transition_applied",
+  "payload": {
+    "from_state_id": "task0-before-recon",
+    "to_state_id": "task0-after-recon"
+  }
+}

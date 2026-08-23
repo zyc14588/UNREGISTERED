@@ -1,0 +1,142 @@
+{
+  "aipt_schema": "aipt.game-clean-fixture-manifest.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B003",
+  "fixture_id": "unregistered-task0-clean-v1",
+  "markers": [
+    "NON_CANON",
+    "TEST_FIXTURE",
+    "CLEAN_BASELINE"
+  ],
+  "compatibility_ref": {
+    "path": "aipt/p0-b003/compatibility.json",
+    "sha256": "cfe8f112a5bbff6a95286953f2d9cfd5629ed1fe1f58d0a578ae17ee87a52d06"
+  },
+  "scenario": {
+    "scope": "FIRST_ROSTER_TASK0",
+    "scene_id": "UNR-SCENE-T000-02",
+    "action": "task0-electronic-recon-success",
+    "rule_id": "UNR-RULE-0034",
+    "source": {
+      "path": "campaign/playtest/stage3-run-guide-v1.md",
+      "sha256": "c1ccd8a77d917e05f86f0604731344b22c8902c508858ef71a39ed9da3cce17f",
+      "locator": "### S2 侦查（三渠道，各 30min）",
+      "locator_type": "MARKDOWN_HEADING"
+    },
+    "machine_authority": {
+      "path": "aipt/p0-b002/machine-rules.json",
+      "sha256": "139d095fe54926e1599edf208b65f7a89061f1cda6d8b492f83b5e47c0693c78",
+      "locator": "rules[rule_id=UNR-RULE-0034]",
+      "locator_type": "JSON_PREDICATE"
+    }
+  },
+  "character_seat_mapping": [
+    { "character_id": "UNR-CHAR-0001", "seat_id": "seat-01" },
+    { "character_id": "UNR-CHAR-0002", "seat_id": "seat-02" },
+    { "character_id": "UNR-CHAR-0003", "seat_id": "seat-03" },
+    { "character_id": "UNR-CHAR-0004", "seat_id": "seat-04" }
+  ],
+  "persona_binding": {
+    "model": "PERSONA_SEPARATE_FROM_CHARACTER",
+    "concrete_persona_profiles": "DEFERRED_TO_AIPT_RUN_MANIFEST"
+  },
+  "visibility_probe": {
+    "field_id": "owner-only-fixture-flag",
+    "synthetic_value_only": true,
+    "real_secret_content_included": false,
+    "authorized_seat_ids": [
+      "seat-01"
+    ],
+    "authority": {
+      "path": "aipt/p0-b001/visibility.json",
+      "sha256": "e232a2f95c6359cf54dd5f4147c72e0c3433614e00555226cd2993716f7bbb70",
+      "mapping_id": "premades-secret-0001",
+      "locator": "mappings[id=premades-secret-0001]",
+      "locator_type": "JSON_PREDICATE"
+    }
+  },
+  "asset_digest_rule": "SHA256_FILE_BYTES_UTF8",
+  "assets": [
+    {
+      "path": "action-intent.json",
+      "kind": "action_intent",
+      "schema_ref": "#/$defs/action_intent",
+      "sha256": "6c1de67bdd4e408c68b72a5a358debbc13a4c8b3b016a50367a2efc53d2f43cd"
+    },
+    {
+      "path": "event.json",
+      "kind": "state_event",
+      "schema_ref": "#/$defs/state_event",
+      "sha256": "e93542b0abfff511ba3274dd7c308628a2a692fb40f84349c6afb02f52a5aef5"
+    },
+    {
+      "path": "final-state.json",
+      "kind": "state",
+      "schema_ref": "#/$defs/state",
+      "sha256": "fde86125510dc2505ea84e5b606c4076e65050c436c1bcd3d9e0602b6df98980"
+    },
+    {
+      "path": "projection-seat-01.json",
+      "kind": "projection",
+      "schema_ref": "#/$defs/projection",
+      "sha256": "8869026afa22a3194f5765b56004eb1a89b5ac60c53551091ace1fa8d1b38b81"
+    },
+    {
+      "path": "projection-seat-02.json",
+      "kind": "projection",
+      "schema_ref": "#/$defs/projection",
+      "sha256": "e5c9a45a221d47bf32434fd8c0751b8102cfb2acf51caa6e5bbeeff496251970"
+    },
+    {
+      "path": "projection-seat-03.json",
+      "kind": "projection",
+      "schema_ref": "#/$defs/projection",
+      "sha256": "fde9ad4695208becba67c2de853cfab894cb89e916f7625ef52f3d95941640e3"
+    },
+    {
+      "path": "projection-seat-04.json",
+      "kind": "projection",
+      "schema_ref": "#/$defs/projection",
+      "sha256": "6b53b52a22a04d8f6e58904a136add7f4af32a38d4259e788c0a204b638ce6c4"
+    },
+    {
+      "path": "replay-assertion.json",
+      "kind": "replay_assertion",
+      "schema_ref": "#/$defs/replay_assertion",
+      "sha256": "be692ae4bfb9646d7654ba6c364d22de20b7d1ec54a641b46d0b34dc6253b716"
+    },
+    {
+      "path": "seats.json",
+      "kind": "seat_set",
+      "schema_ref": "#/$defs/seat_set",
+      "sha256": "5e3f9c1ebc6ebc7c32f43eca558a941d6af544b5071ac628a477cb17a28ac9e3"
+    },
+    {
+      "path": "state.json",
+      "kind": "state",
+      "schema_ref": "#/$defs/state",
+      "sha256": "7455a4d286c71e4096c34ac69fc2540b21756c159b8d093bdeb7611e712cd6a8"
+    },
+    {
+      "path": "transition.json",
+      "kind": "state_transition",
+      "schema_ref": "#/$defs/state_transition",
+      "sha256": "c738b49e07954c243ae4cfdfec75434b1a3ce9c650f489a17237f6a4d965a058"
+    }
+  ],
+  "expected_final_state": {
+    "path": "final-state.json",
+    "canonical_sha256": "4c22dea6f59ca1c4d3c880e0443a758c65ec85d4a147b242afec9f8b534f5875"
+  },
+  "replay_assertion": "replay-assertion.json",
+  "execution": {
+    "deterministic": true,
+    "timestamp_or_randomness": false,
+    "model_call": false,
+    "network": false
+  },
+  "lifecycle": {
+    "canonical": false,
+    "test_only": true,
+    "source_rules": "PROPOSAL"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "aipt_schema": "aipt.mutant-oracle.v1",
+  "mutant_id": "UNR-MUTATION-0001",
+  "kind": "HIDDEN_INFORMATION_LEAK",
+  "markers": [
+    "NON_CANON",
+    "TEST_FIXTURE",
+    "MUTANT"
+  ],
+  "base_commit": "62daf4a6de3f5560d3b2ea8ac7527654a6da616c",
+  "expected_detector": "AIPT_VISIBILITY_UNAUTHORIZED_FIELD",
+  "max_detection_runs": 1,
+  "minimal_evidence": {
+    "mapping_id": "premades-secret-0001",
+    "field_or_entity_id": "UNR-SECRET-0001",
+    "original_principals": [
+      "GM",
+      "CHARACTER:UNR-CHAR-0001"
+    ],
+    "mutated_principals": [
+      "GM",
+      "CHARACTER:UNR-CHAR-0001",
+      "CHARACTER:UNR-CHAR-0002"
+    ],
+    "source": {
+      "path": "aipt/p0-b000/premades-v2.json",
+      "locator": "characters.游隼.secret"
+    }
+  },
+  "false_positive_boundary": {
+    "clean_visibility_and_clean_projection": "MUST_NOT_TRIGGER",
+    "overlay_applied": "MUST_TRIGGER_EXPECTED_DETECTOR"
+  },
+  "expected_detection_run": 1
+}

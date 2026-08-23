@@ -1,0 +1,63 @@
+{
+  "aipt_schema": "aipt.mutant-manifest.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B003",
+  "markers": [
+    "NON_CANON",
+    "TEST_FIXTURE",
+    "MUTANT_MANIFEST"
+  ],
+  "adapter_foundation_checkpoint": "62daf4a6de3f5560d3b2ea8ac7527654a6da616c",
+  "mutants": [
+    {
+      "mutation_id": "UNR-MUTATION-0001",
+      "kind": "HIDDEN_INFORMATION_LEAK",
+      "overlay": {
+        "path": "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0001/overlay.json",
+        "sha256": "2646980bbba810014f66c796fc5ac2f126ac77f397c6eb2e472115cb2ad5f46d"
+      },
+      "oracle": {
+        "path": "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0001/oracle.json",
+        "sha256": "d1c08236054dfc34fa57170b91828a3069408da088c9e91659d168ee342fbde9"
+      },
+      "base_commit": "62daf4a6de3f5560d3b2ea8ac7527654a6da616c",
+      "target_path": "aipt/p0-b001/visibility.json",
+      "expected_detector": "AIPT_VISIBILITY_UNAUTHORIZED_FIELD",
+      "max_detection_runs": 1,
+      "false_positive_boundary_summary": "Clean visibility and clean projection do not trigger; the detector triggers only after this overlay is applied."
+    },
+    {
+      "mutation_id": "UNR-MUTATION-0002",
+      "kind": "PROSE_MACHINE_DIVERGENCE",
+      "overlay": {
+        "path": "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0002/overlay.json",
+        "sha256": "a5e893bbdd844ba8ee050ff0364ef6c911c0c523c82aba874c5c395e8532bcf1"
+      },
+      "oracle": {
+        "path": "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0002/oracle.json",
+        "sha256": "fb17f531211a57f34159e508588d9bcea807230247ea8a479c4fa4d9bcda1b2d"
+      },
+      "base_commit": "62daf4a6de3f5560d3b2ea8ac7527654a6da616c",
+      "target_path": "aipt/p0-b002/machine-rules.json",
+      "expected_detector": "UNREGISTERED_PROSE_MACHINE_DIVERGENCE",
+      "max_detection_runs": 1,
+      "false_positive_boundary_summary": "The clean machine rule agrees with the frozen prose source; only the overlay creates a contradiction."
+    },
+    {
+      "mutation_id": "UNR-MUTATION-0003",
+      "kind": "STATE_REPLAY_INCONSISTENCY",
+      "overlay": {
+        "path": "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0003/overlay.json",
+        "sha256": "a9fab32feff93792f61292fe76e509565297973567b606ba32963ac94ca89ecf"
+      },
+      "oracle": {
+        "path": "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0003/oracle.json",
+        "sha256": "42d90ce2642582fadd3e2fad94b3420dce6ecfffd630138b54402d3bc888025e"
+      },
+      "base_commit": "62daf4a6de3f5560d3b2ea8ac7527654a6da616c",
+      "target_path": "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/replay-assertion.json",
+      "expected_detector": "AIPT_REPLAY_HASH_MISMATCH",
+      "max_detection_runs": 1,
+      "false_positive_boundary_summary": "Repeated clean replay remains deterministic; the detector triggers only after the overlay changes the asserted final-state hash."
+    }
+  ]
+}

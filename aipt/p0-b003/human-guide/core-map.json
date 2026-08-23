@@ -1,0 +1,490 @@
+{
+  "aipt_schema": "aipt.human-guide-map-shard.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B003",
+  "shard_id": "UNR-HUMAN-GUIDE-CORE",
+  "scope": "CORE_TABLE_FLOW",
+  "lifecycle_status": "PROPOSAL",
+  "canonical": false,
+  "source_inputs": [
+    {
+      "path": "campaign/playtest/prototype-table-test-guide-v1.md",
+      "sha256": "a3cef11993fbf9765bc8e614bfca01d6dc84fe41452ffa0cf96af004e799bd40"
+    },
+    {
+      "path": "campaign/playtest/stage3-run-guide-v1.md",
+      "sha256": "c1ccd8a77d917e05f86f0604731344b22c8902c508858ef71a39ed9da3cce17f"
+    },
+    {
+      "path": "campaign/playtest/observation-sheet-v1.md",
+      "sha256": "dea8b39c372be9134caaf7813f2c0ef72884a5c936c0ddb5bdd98006995b3908"
+    },
+    {
+      "path": "aipt/p0-b002/semantic-graph.json",
+      "sha256": "8c9ad9ade247ac6195019b7225725c70cd26b55270979d31c7b3701d02092562"
+    }
+  ],
+  "mappings": [
+    {
+      "mapping_id": "UNR-HGM-CORE-R14-Q003",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "sha256": "c1ccd8a77d917e05f86f0604731344b22c8902c508858ef71a39ed9da3cce17f",
+        "locator": "## 3. 节奏预算（目标 3h）",
+        "locator_type": "MARKDOWN_HEADING"
+      },
+      "machine_events": [
+        {
+          "event_type": "TIMING_SAMPLE_RECORDED",
+          "timing_domain": "WALL_CLOCK",
+          "meaning": "Observed real elapsed time for the human run or table activity."
+        },
+        {
+          "event_type": "TIMING_SAMPLE_RECORDED",
+          "timing_domain": "MODEL_LATENCY",
+          "meaning": "Measured model request-to-response latency telemetry."
+        },
+        {
+          "event_type": "TIMING_SAMPLE_RECORDED",
+          "timing_domain": "SIMULATED_TABLE_TIME",
+          "meaning": "Table-equivalent pacing asserted inside a simulation."
+        },
+        {
+          "event_type": "TIMING_SAMPLE_RECORDED",
+          "timing_domain": "GAME_TIME",
+          "meaning": "In-fiction mission timeline elapsed time."
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "wall_clock_duration_ms",
+          "timing_domain": "WALL_CLOCK",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "unit": "milliseconds"
+        },
+        {
+          "metric_id": "model_latency_ms",
+          "timing_domain": "MODEL_LATENCY",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "unit": "milliseconds"
+        },
+        {
+          "metric_id": "simulated_table_time_seconds",
+          "timing_domain": "SIMULATED_TABLE_TIME",
+          "value_type": "NON_NEGATIVE_NUMBER",
+          "unit": "seconds"
+        },
+        {
+          "metric_id": "game_time_minutes",
+          "timing_domain": "GAME_TIME",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "unit": "minutes"
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "TIMING_DOMAIN_INTEGRITY",
+          "gate_type": "INTEGRITY",
+          "condition": "Every timing sample has exactly one domain and domains are not interchangeable."
+        }
+      ],
+      "classification": "MEASUREMENT_DOMAIN_CONTRACT",
+      "notes": "R14-Q003; retain four disjoint timing domains even when values share units."
+    },
+    {
+      "mapping_id": "UNR-HGM-CORE-R14-Q004",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "sha256": "c1ccd8a77d917e05f86f0604731344b22c8902c508858ef71a39ed9da3cce17f",
+        "locator": "### S3 计划（主内容，GM 只答问不催）",
+        "locator_type": "MARKDOWN_HEADING"
+      },
+      "machine_events": [
+        {
+          "event_type": "PLANNING_PHASE_ENTERED"
+        },
+        {
+          "event_type": "VALID_PLAN_EXCHANGE_RECORDED"
+        },
+        {
+          "event_type": "PLAN_ALTERNATIVE_RECORDED"
+        },
+        {
+          "event_type": "PLAN_TRADEOFF_RECORDED"
+        },
+        {
+          "event_type": "PLANNING_SEAT_CONTRIBUTED"
+        },
+        {
+          "event_type": "EVACUATION_PLAN_STATUS_RECORDED"
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "valid_plan_exchange_count",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "aggregation": "COUNT"
+        },
+        {
+          "metric_id": "alternative_count",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "aggregation": "COUNT_DISTINCT"
+        },
+        {
+          "metric_id": "tradeoff_count",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "aggregation": "COUNT"
+        },
+        {
+          "metric_id": "contributing_seat_count",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "aggregation": "COUNT_DISTINCT_SEATS"
+        },
+        {
+          "metric_id": "evacuation_plan_present",
+          "value_type": "BOOLEAN",
+          "aggregation": "LAST_VALUE"
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "GAME_GATE_PLANNING_EVIDENCE",
+          "gate_type": "GAME_GATE_INPUT",
+          "inputs": [
+            "valid_plan_exchange_count",
+            "alternative_count",
+            "tradeoff_count",
+            "contributing_seat_count",
+            "evacuation_plan_present"
+          ],
+          "condition": "All five planning metrics are recorded; this shard does not invent pass thresholds."
+        }
+      ],
+      "classification": "PLANNING_EVIDENCE_MAPPING",
+      "notes": "R14-Q004; count observed planning structure without directing player choices."
+    },
+    {
+      "mapping_id": "UNR-HGM-CORE-R14-Q005",
+      "source": {
+        "path": "campaign/playtest/observation-sheet-v1.md",
+        "sha256": "dea8b39c372be9134caaf7813f2c0ef72884a5c936c0ddb5bdd98006995b3908",
+        "locator": "## 数据记录区",
+        "locator_type": "MARKDOWN_HEADING"
+      },
+      "machine_events": [
+        {
+          "event_type": "SYSTEM_LATENCY_OBSERVED",
+          "measurement_kind": "SYSTEM_LATENCY",
+          "clock": "MODEL_REQUEST_CLOCK"
+        },
+        {
+          "event_type": "RESOLUTION_COMPLEXITY_OBSERVED",
+          "measurement_kind": "RESOLUTION_COMPLEXITY",
+          "components": [
+            "rules_lookup_count",
+            "question_count",
+            "decision_step_count"
+          ]
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "system_latency_ms",
+          "measurement_kind": "SYSTEM_LATENCY",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "unit": "milliseconds"
+        },
+        {
+          "metric_id": "resolution_complexity",
+          "measurement_kind": "RESOLUTION_COMPLEXITY",
+          "value_type": "STRUCTURED_COUNT_SET",
+          "unit": "observed_steps"
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "MEASUREMENT_KIND_INTEGRITY",
+          "gate_type": "INTEGRITY",
+          "condition": "SYSTEM_LATENCY and RESOLUTION_COMPLEXITY are stored and evaluated independently."
+        }
+      ],
+      "classification": "MEASUREMENT_SEPARATION_CONTRACT",
+      "notes": "R14-Q005; infrastructure delay cannot substitute for observed resolution complexity or vice versa."
+    },
+    {
+      "mapping_id": "UNR-HGM-CORE-R14-Q007",
+      "source": {
+        "path": "campaign/playtest/prototype-table-test-guide-v1.md",
+        "sha256": "a3cef11993fbf9765bc8e614bfca01d6dc84fe41452ffa0cf96af004e799bd40",
+        "locator": "2. **玩家口述反馈三问**：",
+        "locator_type": "MARKDOWN_ORDERED_LIST_ITEM"
+      },
+      "machine_events": [
+        {
+          "event_type": "SUBJECTIVE_REPORT_RECORDED",
+          "reporter_type": "AGENT",
+          "report_subject_enum": [
+            "FUN",
+            "BOREDOM"
+          ],
+          "evidence_class": "SIMULATED_SUBJECTIVE_REPORT"
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "simulated_subjective_report_count",
+          "evidence_class": "SIMULATED_SUBJECTIVE_REPORT",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "aggregation": "COUNT",
+          "diagnostic_only": true
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "OBJECTIVE_HARD_GATE",
+          "gate_type": "EVIDENCE_ELIGIBILITY",
+          "evidence_class": "SIMULATED_SUBJECTIVE_REPORT",
+          "eligible": false
+        }
+      ],
+      "classification": "SIMULATED_SUBJECTIVE_REPORT",
+      "notes": "R14-Q007; agent fun or boredom reports remain diagnostic and never satisfy an objective hard gate."
+    },
+    {
+      "mapping_id": "UNR-HGM-CORE-R14-Q016",
+      "source": {
+        "path": "campaign/playtest/stage3-run-guide-v1.md",
+        "sha256": "c1ccd8a77d917e05f86f0604731344b22c8902c508858ef71a39ed9da3cce17f",
+        "locator": "## 4. 场景菜单（8 张，按发生顺序；玩家绕开就跳过，不重摆）",
+        "locator_type": "MARKDOWN_HEADING"
+      },
+      "machine_events": [
+        {
+          "event_type": "SCENE_CATALOG_DECLARED",
+          "scene_node_ids": [
+            "S1",
+            "S2",
+            "S3",
+            "S4",
+            "S5",
+            "S6",
+            "S7",
+            "S8"
+          ]
+        },
+        {
+          "event_type": "SCENE_NODE_ENTERED",
+          "counted_when": "NATURAL_RUN_ENTRY"
+        },
+        {
+          "event_type": "SCENE_NODE_SKIPPED",
+          "counts_as_entered": false
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "representable_scene_count",
+          "value_type": "INTEGER",
+          "expected_value": 8
+        },
+        {
+          "metric_id": "naturally_entered_node_count",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "aggregation": "COUNT_DISTINCT_NATURAL_ENTRIES"
+        },
+        {
+          "metric_id": "skipped_node_count",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "aggregation": "COUNT_DISTINCT"
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "SCENE_REPRESENTATION_INTEGRITY",
+          "gate_type": "INTEGRITY",
+          "condition": "All S1 through S8 nodes are representable."
+        },
+        {
+          "gate_id": "RUN_SCENE_COVERAGE",
+          "gate_type": "DIAGNOSTIC",
+          "condition": "Count only naturally entered nodes; skipped nodes are not forced or credited."
+        }
+      ],
+      "classification": "SCENE_FLOW_MAPPING",
+      "notes": "R14-Q016; representation completeness does not require a run to enter every scene."
+    },
+    {
+      "mapping_id": "UNR-HGM-CORE-R14-Q017",
+      "source": {
+        "path": "campaign/playtest/prototype-table-test-guide-v1.md",
+        "sha256": "a3cef11993fbf9765bc8e614bfca01d6dc84fe41452ffa0cf96af004e799bd40",
+        "locator": "## 8. Go / No-Go 判定",
+        "locator_type": "MARKDOWN_HEADING"
+      },
+      "machine_events": [
+        {
+          "event_type": "RUN_TERMINATED",
+          "required_field": "termination_reason",
+          "termination_reason_enum": [
+            "ending",
+            "deadline",
+            "evacuation",
+            "no_progress",
+            "budget",
+            "integrity_failure",
+            "human_cancel"
+          ]
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "termination_reason",
+          "value_type": "ENUM",
+          "allowed_values": [
+            "ending",
+            "deadline",
+            "evacuation",
+            "no_progress",
+            "budget",
+            "integrity_failure",
+            "human_cancel"
+          ]
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "TERMINATION_REASON_INTEGRITY",
+          "gate_type": "INTEGRITY",
+          "condition": "A terminated run records exactly one allowed termination_reason."
+        }
+      ],
+      "classification": "RUN_TERMINATION_CONTRACT",
+      "notes": "R14-Q017; the enum covers normal completion, run limits, integrity stops, and human cancellation."
+    },
+    {
+      "mapping_id": "UNR-HGM-CORE-R14-Q018",
+      "source": {
+        "path": "campaign/playtest/prototype-table-test-guide-v1.md",
+        "sha256": "a3cef11993fbf9765bc8e614bfca01d6dc84fe41452ffa0cf96af004e799bd40",
+        "locator": "**中止条件（任一触发即降级）：**",
+        "locator_type": "MARKDOWN_BOLD_LABEL"
+      },
+      "machine_events": [
+        {
+          "event_type": "RUN_EVIDENCE_CLASSIFIED",
+          "evidence_status": "NARRATIVE_DEGRADED",
+          "diagnostic_evidence_retained": true
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "narrative_degraded",
+          "value_type": "BOOLEAN",
+          "expected_value": true
+        },
+        {
+          "metric_id": "diagnostic_evidence_count",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "aggregation": "COUNT_RETAINED"
+        },
+        {
+          "metric_id": "game_gate_eligible",
+          "value_type": "BOOLEAN",
+          "expected_value": false
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "GAME_GATE",
+          "gate_type": "EVIDENCE_ELIGIBILITY",
+          "when_evidence_status": "NARRATIVE_DEGRADED",
+          "result": "DISQUALIFIED",
+          "preserve_diagnostic_evidence": true
+        }
+      ],
+      "classification": "EVIDENCE_QUALITY_MAPPING",
+      "notes": "R14-Q018; degradation blocks Game Gate qualification without deleting diagnostic observations."
+    },
+    {
+      "mapping_id": "UNR-HGM-CORE-R14-Q019",
+      "source": {
+        "path": "aipt/p0-b002/semantic-graph.json",
+        "sha256": "8c9ad9ade247ac6195019b7225725c70cd26b55270979d31c7b3701d02092562",
+        "locator": "/lifecycle",
+        "locator_type": "JSON_POINTER"
+      },
+      "machine_events": [
+        {
+          "event_type": "RULESET_RUN_DECLARED",
+          "source_lifecycle_status": "PROPOSAL",
+          "execution_profile": "PLAYTESTABLE_DRAFT",
+          "canonical": false
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "playtestable_draft_run_count",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "aggregation": "COUNT"
+        },
+        {
+          "metric_id": "release_evidence_eligible",
+          "value_type": "BOOLEAN",
+          "expected_value": false
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "RELEASE_EVIDENCE_GATE",
+          "gate_type": "EVIDENCE_ELIGIBILITY",
+          "source_lifecycle_status": "PROPOSAL",
+          "execution_profile": "PLAYTESTABLE_DRAFT",
+          "result": "DISQUALIFIED"
+        }
+      ],
+      "classification": "RULE_LIFECYCLE_EVIDENCE_MAPPING",
+      "notes": "R14-Q019; PROPOSAL material may execute for draft playtesting but cannot qualify release evidence."
+    },
+    {
+      "mapping_id": "UNR-HGM-CORE-R14-Q020",
+      "source": {
+        "path": "campaign/playtest/prototype-table-test-guide-v1.md",
+        "sha256": "a3cef11993fbf9765bc8e614bfca01d6dc84fe41452ffa0cf96af004e799bd40",
+        "locator": "**中止条件（任一触发即降级）：**",
+        "locator_type": "MARKDOWN_BOLD_LABEL"
+      },
+      "machine_events": [
+        {
+          "event_type": "UNRESOLVED_AMBIGUITY_RECORDED",
+          "task_id": "Task0",
+          "counter": "task0_unresolved_ambiguity_count"
+        },
+        {
+          "event_type": "AMBIGUITY_THRESHOLD_REACHED",
+          "task_id": "Task0",
+          "threshold": 2,
+          "result": "NARRATIVE_DEGRADED"
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "task0_unresolved_ambiguity_count",
+          "value_type": "NON_NEGATIVE_INTEGER",
+          "aggregation": "COUNT"
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "TASK0_UNRESOLVED_AMBIGUITY_GATE",
+          "gate_type": "GAME_MAPPING_CONFIGURATION",
+          "configuration_layer": "UNREGISTERED_GAME_MAPPING",
+          "aipt_core_parameter": false,
+          "operator": "GREATER_THAN_OR_EQUAL",
+          "threshold": 2,
+          "result": "NARRATIVE_DEGRADED"
+        }
+      ],
+      "classification": "GAME_SPECIFIC_GATE_CONFIGURATION",
+      "notes": "R14-Q020; Task0 owns the exact threshold of 2 outside AIPT core."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "aipt_schema": "aipt.noncanon-patch-overlay.v1",
+  "mutant_id": "UNR-MUTATION-0002",
+  "kind": "PROSE_MACHINE_DIVERGENCE",
+  "markers": [
+    "NON_CANON",
+    "TEST_FIXTURE",
+    "MUTANT"
+  ],
+  "base_commit": "62daf4a6de3f5560d3b2ea8ac7527654a6da616c",
+  "target": {
+    "path": "aipt/p0-b002/machine-rules.json",
+    "preimage_sha256": "139d095fe54926e1599edf208b65f7a89061f1cda6d8b492f83b5e47c0693c78"
+  },
+  "operations": [
+    {
+      "op": "replace",
+      "path": "/rules/19/resolution/3/change/amount",
+      "value": -5
+    }
+  ],
+  "postimage_sha256": "292f26f19c1f6a7b0d0c23c00a8fbb2858898cb80126fc4650235e68cd0b4af8",
+  "digest_rules": {
+    "hash_algorithm": "sha256",
+    "encoding": "UTF-8",
+    "preimage_input": "EXACT_TARGET_FILE_BYTES",
+    "postimage_input": "AIPT_CANONICAL_JSON_V1_SORT_KEYS_NO_WHITESPACE",
+    "object_keys": "SORT_RECURSIVELY",
+    "array_order": "PRESERVE",
+    "whitespace": "NONE",
+    "postimage_trailing_newline": false
+  }
+}

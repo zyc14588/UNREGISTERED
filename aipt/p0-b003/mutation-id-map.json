@@ -1,0 +1,43 @@
+{
+  "aipt_schema": "aipt.mutation-id-map.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B003",
+  "decision_ref": "R14-Q021",
+  "historical_authority": {
+    "path": "aipt/p0-b002/rule-id-map.json",
+    "mutation_count": 0,
+    "remains_historical": true,
+    "byte_unchanged": true
+  },
+  "allocation_order": [
+    "UNR-MUTATION-0001",
+    "UNR-MUTATION-0002",
+    "UNR-MUTATION-0003"
+  ],
+  "mutations": [
+    {
+      "mutation_id": "UNR-MUTATION-0001",
+      "kind": "HIDDEN_INFORMATION_LEAK",
+      "fixture_class": "NON_CANON_TEST_FIXTURE",
+      "canonical": false,
+      "test_only": true
+    },
+    {
+      "mutation_id": "UNR-MUTATION-0002",
+      "kind": "PROSE_MACHINE_DIVERGENCE",
+      "fixture_class": "NON_CANON_TEST_FIXTURE",
+      "canonical": false,
+      "test_only": true
+    },
+    {
+      "mutation_id": "UNR-MUTATION-0003",
+      "kind": "STATE_REPLAY_INCONSISTENCY",
+      "fixture_class": "NON_CANON_TEST_FIXTURE",
+      "canonical": false,
+      "test_only": true
+    }
+  ],
+  "lifecycle": {
+    "content_class": "NON_CANON_TEST_FIXTURE",
+    "promotes_source_lifecycle": false
+  }
+}

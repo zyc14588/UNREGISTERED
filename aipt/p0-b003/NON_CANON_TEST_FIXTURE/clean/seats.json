@@ -1,0 +1,11 @@
+{
+  "protocol_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "fixture_id": "unregistered-task0-clean-v1",
+  "seats": [
+    { "seat_id": "seat-01", "name": "游隼" },
+    { "seat_id": "seat-02", "name": "短波" },
+    { "seat_id": "seat-03", "name": "静水" },
+    { "seat_id": "seat-04", "name": "底片" }
+  ]
+}

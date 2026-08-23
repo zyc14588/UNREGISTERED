@@ -1,0 +1,20 @@
+{
+  "protocol_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "fixture_id": "unregistered-task0-clean-v1",
+  "assertion_id": "task0-recon-replay-001",
+  "hash_algorithm": "sha256",
+  "canonical_json_rule": "AIPT_CANONICAL_JSON_V1_SORT_KEYS_NO_WHITESPACE",
+  "final_state_ref": "final-state.json",
+  "final_state_hash": "4c22dea6f59ca1c4d3c880e0443a758c65ec85d4a147b242afec9f8b534f5875",
+  "replays": [
+    {
+      "replay_id": "task0-recon-replay-a",
+      "final_state_hash": "4c22dea6f59ca1c4d3c880e0443a758c65ec85d4a147b242afec9f8b534f5875"
+    },
+    {
+      "replay_id": "task0-recon-replay-b",
+      "final_state_hash": "4c22dea6f59ca1c4d3c880e0443a758c65ec85d4a147b242afec9f8b534f5875"
+    }
+  ]
+}

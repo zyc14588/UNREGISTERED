@@ -1,0 +1,484 @@
+{
+  "aipt_schema": "aipt.human-guide-map-shard.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B003",
+  "shard_id": "SAFETY_OBSERVER",
+  "base_commit": "b28b2e2be6a065b948ecbf4b61cd9d0bf19de4cf",
+  "source_digest_rule": "SHA256_EXACT_FILE_BYTES",
+  "mappings": [
+    {
+      "mapping_id": "R14-Q006-SAFETY-PROTOCOL-CONFORMANCE",
+      "source": {
+        "path": "aipt/p0-b001/safety-profile.json",
+        "sha256": "dea0b7a62ba8ac81cb9314546afebca400642d9923f9ae928d97c9a40a29304f",
+        "locator": "table_tools",
+        "locator_type": "json_path"
+      },
+      "machine_events": [
+        {
+          "event_id": "safety_protocol_check",
+          "required_context": [
+            "safety_profile_sha256"
+          ],
+          "result_values": [
+            "PASS",
+            "FAIL"
+          ]
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "safety_protocol_conformance",
+          "type": "BOOLEAN",
+          "derived_from": [
+            "safety_protocol_check"
+          ]
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "R14-Q006",
+          "type": "HARD",
+          "pass_condition": "All configured safety-protocol checks return PASS.",
+          "failure_result": "SAFETY_PROTOCOL_NONCONFORMANCE",
+          "proof_scope": "SAFETY_PROTOCOL_CONFORMANCE"
+        }
+      ],
+      "classification": "SAFETY_PROTOCOL_CONFORMANCE",
+      "notes": "This gate proves only conformance to the configured protocol; it makes no inference about human mental state or lived outcome."
+    },
+    {
+      "mapping_id": "R14-Q007-SIMULATED-SUBJECTIVE-REPORT",
+      "source": {
+        "path": "campaign/playtest/observer-cheatsheet-v1.md",
+        "sha256": "02ea5cf8d0280f16e0cab5cdc83930069363055c43366ae2e409ecea65694a62",
+        "locator": {
+          "start_line": 1,
+          "end_line": 5
+        },
+        "locator_type": "markdown_preamble"
+      },
+      "machine_events": [
+        {
+          "event_id": "simulated_subjective_report",
+          "producer": "SIMULATED_AGENT",
+          "report_values": [
+            "FUN",
+            "BORED"
+          ],
+          "objective_truth_value": false
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "simulated_fun_report_count",
+          "type": "COUNT",
+          "objective_gate": false
+        },
+        {
+          "metric_id": "simulated_bored_report_count",
+          "type": "COUNT",
+          "objective_gate": false
+        }
+      ],
+      "gates": [],
+      "classification": "SIMULATED_SUBJECTIVE_REPORT",
+      "notes": "FUN and BORED are synthetic agent reports: evidence labels only, never objective quality measures or hard acceptance gates."
+    },
+    {
+      "mapping_id": "R14-Q008-SAFETY-STOP-TRIGGER-MODES",
+      "source": {
+        "path": "campaign/session0-redlines.md",
+        "sha256": "d5d9246e07b2d4c9de9ce602835ec763ac33f5dd01a8b5e83c9b2318f9b6e630",
+        "locator": "## 3. 桌上工具",
+        "locator_type": "markdown_heading"
+      },
+      "machine_events": [
+        {
+          "event_id": "safety_stop",
+          "trigger_modes": [
+            "AGENT_TRIGGERED",
+            "DETERMINISTIC_INJECTION"
+          ],
+          "allowed_effects": [
+            "PAUSE",
+            "SKIP"
+          ],
+          "explanation_required": false,
+          "payload_fields": []
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "safety_stop_trigger_mode_coverage",
+          "type": "ENUM_SET_COVERAGE",
+          "required_values": [
+            "AGENT_TRIGGERED",
+            "DETERMINISTIC_INJECTION"
+          ]
+        },
+        {
+          "metric_id": "safety_stop_handled_count",
+          "type": "COUNT"
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "R14-Q008-TRIGGER-SUPPORT",
+          "type": "HARD",
+          "pass_condition": "Both declared trigger modes are accepted and produce PAUSE or SKIP without requiring an explanation.",
+          "failure_result": "SAFETY_STOP_MODE_UNSUPPORTED"
+        }
+      ],
+      "classification": "SAFETY_PROTOCOL_CONFORMANCE",
+      "notes": "The event carries control metadata only; it does not carry a reason, participant statement, or other private payload."
+    },
+    {
+      "mapping_id": "R14-Q008-HUMAN-CANCEL-TERMINATION",
+      "source": {
+        "path": "campaign/session0-redlines.md",
+        "sha256": "d5d9246e07b2d4c9de9ce602835ec763ac33f5dd01a8b5e83c9b2318f9b6e630",
+        "locator": {
+          "start_line": 1,
+          "end_line": 4
+        },
+        "locator_type": "markdown_preamble"
+      },
+      "machine_events": [
+        {
+          "event_id": "human_cancel",
+          "payload_fields": []
+        },
+        {
+          "event_id": "run_terminated",
+          "reason": "HUMAN_CANCEL",
+          "terminal": true
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "human_cancel_termination_count",
+          "type": "COUNT"
+        },
+        {
+          "metric_id": "post_cancel_gameplay_event_count",
+          "type": "COUNT",
+          "required_value": 0
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "HUMAN-CANCEL-IS-TERMINAL",
+          "type": "HARD",
+          "pass_condition": "human_cancel produces one terminal run_terminated event and no later gameplay event.",
+          "failure_result": "INVALID_TERMINATION_TRACE"
+        }
+      ],
+      "classification": "HUMAN_CANCEL_TERMINATION",
+      "notes": "Cancellation is a terminal control outcome, not a test failure and not a source of participant payload."
+    },
+    {
+      "mapping_id": "R14-Q015-VERIFIED-SAFETY-PROFILE",
+      "source": {
+        "path": "aipt/p0-b001/safety-profile.json",
+        "sha256": "dea0b7a62ba8ac81cb9314546afebca400642d9923f9ae928d97c9a40a29304f",
+        "locator": null,
+        "locator_type": "whole_file"
+      },
+      "machine_events": [
+        {
+          "event_id": "run_manifest_safety_profile_verified",
+          "required_binding": {
+            "path": "aipt/p0-b001/safety-profile.json",
+            "sha256": "dea0b7a62ba8ac81cb9314546afebca400642d9923f9ae928d97c9a40a29304f",
+            "aipt_schema": "aipt.safety-profile.v1"
+          },
+          "result_values": [
+            "VERIFIED",
+            "REJECTED"
+          ]
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "verified_safety_profile_binding_count",
+          "type": "COUNT",
+          "required_value": 1
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "R14-Q015-SAFETY-PROFILE",
+          "type": "HARD_FAIL_CLOSED",
+          "pass_condition": "The Run Manifest binds the exact path, digest, and schema and verification returns VERIFIED before execution.",
+          "failure_result": "REJECT_RUN_MANIFEST"
+        }
+      ],
+      "classification": "RUN_MANIFEST_INPUT_VERIFICATION",
+      "notes": "The manifest binds the verified SafetyProfile artifact, never participant confirmations or responses."
+    },
+    {
+      "mapping_id": "R14-Q015-SESSION0-SEPARATE-CASE",
+      "source": {
+        "path": "campaign/session0-redlines.md",
+        "sha256": "d5d9246e07b2d4c9de9ce602835ec763ac33f5dd01a8b5e83c9b2318f9b6e630",
+        "locator": {
+          "start_line": 1,
+          "end_line": 4
+        },
+        "locator_type": "markdown_preamble"
+      },
+      "machine_events": [
+        {
+          "event_id": "run_manifest_case_declared",
+          "case_id": "SESSION0_PROTOCOL_CONFORMANCE",
+          "source_path": "campaign/session0-redlines.md",
+          "source_sha256": "d5d9246e07b2d4c9de9ce602835ec763ac33f5dd01a8b5e83c9b2318f9b6e630"
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "session0_protocol_case_count",
+          "type": "COUNT"
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "R14-Q015-SESSION0-CASE-SEPARATION",
+          "type": "MANIFEST_STRUCTURE",
+          "pass_condition": "Session0 protocol conformance is representable as a distinct case from SafetyProfile artifact verification.",
+          "failure_result": "CASE_COUPLING_REJECTED"
+        }
+      ],
+      "classification": "RUN_MANIFEST_CASE_MAPPING",
+      "notes": "This case references protocol structure only and excludes all per-person answers or confirmation payloads."
+    },
+    {
+      "mapping_id": "R14-SAFETY-EVIDENCE-DATA-MINIMIZATION",
+      "source": {
+        "path": "aipt/p0-b001/safety-profile.json",
+        "sha256": "dea0b7a62ba8ac81cb9314546afebca400642d9923f9ae928d97c9a40a29304f",
+        "locator": "data_handling",
+        "locator_type": "json_path"
+      },
+      "machine_events": [
+        {
+          "event_id": "safety_protocol_evidence",
+          "allowed_fields": [
+            "run_id",
+            "safety_profile_sha256",
+            "event_id",
+            "trigger_mode",
+            "result_code"
+          ],
+          "forbidden_fields": [
+            "participant_answers",
+            "participant_names",
+            "mental_health_data"
+          ]
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "human_private_payload_count",
+          "type": "COUNT",
+          "required_value": 0
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "SAFETY-EVIDENCE-NO-HUMAN-PRIVATE-PAYLOAD",
+          "type": "HARD_FAIL_CLOSED",
+          "pass_condition": "Evidence contains only allowed control metadata and no forbidden field.",
+          "failure_result": "REJECT_EVIDENCE"
+        }
+      ],
+      "classification": "PARTICIPANT_PAYLOAD_EXCLUSION",
+      "notes": "Safety evidence is metadata-only; human-private responses are neither formal game input nor persisted evidence."
+    },
+    {
+      "mapping_id": "R14-VISIBILITY-FAIL-CLOSED-EVIDENCE",
+      "source": {
+        "path": "aipt/p0-b001/visibility.json",
+        "sha256": "e232a2f95c6359cf54dd5f4147c72e0c3433614e00555226cd2993716f7bbb70",
+        "locator": "validation",
+        "locator_type": "json_path"
+      },
+      "machine_events": [
+        {
+          "event_id": "visibility_policy_check",
+          "allowed_evidence_fields": [
+            "mapping_id",
+            "label",
+            "principal_class",
+            "result_code"
+          ],
+          "result_values": [
+            "PASS",
+            "REJECT"
+          ]
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "visibility_rejection_count",
+          "type": "COUNT"
+        },
+        {
+          "metric_id": "human_private_manifest_reference_count",
+          "type": "COUNT",
+          "required_value": 0
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "VISIBILITY-UNKNOWN-OR-MISSING-REJECT",
+          "type": "HARD_FAIL_CLOSED",
+          "pass_condition": "Unknown labels, missing mappings, conflicting mappings, and invalid principals produce REJECT.",
+          "failure_result": "REJECT_VISIBILITY_EVIDENCE"
+        },
+        {
+          "gate_id": "HUMAN-PRIVATE-NOT-GAME-INPUT",
+          "type": "HARD_FAIL_CLOSED",
+          "pass_condition": "No manifest or packaged-content reference uses human-private data.",
+          "failure_result": "REJECT_MANIFEST"
+        }
+      ],
+      "classification": "VISIBILITY_POLICY_CONFORMANCE",
+      "notes": "Evidence records policy identifiers and outcomes only; hidden content and human-private payloads are excluded."
+    },
+    {
+      "mapping_id": "R14-OBSERVER-LOOKUP-EVIDENCE",
+      "source": {
+        "path": "campaign/playtest/observer-cheatsheet-v1.md",
+        "sha256": "02ea5cf8d0280f16e0cab5cdc83930069363055c43366ae2e409ecea65694a62",
+        "locator": "## B. 查表计数（GM 和玩家的都算，看到就记）",
+        "locator_type": "markdown_heading"
+      },
+      "machine_events": [
+        {
+          "event_id": "observer_reference_lookup",
+          "required_fields": [
+            "reference_id"
+          ]
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "reference_lookup_count",
+          "type": "COUNT",
+          "group_by": "reference_id"
+        },
+        {
+          "metric_id": "repeated_reference_lookup_flag",
+          "type": "BOOLEAN",
+          "threshold": 3
+        }
+      ],
+      "gates": [],
+      "classification": "OBSERVER_OPERATIONAL_EVIDENCE",
+      "notes": "Lookup counts are descriptive observer evidence; they do not establish safety, fun, or a rules verdict by themselves."
+    },
+    {
+      "mapping_id": "R14-OBSERVER-GM-SCREEN-REFERENCE",
+      "source": {
+        "path": "campaign/playtest/gm-screen-v1.md",
+        "sha256": "2a054d42eb48e378a29db07ddd6c5cd751b4d2340f6426552fea516d63bf2b8a",
+        "locator": null,
+        "locator_type": "whole_file"
+      },
+      "machine_events": [
+        {
+          "event_id": "observer_reference_verified",
+          "reference_id": "GM_SCREEN_V1",
+          "required_sha256": "2a054d42eb48e378a29db07ddd6c5cd751b4d2340f6426552fea516d63bf2b8a"
+        }
+      ],
+      "metrics": [],
+      "gates": [
+        {
+          "gate_id": "OBSERVER-REFERENCE-DIGEST",
+          "type": "INPUT_VERIFICATION",
+          "pass_condition": "The observer lookup baseline uses the exact frozen GM-screen digest.",
+          "failure_result": "REJECT_REFERENCE_ARTIFACT"
+        }
+      ],
+      "classification": "OBSERVER_REFERENCE_ARTIFACT",
+      "notes": "The frozen sheet is a lookup reference surface; its presence alone is not an observation result."
+    },
+    {
+      "mapping_id": "R14-RULE-KNOWLEDGE-INJECTION-SCOPE",
+      "source": {
+        "path": "campaign/playtest/rule-knowledge-sheet-v1.md",
+        "sha256": "61af1a1beaede971b50508bc38954533b18e3706587dc96e472406c0260d3691",
+        "locator": "## 污染条说明（GM 用）",
+        "locator_type": "markdown_heading"
+      },
+      "machine_events": [
+        {
+          "event_id": "simulated_character_rule_knowledge_injection",
+          "target_scope": "CHARACTER_RULE_KNOWLEDGE",
+          "write_surface": "GM_NOTE",
+          "preserve_player_authored_rows": true
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "simulated_rule_knowledge_injection_count",
+          "type": "COUNT"
+        },
+        {
+          "metric_id": "player_authored_row_mutation_count",
+          "type": "COUNT",
+          "required_value": 0
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "RULE-KNOWLEDGE-TARGET-SCOPE",
+          "type": "HARD",
+          "pass_condition": "Injection targets simulated character rule knowledge and preserves player-authored rows.",
+          "failure_result": "REJECT_STATE_MUTATION"
+        }
+      ],
+      "classification": "SAFETY_PROTOCOL_CONFORMANCE",
+      "notes": "Only simulated character-state semantics are mapped; no human inference, private note content, or participant payload is evidence."
+    },
+    {
+      "mapping_id": "R14-COGNITIVE-POLLUTION-SAFETY-BOUNDARY",
+      "source": {
+        "path": "campaign/session0-redlines.md",
+        "sha256": "d5d9246e07b2d4c9de9ce602835ec763ac33f5dd01a8b5e83c9b2318f9b6e630",
+        "locator": "## 4. 认知污染的桌上保护（本作特有）",
+        "locator_type": "markdown_heading"
+      },
+      "machine_events": [
+        {
+          "event_id": "cognitive_pollution_scope_check",
+          "allowed_scope": "CHARACTER_RULE_KNOWLEDGE",
+          "forbidden_scope": "PLAYER_REALITY",
+          "result_values": [
+            "PASS",
+            "FAIL"
+          ]
+        }
+      ],
+      "metrics": [
+        {
+          "metric_id": "cognitive_pollution_scope_violation_count",
+          "type": "COUNT",
+          "required_value": 0
+        }
+      ],
+      "gates": [
+        {
+          "gate_id": "COGNITIVE-POLLUTION-CHARACTER-SCOPE-ONLY",
+          "type": "HARD_FAIL_CLOSED",
+          "pass_condition": "False-information effects remain inside character rule knowledge.",
+          "failure_result": "REJECT_SCENARIO"
+        }
+      ],
+      "classification": "SAFETY_PROTOCOL_CONFORMANCE",
+      "notes": "The map tests scope metadata only and stores no consent response, identity detail, or other participant data."
+    }
+  ]
+}

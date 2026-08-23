@@ -1,0 +1,17 @@
+{
+  "protocol_version": "1.0.0",
+  "schema_version": "1.0.0",
+  "fixture_id": "unregistered-task0-clean-v1",
+  "message_id": "task0-recon-action-001",
+  "method": "aipt.protocol.applyAction",
+  "params": {
+    "action": "task0-electronic-recon-success",
+    "seat_id": "seat-02",
+    "proposal": {
+      "scene_id": "UNR-SCENE-T000-02",
+      "rule_id": "UNR-RULE-0034",
+      "declared_outcome": "success",
+      "time_cost_minutes": 30
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "aipt_schema": "aipt.human-guide-map.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B003",
+  "aggregation": {
+    "mode": "REFERENCE_ONLY",
+    "source_interpretation_added": false
+  },
+  "shards": [
+    {
+      "role": "CORE_TABLE_FLOW",
+      "path": "aipt/p0-b003/human-guide/core-map.json",
+      "sha256": "5d06362f1993502f0f2f7b6488f65196a3a9a31256b46328846078b9f1935635"
+    },
+    {
+      "role": "SAFETY_OBSERVER",
+      "path": "aipt/p0-b003/human-guide/safety-observer-map.json",
+      "sha256": "e280c39c6b28241e9a66cb50354b4e307a5241699279a6038ba65ee7d3933e0d"
+    }
+  ]
+}

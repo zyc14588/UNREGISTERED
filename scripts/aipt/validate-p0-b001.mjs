@@ -131,8 +131,9 @@ const ROOT = path.resolve(SCRIPT_DIR, "..", "..");
 
 const BATCH = "UNREGISTERED-AIPT-P0-B001";
 const PREV_BATCH = "UNREGISTERED-AIPT-P0-B000";
-const CURRENT_BATCH = "UNREGISTERED-AIPT-P0-B002";
-const NEXT_BATCH = "UNREGISTERED-AIPT-P0-B003";
+const B002_BATCH = "UNREGISTERED-AIPT-P0-B002";
+const CURRENT_BATCH = "UNREGISTERED-AIPT-P0-B003";
+const NEXT_BATCH = "AIPT-M0-B007";
 // The participant-data classification token; assembled from fragments so this
 // validator does not flag itself in the B000 delivery-surface scan.
 const HPD = "HUMAN_" + "PRIVATE_" + "DATA";
@@ -246,7 +247,7 @@ function expectThrown(fn, sub) {
 }
 
 // ---------------------------------------------------------------------------
-// 1. Exact B002 MERGED_CLOSED status (B001 remains historical)
+// 1. Exact B003 construction status (B001 remains historical)
 // ---------------------------------------------------------------------------
 
 const STATUS_KEYS = [
@@ -255,7 +256,7 @@ const STATUS_KEYS = [
   "status",
   "global_wip",
   "previous_repo_batch",
-  "external_serial_predecessor",
+  "historical_external_ancestry",
   "next_batch",
   "next_batch_state",
   "next_batch_authorized",
@@ -263,16 +264,21 @@ const STATUS_KEYS = [
 ];
 
 const EXPECTED_STATUS = {
-  aipt_schema: "aipt.status.v2",
+  aipt_schema: "aipt.status.v3",
   current_batch: CURRENT_BATCH,
-  status: "MERGED_CLOSED",
-  global_wip: 0,
+  status: "IN_PROGRESS",
+  global_wip: 1,
   previous_repo_batch: {
-    batch_id: BATCH,
+    batch_id: B002_BATCH,
     status: "MERGED_CLOSED",
-    closeout_commit: "a37b284bf5ec35895f436abe71d22599edb6da53",
+    candidate_commit: "284c50eeab65c0713a6776198004245895724cba",
+    candidate_tree: "781220f10f7c2f72e58ba2d6d214b58833045a13",
+    implementation_merge: "5c12c0b5a126e8dfa891eae6d13f7d472781e87a",
+    closeout_commit: "7ae44d12b3637e49f0883049a09423dd4f385341",
+    closeout_ci_run: 32589300293,
+    closeout_ci_conclusion: "success",
   },
-  external_serial_predecessor: {
+  historical_external_ancestry: {
     batch_id: "AIPT-M0-B006",
     status: "MERGED_CLOSED",
     implementation_merge: "35acba9fb629f50087def3b720df304fadfd2158",
@@ -282,8 +288,8 @@ const EXPECTED_STATUS = {
     closeout_ci_conclusion: "success",
   },
   next_batch: NEXT_BATCH,
-  next_batch_state: "AUTHORIZED_TO_PREPARE",
-  next_batch_authorized: true,
+  next_batch_state: "NOT_AUTHORIZED",
+  next_batch_authorized: false,
   next_batch_started: false,
 };
 
@@ -303,7 +309,7 @@ function checkStatusObj(s) {
 
 function checkStatus() {
   checkStatusObj(loadJson("aipt/status.json"));
-  pass("status: exact B002 MERGED_CLOSED closeout shape (previous repository batch B001 MERGED_CLOSED; external predecessor AIPT-M0-B006 closed successfully; global_wip 0; B003 AUTHORIZED_TO_PREPARE, not started)");
+  pass("status: exact B003 IN_PROGRESS shape (direct predecessor B002 MERGED_CLOSED; B006 retained as historical external ancestry; global_wip 1; AIPT-M0-B007 NOT_AUTHORIZED and not started)");
 }
 
 // ---------------------------------------------------------------------------
@@ -2126,6 +2132,40 @@ const REQUIRED_B002_AIPT_FILES = [
   "aipt/p0-b002/semantic-graph.json",
 ];
 
+const REQUIRED_B003_CONTROL_AIPT_FILES = [
+  "aipt/p0-b003/compatibility.json",
+  "aipt/p0-b003/mutation-id-map.json",
+];
+
+const ALLOWED_B003_AIPT_FILES = [
+  "aipt/p0-b003/README.md",
+  "aipt/p0-b003/compatibility.json",
+  "aipt/p0-b003/mutation-id-map.json",
+  "aipt/p0-b003/game-adapter.json",
+  "aipt/p0-b003/human-guide-map.json",
+  "aipt/p0-b003/human-guide/core-map.json",
+  "aipt/p0-b003/human-guide/safety-observer-map.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/manifest.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/seats.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/state.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-01.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-02.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-03.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-04.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/action-intent.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/transition.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/event.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/final-state.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/replay-assertion.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/manifest.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0001/overlay.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0001/oracle.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0002/overlay.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0002/oracle.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0003/overlay.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0003/oracle.json",
+];
+
 function checkArtifactPaths(entries) {
   const nonRegular = entries.filter((e) => e.kind !== "file");
   if (nonRegular.length > 0) {
@@ -2136,8 +2176,8 @@ function checkArtifactPaths(entries) {
     );
   }
   const files = entries.map((e) => e.rel).sort();
-  const required = [...REQUIRED_HISTORICAL_AIPT_FILES, ...REQUIRED_B002_AIPT_FILES];
-  const allowed = new Set(required);
+  const required = [...REQUIRED_HISTORICAL_AIPT_FILES, ...REQUIRED_B002_AIPT_FILES, ...REQUIRED_B003_CONTROL_AIPT_FILES];
+  const allowed = new Set([...required, ...ALLOWED_B003_AIPT_FILES]);
   const missing = required.filter((p) => !files.includes(p));
   if (missing.length > 0) {
     throw new Error(`historical AIPT artifacts and all four finalized B002 artifacts must remain present exactly; missing ${JSON.stringify(missing)}`);
@@ -2145,7 +2185,7 @@ function checkArtifactPaths(entries) {
   const unexpected = files.filter((p) => !allowed.has(p));
   if (unexpected.length > 0) {
     throw new Error(
-      `unexpected AIPT artifact paths: B000/B001 historical files and finalized B002 files remain exact at ${JSON.stringify(REQUIRED_B002_AIPT_FILES)}; got unexpected ${JSON.stringify(unexpected)}`,
+      `unexpected AIPT artifact paths: historical files remain exact and B003 is limited to the explicit path allowlist; got unexpected ${JSON.stringify(unexpected)}`,
     );
   }
 }
@@ -2165,12 +2205,12 @@ function checkScriptsAipt(entries) {
     "scripts/aipt/validate-p0-b001.mjs",
     "scripts/aipt/validate-p0-b002.mjs",
   ];
-  const allowed = new Set(required);
+  const allowed = new Set([...required, "scripts/aipt/validate-p0-b003.mjs"]);
   const missing = required.filter((p) => !files.includes(p));
   const unexpected = files.filter((p) => !allowed.has(p));
   if (missing.length > 0 || unexpected.length > 0) {
     throw new Error(
-      `scripts/aipt must contain exactly the B000+B001+B002 validators (no adapter/runtime/mutant executable); missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)}`,
+      `scripts/aipt must retain B000+B001+B002 and may add only validate-p0-b003.mjs; missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)}`,
     );
   }
 }
@@ -2750,25 +2790,25 @@ function runProbes() {
       expectThrown(() => checkManifestObj(m), "reserved_zero_kinds must be exactly [RULE, INVARIANT, MUTATION] in registry order");
     }],
     // --- status ---
-    ["status drift from MERGED_CLOSED", () => {
+    ["status drift from IN_PROGRESS", () => {
       const s = structuredClone(loadJson("aipt/status.json"));
-      s.status = "IN_PROGRESS";
-      expectThrown(() => checkStatusObj(s), "status MERGED_CLOSED");
+      s.status = "MERGED_CLOSED";
+      expectThrown(() => checkStatusObj(s), "status IN_PROGRESS");
     }],
     ["previous repository batch status drift", () => {
       const s = structuredClone(loadJson("aipt/status.json"));
       s.previous_repo_batch.status = "IN_PROGRESS";
-      expectThrown(() => checkStatusObj(s), "previous repository batch B001 MERGED_CLOSED");
+      expectThrown(() => checkStatusObj(s), "previous repository batch B002 MERGED_CLOSED");
     }],
     ["global_wip drift", () => {
       const s = structuredClone(loadJson("aipt/status.json"));
-      s.global_wip = 1;
-      expectThrown(() => checkStatusObj(s), "global_wip 0");
+      s.global_wip = 0;
+      expectThrown(() => checkStatusObj(s), "global_wip 1");
     }],
     ["external predecessor CI conclusion drift", () => {
       const s = structuredClone(loadJson("aipt/status.json"));
-      s.external_serial_predecessor.closeout_ci_conclusion = "failure";
-      expectThrown(() => checkStatusObj(s), "external predecessor closeout CI success");
+      s.historical_external_ancestry.closeout_ci_conclusion = "failure";
+      expectThrown(() => checkStatusObj(s), "historical external ancestry closeout CI success");
     }],
     // --- artifacts ---
     ["unexpected B001 artifact path", () => {
@@ -2924,11 +2964,11 @@ function main() {
   runCheck("safety-profile", checkSafetyProfile);
   runCheck("artifact paths", () => {
     checkArtifactPaths(collectAiptEntries());
-    pass("artifact paths: B000+B001 historical files and all four finalized B002 artifacts are required exactly; symlinks and other non-regular entries reject");
+    pass("artifact paths: historical files plus B003 control artifacts required; B003 construction limited to an exact file allowlist; non-regular entries reject");
   });
   runCheck("scripts/aipt allowlist", () => {
     checkScriptsAipt(collectScriptsAiptEntries());
-    pass("scripts/aipt allowlist: exactly B000+B001+B002 validators required — no adapter/runtime/mutant executable");
+    pass("scripts/aipt allowlist: B000+B001+B002 required; only the B003 validator may be added — no adapter/runtime/mutant executable");
   });
   runCheck("delivery-surface scan", checkScan);
   runProbes();

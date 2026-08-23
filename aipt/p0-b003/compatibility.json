@@ -1,0 +1,36 @@
+{
+  "aipt_schema": "aipt.game-compatibility.v1",
+  "batch_id": "UNREGISTERED-AIPT-P0-B003",
+  "game": {
+    "repo": "zyc14588/UNREGISTERED",
+    "previous_closed_commit": "7ae44d12b3637e49f0883049a09423dd4f385341",
+    "readiness": "PLAYTESTABLE_DRAFT"
+  },
+  "aipt": {
+    "repo": "zyc14588/AIPT",
+    "current_read_only_commit": "e1e1a6315ef2308922105dd30fd4bbcf4e3f91c8",
+    "protocol_authority_commit": "fccfb595c23feab38397506505a3e996fe7b9e9c",
+    "protocol_authority_tree": "f99570bc3c4307244ca926cec62e82a07ef5aee8",
+    "schema_path": "schemas/protocol/v1/aipt-protocol.schema.json",
+    "raw_schema_sha256": "59467ffb27622b7858bd590b2b711a7affc9b5b0cb13e358504bd44eabe09dcf",
+    "protocol_version": "1.0.0",
+    "schema_version": "1.0.0",
+    "adapter_sdk": {
+      "package": "@aipt/adapter-sdk",
+      "version": "1.0.0",
+      "node": ">=24.19.0 <25",
+      "third_party_dependencies": 0
+    }
+  },
+  "contract": {
+    "model": "AIPT_SCHEMA_PLUS_GAME_COMPAT_DECLARATION",
+    "actual_commit_pair_binding": "DEFERRED_TO_INTEGRATION_RUN_MANIFEST",
+    "integration_id": "INT-AIPT-UNREGISTERED-001",
+    "schema_copied": false,
+    "sdk_vendored": false
+  },
+  "lifecycle": {
+    "source_rules": "PROPOSAL",
+    "canonical": false
+  }
+}

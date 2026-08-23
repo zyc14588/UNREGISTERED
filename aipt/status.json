@@ -1,14 +1,19 @@
 {
-  "aipt_schema": "aipt.status.v2",
-  "current_batch": "UNREGISTERED-AIPT-P0-B002",
-  "status": "MERGED_CLOSED",
-  "global_wip": 0,
+  "aipt_schema": "aipt.status.v3",
+  "current_batch": "UNREGISTERED-AIPT-P0-B003",
+  "status": "IN_PROGRESS",
+  "global_wip": 1,
   "previous_repo_batch": {
-    "batch_id": "UNREGISTERED-AIPT-P0-B001",
+    "batch_id": "UNREGISTERED-AIPT-P0-B002",
     "status": "MERGED_CLOSED",
-    "closeout_commit": "a37b284bf5ec35895f436abe71d22599edb6da53"
+    "candidate_commit": "284c50eeab65c0713a6776198004245895724cba",
+    "candidate_tree": "781220f10f7c2f72e58ba2d6d214b58833045a13",
+    "implementation_merge": "5c12c0b5a126e8dfa891eae6d13f7d472781e87a",
+    "closeout_commit": "7ae44d12b3637e49f0883049a09423dd4f385341",
+    "closeout_ci_run": 32589300293,
+    "closeout_ci_conclusion": "success"
   },
-  "external_serial_predecessor": {
+  "historical_external_ancestry": {
     "batch_id": "AIPT-M0-B006",
     "status": "MERGED_CLOSED",
     "implementation_merge": "35acba9fb629f50087def3b720df304fadfd2158",
@@ -17,8 +22,8 @@
     "closeout_ci_run": 32579049539,
     "closeout_ci_conclusion": "success"
   },
-  "next_batch": "UNREGISTERED-AIPT-P0-B003",
-  "next_batch_state": "AUTHORIZED_TO_PREPARE",
-  "next_batch_authorized": true,
+  "next_batch": "AIPT-M0-B007",
+  "next_batch_state": "NOT_AUTHORIZED",
+  "next_batch_authorized": false,
   "next_batch_started": false
 }

@@ -69,8 +69,9 @@ const ROOT = path.resolve(SCRIPT_DIR, "..", "..");
 
 const BATCH = "UNREGISTERED-AIPT-P0-B000";
 const B001_BATCH = "UNREGISTERED-AIPT-P0-B001";
-const CURRENT_BATCH = "UNREGISTERED-AIPT-P0-B002";
-const NEXT_BATCH = "UNREGISTERED-AIPT-P0-B003";
+const B002_BATCH = "UNREGISTERED-AIPT-P0-B002";
+const CURRENT_BATCH = "UNREGISTERED-AIPT-P0-B003";
+const NEXT_BATCH = "AIPT-M0-B007";
 const CODENAME = "《特工模拟》";
 // The prohibited current-name typo (未登记 misspelled) and its bracketed title
 // form must be assembled from fragments so this validator does not flag its
@@ -539,33 +540,38 @@ function checkForbiddenKeys(obj, fileLabel) {
   }
 }
 
-/** Legal B002 MERGED_CLOSED closeout status for aipt/status.json: exactly these
- *  keys and values. It records the previous repository batch separately from
- *  the external serial predecessor that authorized B002. */
-const STATUS_KEYS_B002 = [
+/** Legal B003 construction status for aipt/status.json: exactly these keys and
+ *  values. B002 is the direct repository predecessor; B006 is retained only as
+ *  historical external ancestry. */
+const STATUS_KEYS_B003 = [
   "aipt_schema",
   "current_batch",
   "status",
   "global_wip",
   "previous_repo_batch",
-  "external_serial_predecessor",
+  "historical_external_ancestry",
   "next_batch",
   "next_batch_state",
   "next_batch_authorized",
   "next_batch_started",
 ];
 
-const EXPECTED_STATUS_B002 = {
-  aipt_schema: "aipt.status.v2",
+const EXPECTED_STATUS_B003 = {
+  aipt_schema: "aipt.status.v3",
   current_batch: CURRENT_BATCH,
-  status: "MERGED_CLOSED",
-  global_wip: 0,
+  status: "IN_PROGRESS",
+  global_wip: 1,
   previous_repo_batch: {
-    batch_id: B001_BATCH,
+    batch_id: B002_BATCH,
     status: "MERGED_CLOSED",
-    closeout_commit: "a37b284bf5ec35895f436abe71d22599edb6da53",
+    candidate_commit: "284c50eeab65c0713a6776198004245895724cba",
+    candidate_tree: "781220f10f7c2f72e58ba2d6d214b58833045a13",
+    implementation_merge: "5c12c0b5a126e8dfa891eae6d13f7d472781e87a",
+    closeout_commit: "7ae44d12b3637e49f0883049a09423dd4f385341",
+    closeout_ci_run: 32589300293,
+    closeout_ci_conclusion: "success",
   },
-  external_serial_predecessor: {
+  historical_external_ancestry: {
     batch_id: "AIPT-M0-B006",
     status: "MERGED_CLOSED",
     implementation_merge: "35acba9fb629f50087def3b720df304fadfd2158",
@@ -575,8 +581,8 @@ const EXPECTED_STATUS_B002 = {
     closeout_ci_conclusion: "success",
   },
   next_batch: NEXT_BATCH,
-  next_batch_state: "AUTHORIZED_TO_PREPARE",
-  next_batch_authorized: true,
+  next_batch_state: "NOT_AUTHORIZED",
+  next_batch_authorized: false,
   next_batch_started: false,
 };
 
@@ -597,14 +603,48 @@ const REQUIRED_B002_ARTIFACTS = [
 ];
 const ALLOWED_B002_ARTIFACTS = new Set(REQUIRED_B002_ARTIFACTS);
 
+const REQUIRED_B003_CONTROL_ARTIFACTS = [
+  "aipt/p0-b003/compatibility.json",
+  "aipt/p0-b003/mutation-id-map.json",
+];
+
+const ALLOWED_B003_ARTIFACTS = new Set([
+  "aipt/p0-b003/README.md",
+  "aipt/p0-b003/compatibility.json",
+  "aipt/p0-b003/mutation-id-map.json",
+  "aipt/p0-b003/game-adapter.json",
+  "aipt/p0-b003/human-guide-map.json",
+  "aipt/p0-b003/human-guide/core-map.json",
+  "aipt/p0-b003/human-guide/safety-observer-map.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/manifest.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/seats.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/state.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-01.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-02.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-03.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-04.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/action-intent.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/transition.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/event.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/final-state.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/replay-assertion.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/manifest.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0001/overlay.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0001/oracle.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0002/overlay.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0002/oracle.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0003/overlay.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0003/oracle.json",
+]);
+
 function checkBatchStatus(s) {
   if (!s || typeof s !== "object") throw new Error("status.json: missing status object");
   const keys = Object.keys(s).sort();
-  const expectedKeys = [...STATUS_KEYS_B002].sort();
+  const expectedKeys = [...STATUS_KEYS_B003].sort();
   if (JSON.stringify(keys) !== JSON.stringify(expectedKeys)) {
     throw new Error(`status.json keys must be exactly ${JSON.stringify(expectedKeys)}, got ${JSON.stringify(keys)}`);
   }
-  for (const [k, v] of Object.entries(EXPECTED_STATUS_B002)) {
+  for (const [k, v] of Object.entries(EXPECTED_STATUS_B003)) {
     if (JSON.stringify(s[k]) !== JSON.stringify(v)) {
       throw new Error(`status.${k} must be exactly ${JSON.stringify(v)}, got ${JSON.stringify(s[k])}`);
     }
@@ -614,8 +654,8 @@ function checkBatchStatus(s) {
 function checkStatusAndArtifacts() {
   const status = loadJson("aipt/status.json");
   checkBatchStatus(status);
-  if (status.previous_repo_batch.batch_id !== B001_BATCH || status.previous_repo_batch.status !== "MERGED_CLOSED") {
-    throw new Error(`status.previous_repo_batch must record ${B001_BATCH} MERGED_CLOSED`);
+  if (status.previous_repo_batch.batch_id !== B002_BATCH || status.previous_repo_batch.status !== "MERGED_CLOSED") {
+    throw new Error(`status.previous_repo_batch must record ${B002_BATCH} MERGED_CLOSED`);
   }
   // B001 artifacts are required now (accepted baseline), not rejected.
   for (const r of REQUIRED_B001_ARTIFACTS) {
@@ -632,12 +672,21 @@ function checkStatusAndArtifacts() {
       throw new Error(`required B002 artifact missing after S1 finalization: ${r}`);
     }
   }
+  for (const r of REQUIRED_B003_CONTROL_ARTIFACTS) {
+    const abs = path.join(ROOT, r);
+    if (!existsSync(abs) || !statSync(abs).isFile()) {
+      throw new Error(`required P0-B003 control artifact missing: ${r}`);
+    }
+  }
   for (const f of walk(path.join(ROOT, "aipt"))) {
     const r = relPath(f);
     if (r.startsWith("aipt/p0-b002/") && !ALLOWED_B002_ARTIFACTS.has(r)) {
       throw new Error(`unexpected P0-B002 artifact outside the explicit construction allowlist: ${r}`);
     }
-    if (/^aipt\/p0-b00[3-9]\//i.test(r)) throw new Error(`unexpected later-batch artifact present: ${r}`);
+    if (r.startsWith("aipt/p0-b003/") && !ALLOWED_B003_ARTIFACTS.has(r)) {
+      throw new Error(`unexpected P0-B003 artifact outside the explicit construction allowlist: ${r}`);
+    }
+    if (/^aipt\/p0-b00[4-9]\//i.test(r)) throw new Error(`unexpected later-batch artifact present: ${r}`);
     if (/^(rule-id-map|machine-rules|semantic-graph)\.json$/i.test(path.basename(f)) && !r.startsWith("aipt/p0-b002/")) {
       throw new Error(`P0-B002 rule authority artifact outside aipt/p0-b002/**: ${r}`);
     }
@@ -645,7 +694,7 @@ function checkStatusAndArtifacts() {
       throw new Error(`AIPT run manifest present: ${r} (not allowed: ${CURRENT_BATCH} is MERGED_CLOSED and ${NEXT_BATCH} is authorized to prepare but not started)`);
     }
   }
-  pass(`status: ${CURRENT_BATCH} MERGED_CLOSED (closeout); previous repo batch ${B001_BATCH} MERGED_CLOSED; external predecessor AIPT-M0-B006 closed successfully; global_wip=0; next ${NEXT_BATCH} AUTHORIZED_TO_PREPARE, not started; B001 artifacts frozen; B002 surface explicit`);
+  pass(`status: ${CURRENT_BATCH} IN_PROGRESS; direct predecessor ${B002_BATCH} MERGED_CLOSED; AIPT-M0-B006 retained as historical external ancestry; global_wip=1; next ${NEXT_BATCH} NOT_AUTHORIZED and not started; historical artifacts frozen; B003 surface explicit`);
 }
 
 // ---------------------------------------------------------------------------
@@ -1325,34 +1374,34 @@ function runProbes() {
 
 // ---------------------------------------------------------------------------
 // 9b. In-memory status-mutation probe set — every stale/legacy/contradictory
-//     mutation of the legal B002 MERGED_CLOSED closeout status must reject.
+//     mutation of the legal B003 construction status must reject.
 // ---------------------------------------------------------------------------
 
 function runStatusProbes() {
   const base = loadJson("aipt/status.json");
   const probes = [
-    ["current status drift (IN_PROGRESS)", () => checkBatchStatus({ ...base, status: "IN_PROGRESS" })],
-    ["global_wip=1", () => checkBatchStatus({ ...base, global_wip: 1 })],
+    ["current status drift (MERGED_CLOSED)", () => checkBatchStatus({ ...base, status: "MERGED_CLOSED" })],
+    ["global_wip=0", () => checkBatchStatus({ ...base, global_wip: 0 })],
     ["previous_repo_batch.status drift", () =>
       checkBatchStatus({ ...base, previous_repo_batch: { ...base.previous_repo_batch, status: "IN_PROGRESS" } })],
     ["previous_repo_batch.batch_id drift", () =>
-      checkBatchStatus({ ...base, previous_repo_batch: { ...base.previous_repo_batch, batch_id: BATCH } })],
+      checkBatchStatus({ ...base, previous_repo_batch: { ...base.previous_repo_batch, batch_id: B001_BATCH } })],
     ["previous_repo_batch.closeout_commit drift", () =>
       checkBatchStatus({ ...base, previous_repo_batch: { ...base.previous_repo_batch, closeout_commit: "0".repeat(40) } })],
-    ["external predecessor status drift", () =>
-      checkBatchStatus({ ...base, external_serial_predecessor: { ...base.external_serial_predecessor, status: "IN_PROGRESS" } })],
-    ["external predecessor merge drift", () =>
-      checkBatchStatus({ ...base, external_serial_predecessor: { ...base.external_serial_predecessor, implementation_merge: "0".repeat(40) } })],
-    ["external predecessor tree drift", () =>
-      checkBatchStatus({ ...base, external_serial_predecessor: { ...base.external_serial_predecessor, implementation_tree: "0".repeat(40) } })],
-    ["external predecessor closeout drift", () =>
-      checkBatchStatus({ ...base, external_serial_predecessor: { ...base.external_serial_predecessor, closeout_commit: "0".repeat(40) } })],
-    ["external predecessor CI conclusion drift", () =>
-      checkBatchStatus({ ...base, external_serial_predecessor: { ...base.external_serial_predecessor, closeout_ci_conclusion: "failure" } })],
+    ["historical ancestry status drift", () =>
+      checkBatchStatus({ ...base, historical_external_ancestry: { ...base.historical_external_ancestry, status: "IN_PROGRESS" } })],
+    ["historical ancestry merge drift", () =>
+      checkBatchStatus({ ...base, historical_external_ancestry: { ...base.historical_external_ancestry, implementation_merge: "0".repeat(40) } })],
+    ["historical ancestry tree drift", () =>
+      checkBatchStatus({ ...base, historical_external_ancestry: { ...base.historical_external_ancestry, implementation_tree: "0".repeat(40) } })],
+    ["historical ancestry closeout drift", () =>
+      checkBatchStatus({ ...base, historical_external_ancestry: { ...base.historical_external_ancestry, closeout_commit: "0".repeat(40) } })],
+    ["historical ancestry CI conclusion drift", () =>
+      checkBatchStatus({ ...base, historical_external_ancestry: { ...base.historical_external_ancestry, closeout_ci_conclusion: "failure" } })],
     ["next_batch drift", () => checkBatchStatus({ ...base, next_batch: "UNREGISTERED-AIPT-P0-B004" })],
-    ["next_batch_state drift (NOT_AUTHORIZED)", () =>
-      checkBatchStatus({ ...base, next_batch_state: "NOT_AUTHORIZED" })],
-    ["next_batch_authorized=false", () => checkBatchStatus({ ...base, next_batch_authorized: false })],
+    ["next_batch_state drift (AUTHORIZED_TO_PREPARE)", () =>
+      checkBatchStatus({ ...base, next_batch_state: "AUTHORIZED_TO_PREPARE" })],
+    ["next_batch_authorized=true", () => checkBatchStatus({ ...base, next_batch_authorized: true })],
     ["next_batch_started=true", () => checkBatchStatus({ ...base, next_batch_started: true })],
     ["legacy next_started key", () => checkBatchStatus({ ...base, next_started: false })],
     ["legacy previous_batch key", () => checkBatchStatus({ ...base, previous_batch: { batch_id: BATCH, status: "MERGED_CLOSED" } })],

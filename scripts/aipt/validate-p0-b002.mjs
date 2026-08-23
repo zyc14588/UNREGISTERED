@@ -45,7 +45,7 @@ const ROOT = path.resolve(SCRIPT_DIR, "..", "..");
 const BATCH = "UNREGISTERED-AIPT-P0-B002";
 const B000_BATCH = "UNREGISTERED-AIPT-P0-B000";
 const B001_BATCH = "UNREGISTERED-AIPT-P0-B001";
-const NEXT_BATCH = "UNREGISTERED-AIPT-P0-B003";
+const NEXT_BATCH = "AIPT-M0-B007";
 // The participant-data classification token; assembled from fragments so this
 // validator does not flag itself in the delivery-surface scan.
 const HPD = "HUMAN_" + "PRIVATE_" + "DATA";
@@ -1615,6 +1615,40 @@ const ALLOWED_B002_AIPT_FILES = [
   "aipt/p0-b002/README.md",
 ];
 
+const REQUIRED_B003_CONTROL_AIPT_FILES = [
+  "aipt/p0-b003/compatibility.json",
+  "aipt/p0-b003/mutation-id-map.json",
+];
+
+const ALLOWED_B003_AIPT_FILES = [
+  "aipt/p0-b003/README.md",
+  "aipt/p0-b003/compatibility.json",
+  "aipt/p0-b003/mutation-id-map.json",
+  "aipt/p0-b003/game-adapter.json",
+  "aipt/p0-b003/human-guide-map.json",
+  "aipt/p0-b003/human-guide/core-map.json",
+  "aipt/p0-b003/human-guide/safety-observer-map.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/manifest.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/seats.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/state.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-01.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-02.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-03.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/projection-seat-04.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/action-intent.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/transition.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/event.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/final-state.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/clean/replay-assertion.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/manifest.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0001/overlay.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0001/oracle.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0002/overlay.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0002/oracle.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0003/overlay.json",
+  "aipt/p0-b003/NON_CANON_TEST_FIXTURE/mutants/UNR-MUTATION-0003/oracle.json",
+];
+
 const REQUIRED_SCRIPTS_AIPT = [
   "scripts/aipt/validate-p0-b000.mjs",
   "scripts/aipt/validate-p0-b001.mjs",
@@ -1654,15 +1688,21 @@ function checkArtifactPaths(entries, opts = {}) {
     );
   }
   const files = entries.map((e) => e.rel).sort();
-  const allowed = new Set([...REQUIRED_HISTORICAL_AIPT_FILES, ...ALLOWED_B002_AIPT_FILES]);
-  const missingHistorical = REQUIRED_HISTORICAL_AIPT_FILES.filter((p) => !files.includes(p));
+  const allowed = new Set([
+    ...REQUIRED_HISTORICAL_AIPT_FILES,
+    ...ALLOWED_B002_AIPT_FILES,
+    ...REQUIRED_B003_CONTROL_AIPT_FILES,
+    ...ALLOWED_B003_AIPT_FILES,
+  ]);
+  const required = [...REQUIRED_HISTORICAL_AIPT_FILES, ...ALLOWED_B002_AIPT_FILES, ...REQUIRED_B003_CONTROL_AIPT_FILES];
+  const missingHistorical = required.filter((p) => !files.includes(p));
   if (missingHistorical.length > 0) {
     throw new Error(`historical AIPT artifacts must remain present exactly; missing ${JSON.stringify(missingHistorical)}`);
   }
   const unexpected = files.filter((p) => !allowed.has(p));
   if (unexpected.length > 0) {
     throw new Error(
-      `unexpected AIPT artifact paths: B000/B001 historical files remain exact and B002 construction is allowed only at ${JSON.stringify(ALLOWED_B002_AIPT_FILES)}; got unexpected ${JSON.stringify(unexpected)}`,
+      `unexpected AIPT artifact paths: historical files remain exact and B003 is limited to the explicit file allowlist; got unexpected ${JSON.stringify(unexpected)}`,
     );
   }
 }
@@ -1675,12 +1715,12 @@ function checkScriptsAipt(entries, opts = {}) {
     );
   }
   const files = entries.map((e) => e.rel).sort();
-  const allowed = new Set(REQUIRED_SCRIPTS_AIPT);
+  const allowed = new Set([...REQUIRED_SCRIPTS_AIPT, "scripts/aipt/validate-p0-b003.mjs"]);
   const missing = REQUIRED_SCRIPTS_AIPT.filter((p) => !files.includes(p));
   const unexpected = files.filter((p) => !allowed.has(p));
   if (missing.length > 0 || unexpected.length > 0) {
     throw new Error(
-      `scripts/aipt must contain exactly ${JSON.stringify(REQUIRED_SCRIPTS_AIPT)}; missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)} (no adapter/runtime/mutant executable, no B003 script)`,
+      `scripts/aipt must retain ${JSON.stringify(REQUIRED_SCRIPTS_AIPT)} and may add only validate-p0-b003.mjs; missing ${JSON.stringify(missing)}, unexpected ${JSON.stringify(unexpected)} (no adapter/runtime/mutant executable)`,
     );
   }
 }
@@ -1725,10 +1765,6 @@ function buildScanNeedles() {
       label: "participant payload value",
       re: new RegExp('"(participant_' + "answers|names|responses|feedback|mental_health_data" + ')"\\s*:\\s*("|\\[|\\{)'),
     },
-    {
-      label: "B003 artifact",
-      re: new RegExp('"batch_id"\\s*:\\s*"UNREGISTERED-AIPT-P0-B003"'),
-    },
   ];
 }
 
@@ -1757,14 +1793,14 @@ function checkScan() {
     scanned += 1;
     scanText(relPath(f), readRel(relPath(f)));
   }
-  pass(`security/surface scan: no credentials, private absolute paths, private prompt/package markers, participant payloads, or B003 artifacts (${scanned} files scanned; classification token allowed only in aipt/p0-b001/)`);
+  pass(`security/surface scan: no credentials, private absolute paths, private prompt/package markers, or participant payloads (${scanned} files scanned; classification token allowed only in aipt/p0-b001/)`);
 }
 
 function checkSurfaces() {
   checkArtifactPaths(collectEntriesWithKinds("aipt"));
   checkScriptsAipt(collectEntriesWithKinds(path.join("scripts", "aipt")));
   checkScan();
-  pass("artifact surfaces: exact AIPT artifacts (historical B000/B001 + three P0-B002 JSON files; later S1 README is the only optional construction file), scripts/aipt exactly B000+B001+B002 validators, non-regular entries rejected, no unexpected p0-b002/scripts/aipt artifacts");
+  pass("artifact surfaces: historical B000/B001/B002 files stay exact; B003 is limited to explicit data/validator paths; non-regular and executable adapter/runtime/mutant entries reject");
 }
 
 // ---------------------------------------------------------------------------
@@ -1998,10 +2034,10 @@ function runProbes() {
         "symlink path",
       );
     }],
-    ["future B003 artifact", () => {
+    ["unlisted B003 artifact", () => {
       const entries = collectEntriesWithKinds("aipt");
       entries.push({ rel: "aipt/p0-b003/started.json", kind: "file" });
-      expectThrown(() => checkArtifactPaths(entries), "B003 artifact");
+      expectThrown(() => checkArtifactPaths(entries), "unlisted B003 artifact");
     }],
     ["unexpected scripts/aipt adapter/runtime/mutant", () => {
       const entries = collectEntriesWithKinds(path.join("scripts", "aipt"));
@@ -2017,7 +2053,7 @@ function runProbes() {
       throw new Error(`negative probe failed (${name}): ${e.message}`);
     }
   }
-  pass(`adversarial probes: all ${probes.length} in-memory negative probes reject (duplicate/gap/reorder/unknown IDs, Mutation allocation, hash/locator drift/ambiguity, CANON/canonical true, manifest co-drift, B001 mutation, misplaced machine rules, unknown machine key, unallocated/duplicate active rules, executable injection, missing concept, orphan/unknown edge, SUPERSEDES cycle, Mutation node, path escape/symlink, future artifact)`);
+  pass(`adversarial probes: all ${probes.length} in-memory negative probes reject (duplicate/gap/reorder/unknown IDs, Mutation allocation, hash/locator drift/ambiguity, CANON/canonical true, manifest co-drift, B001 mutation, misplaced machine rules, unknown machine key, unallocated/duplicate active rules, executable injection, missing concept, orphan/unknown edge, SUPERSEDES cycle, Mutation node, path escape/symlink, unlisted B003 artifact)`);
 }
 
 // ---------------------------------------------------------------------------

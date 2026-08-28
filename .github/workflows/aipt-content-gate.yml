@@ -54,6 +54,10 @@ jobs:
           test "$(git -C "${P1_CANDIDATE_TARGET}" rev-parse HEAD)" = "${GITHUB_SHA}"
           test -z "$(git -C "${P1_CANDIDATE_TARGET}" status --porcelain=v1 --untracked-files=all)"
 
+          # These validators run against exact detached AIPT authority targets.
+          # GitHub's execution identity belongs to this UNREGISTERED checkout.
+          unset GITHUB_ACTIONS GITHUB_EVENT_NAME GITHUB_REF GITHUB_HEAD_REF GITHUB_BASE_REF GITHUB_SHA
+
           node "${AIPT_AUTHORITY_TARGET}/scripts/ci/validate/p1-b000-authority-amendment-003.mjs" \
             --repo "${AIPT_AUTHORITY_TARGET}"
           node "${AIPT_AUTHORITY_TARGET}/scripts/ci/validate/p1-b000-authority.mjs" \

@@ -1,29 +1,68 @@
 {
-  "aipt_schema": "aipt.status.v3",
-  "current_batch": "UNREGISTERED-AIPT-P0-B003",
-  "status": "MERGED_CLOSED",
-  "global_wip": 0,
-  "previous_repo_batch": {
+  "aipt_schema": "aipt.status.v4",
+  "current_batch": "UNREGISTERED-AIPT-P1-B000",
+  "status": "CANDIDATE_FROZEN",
+  "global_wip": 1,
+  "predecessor": {
+    "batch_id": "UNREGISTERED-AIPT-P0-B003",
+    "status": "MERGED_CLOSED",
+    "commit": "358d6d9d08a86818e34fd0c0d9a62bfe66e73abe",
+    "tree": "5585271c78d1fe5cd8357c7b36a501bee34f0240",
+    "validation_target": "EXACT_DETACHED_PREDECESSOR",
+    "p0_b000": "PASS",
+    "p0_b001": "PASS",
+    "p0_b002": "PASS",
+    "p0_b003": "PASS"
+  },
+  "authority": {
+    "task_id": "UNREGISTERED-AIPT-P1-B000-AUTHORITY-001",
+    "version": "1.0.0",
+    "canonical_lifecycle_source": "ACCEPTED_APPEND_ONLY_LIFECYCLE_RECORD_CHAIN",
+    "lifecycle": "CLOSED_EFFECTIVE",
+    "base_authority_closeout": "8d6a438d051fb635e769285215e70536958a8f42",
+    "amendment_001_r1_closeout": "2619339e53113633e02f3aef14156a1ff08c13f8",
+    "repair_merge": "df71476d4b8f271f3b444cace46a3d6fbd1eaea4",
+    "amendment_002_closeout": "97085cb48ea3c20fc60a049c0e145d2ecc37dc3f",
+    "amendment_003_closeout": "d12218f69a31884382e78c7c168b4677b5de8d87",
+    "authority_validator_sha256": "c6f0c8e01397200ce15f48bf1fc2412d9db477dddc37d3f99e0478d26956dd0c",
+    "b001_validator_sha256": "319c8d4a3466c20d14e2d5fc74cc246c9b796d36f884fcc39e2b0a25317351c4"
+  },
+  "implementation": {
+    "branch": "task/UNREGISTERED-AIPT-P1-B000",
+    "base_commit": "358d6d9d08a86818e34fd0c0d9a62bfe66e73abe",
+    "base_tree": "5585271c78d1fe5cd8357c7b36a501bee34f0240",
+    "candidate_commit_embedded": false,
+    "candidate_identity_recording": "STRUCTURED_STAGE_REVIEW",
+    "playtest_package": "aipt/p1-b000/playtest-package.json",
+    "runtime_adapter_input": "aipt/p1-b000/runtime-adapter-input.json",
+    "compatibility_evidence": "aipt/p1-b000/compatibility-evidence.json",
+    "validator": "scripts/aipt/validate-p1-b000.mjs"
+  },
+  "historical_repo_batch": {
     "batch_id": "UNREGISTERED-AIPT-P0-B002",
     "status": "MERGED_CLOSED",
     "candidate_commit": "284c50eeab65c0713a6776198004245895724cba",
     "candidate_tree": "781220f10f7c2f72e58ba2d6d214b58833045a13",
     "implementation_merge": "5c12c0b5a126e8dfa891eae6d13f7d472781e87a",
-    "closeout_commit": "7ae44d12b3637e49f0883049a09423dd4f385341",
-    "closeout_ci_run": 32589300293,
-    "closeout_ci_conclusion": "success"
+    "closeout_commit": "7ae44d12b3637e49f0883049a09423dd4f385341"
   },
   "historical_external_ancestry": {
     "batch_id": "AIPT-M0-B006",
     "status": "MERGED_CLOSED",
     "implementation_merge": "35acba9fb629f50087def3b720df304fadfd2158",
     "implementation_tree": "4271a3fb71236a8b003b4d9ddc84727c6fec8d46",
-    "closeout_commit": "e1e1a6315ef2308922105dd30fd4bbcf4e3f91c8",
-    "closeout_ci_run": 32579049539,
-    "closeout_ci_conclusion": "success"
+    "closeout_commit": "e1e1a6315ef2308922105dd30fd4bbcf4e3f91c8"
   },
-  "next_batch": "AIPT-M0-B007",
-  "next_batch_state": "AUTHORIZED_TO_PREPARE",
-  "next_batch_authorized": true,
-  "next_batch_started": false
+  "merge_authorized": false,
+  "closeout_authorized": false,
+  "next_batch": null,
+  "next_batch_authorized": false,
+  "next_batch_started": false,
+  "runtime_boundaries": {
+    "run_core_implemented": false,
+    "agent_orchestration_implemented": false,
+    "real_model_gateway_implemented": false,
+    "real_model_calls": 0,
+    "real_playtest_executed": false
+  }
 }

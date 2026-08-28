@@ -1,0 +1,255 @@
+{
+  "schema": "unregistered.aipt.p1-b000.compatibility-evidence/v1",
+  "evidence_version": "1.0.0",
+  "task_id": "UNREGISTERED-AIPT-P1-B000",
+  "predecessor_validation_target": {
+    "repository": "zyc14588/UNREGISTERED",
+    "commit": "358d6d9d08a86818e34fd0c0d9a62bfe66e73abe",
+    "tree": "5585271c78d1fe5cd8357c7b36a501bee34f0240",
+    "detached_checkout_required": true,
+    "candidate_overlay_permitted": false,
+    "node_version": "v24.19.0",
+    "p0_gate_results": [
+      {
+        "gate_id": "P0-B000",
+        "validator_path": "scripts/aipt/validate-p0-b000.mjs",
+        "validator_sha256": "bf27739727b86a4c174ea52da54fb17e741d7c7e95062ccbe1cf16da96ecb7d2",
+        "result": "PASS"
+      },
+      {
+        "gate_id": "P0-B001",
+        "validator_path": "scripts/aipt/validate-p0-b001.mjs",
+        "validator_sha256": "d464034da401d1056b42d9910bd87d85adf6d9f6a39df44be81e6dc0b5b1bb71",
+        "result": "PASS"
+      },
+      {
+        "gate_id": "P0-B002",
+        "validator_path": "scripts/aipt/validate-p0-b002.mjs",
+        "validator_sha256": "d1508d6449f4436064ac567dc9f58050837fab9e4f051512985f26358faa82b5",
+        "result": "PASS"
+      },
+      {
+        "gate_id": "P0-B003",
+        "validator_path": "scripts/aipt/validate-p0-b003.mjs",
+        "validator_sha256": "ef08ce52d27b33dfb00152c2d29dc9056a0b09fdadeafcc2dd9f1d1c59ddfe45",
+        "result": "PASS"
+      }
+    ]
+  },
+  "candidate_validation_target": {
+    "base_commit": "358d6d9d08a86818e34fd0c0d9a62bfe66e73abe",
+    "base_tree": "5585271c78d1fe5cd8357c7b36a501bee34f0240",
+    "branch": "task/UNREGISTERED-AIPT-P1-B000",
+    "candidate_commit_embedded": false,
+    "candidate_identity_recording": "STRUCTURED_STAGE_REVIEW",
+    "protected_inventory_artifact_sha256": "e1b3b1353a1c7cbba570bdc6ae1fdc5ad5b60a25082f6896d37ec50a71afc958",
+    "protected_inventory_projection_sha256": "55480de50eb218163db4d2bcb20b8c64ce0bc44858c6a4fa722e1a37ca6751ac",
+    "allowed_additions": [
+      "aipt/p1-b000/compatibility-evidence.json",
+      "aipt/p1-b000/playtest-package.json",
+      "aipt/p1-b000/runtime-adapter-input.json",
+      "scripts/aipt/validate-p1-b000.mjs"
+    ],
+    "allowed_controlled_modifications": [
+      ".github/workflows/aipt-content-gate.yml",
+      "aipt/README.md",
+      "aipt/status.json"
+    ],
+    "p0_preservation_required": true,
+    "unexpected_delta_permitted": false
+  },
+  "authority": {
+    "canonical_lifecycle_source": "ACCEPTED_APPEND_ONLY_LIFECYCLE_RECORD_CHAIN",
+    "base_authority": {
+      "task_id": "UNREGISTERED-AIPT-P1-B000-AUTHORITY-001",
+      "semantic_candidate_commit": "c9f7729f666d11716c04d7682da16044ca965236",
+      "semantic_candidate_tree": "9cf551e7bc70d4354ca21d62a2bd456ed6f401bb",
+      "closeout_commit": "8d6a438d051fb635e769285215e70536958a8f42",
+      "lifecycle_state": "CLOSED",
+      "effective": true
+    },
+    "accepted_amendments": [
+      {
+        "task_id": "UNREGISTERED-AIPT-P1-B000-AUTHORITY-AMENDMENT-001-R1",
+        "closeout_commit": "2619339e53113633e02f3aef14156a1ff08c13f8",
+        "lifecycle_state": "CLOSED",
+        "effective": true
+      },
+      {
+        "task_id": "UNREGISTERED-AIPT-P1-B000-AUTHORITY-AMENDMENT-002",
+        "closeout_commit": "97085cb48ea3c20fc60a049c0e145d2ecc37dc3f",
+        "lifecycle_state": "CLOSED",
+        "effective": true
+      },
+      {
+        "task_id": "UNREGISTERED-AIPT-P1-B000-AUTHORITY-AMENDMENT-003",
+        "closeout_commit": "d12218f69a31884382e78c7c168b4677b5de8d87",
+        "lifecycle_state": "CLOSED",
+        "effective": true
+      }
+    ],
+    "accepted_repair_merge": "df71476d4b8f271f3b444cace46a3d6fbd1eaea4",
+    "authority_version": "1.0.0",
+    "authority_registry_sha256": "a9845bb74dac409ee243b7024e23aae271ab13c75e18116ae2513853cc02eed6",
+    "authority_artifact_manifest_sha256": "3e7d5ee752ac01ae4034fdaf2ec71231bb4f58eca9174e99619d0a13b200cd4f",
+    "authority_validator_sha256": "c6f0c8e01397200ce15f48bf1fc2412d9db477dddc37d3f99e0478d26956dd0c",
+    "b001_validator_sha256": "319c8d4a3466c20d14e2d5fc74cc246c9b796d36f884fcc39e2b0a25317351c4"
+  },
+  "package_binding": {
+    "path": "aipt/p1-b000/playtest-package.json",
+    "package_id": "zyc14588/agent-sim",
+    "package_version": "1.0.0",
+    "source_repository": "zyc14588/UNREGISTERED",
+    "source_commit": "358d6d9d08a86818e34fd0c0d9a62bfe66e73abe",
+    "source_tree": "5585271c78d1fe5cd8357c7b36a501bee34f0240",
+    "source_digest": "605b4a72dda8348fc51245f0d0947d69cc47b174346bb9f14b378fb703ff594d",
+    "package_manifest_sha256": "99683081677f5ac098dc94ee1221b4ae1fd5a75b416da7094276dbf694bb23bd"
+  },
+  "adapter_binding": {
+    "path": "aipt/p1-b000/runtime-adapter-input.json",
+    "adapter_input_id": "UNREGISTERED-P1-B000-T000-ADAPTER-INPUT",
+    "adapter_contract_version": "1.0.0",
+    "canonical_sha256": "b6b80ef8b671414ca7bc34b7e65510db9a3bad5910996f43ea92120ecaec773d"
+  },
+  "b001_binding": {
+    "test_plan": {
+      "schema": "aipt.test-plan/v1",
+      "plan_id": "UNREGISTERED-P1-B000-TEST-PLAN",
+      "campaigns": [
+        {
+          "campaign_id": "UNREGISTERED-P1-B000-CAMPAIGN",
+          "name": "UNREGISTERED P1 B000 package compatibility",
+          "suites": [
+            {
+              "suite_id": "UNREGISTERED-P1-B000-SUITE",
+              "name": "Package and source binding",
+              "cases": [
+                {
+                  "case_id": "UNREGISTERED-P1-B000-CASE",
+                  "name": "Task 0 vertical-slice input contract",
+                  "task_type": "PACKAGE_BUILD",
+                  "runs": [
+                    {
+                      "run_id": "UNREGISTERED-P1-B000-RUN-001",
+                      "run_type": "PACKAGE_BUILD",
+                      "manifest_id": "UNREGISTERED-P1-B000-RUN-MANIFEST-001",
+                      "attempt_policy": {
+                        "scope": "RUN_INTERNAL_ONLY",
+                        "max_attempts": 1
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "run_manifest": {
+      "schema": "aipt.run-manifest/v1",
+      "manifest_id": "UNREGISTERED-P1-B000-RUN-MANIFEST-001",
+      "run_id": "UNREGISTERED-P1-B000-RUN-001",
+      "ancestry": {
+        "campaign_id": "UNREGISTERED-P1-B000-CAMPAIGN",
+        "suite_id": "UNREGISTERED-P1-B000-SUITE",
+        "case_id": "UNREGISTERED-P1-B000-CASE"
+      },
+      "run_type": "PACKAGE_BUILD",
+      "source": {
+        "aipt": {
+          "repository": "zyc14588/AIPT",
+          "commit": "eede815e818d87362605f55d5bfd2a0460e6e130",
+          "tree": "d2668f0ea9d3b72969199c7cd8afc5edb94c2a6b"
+        },
+        "game": {
+          "repository": "zyc14588/UNREGISTERED",
+          "commit": "358d6d9d08a86818e34fd0c0d9a62bfe66e73abe",
+          "tree": "5585271c78d1fe5cd8357c7b36a501bee34f0240"
+        }
+      },
+      "model_assignments": [
+        {
+          "assignment_id": "UNREGISTERED-P1-B000-STATIC-ASSIGNMENT",
+          "model_profile_id": "STATIC-VALIDATION-STUB-V1"
+        }
+      ],
+      "prompt_assets": [
+        {
+          "asset_id": "UNREGISTERED-P1-B000-PLAYTEST-PACKAGE",
+          "sha256": "99683081677f5ac098dc94ee1221b4ae1fd5a75b416da7094276dbf694bb23bd"
+        }
+      ],
+      "seat_roster": [
+        {
+          "seat_id": "validation-seat",
+          "role_id": "STATIC_VALIDATION",
+          "model_assignment_id": "UNREGISTERED-P1-B000-STATIC-ASSIGNMENT"
+        }
+      ],
+      "budget": {
+        "policy_id": "UNREGISTERED-P1-B000-NO-EXECUTION",
+        "limits_id": "UNREGISTERED-P1-B000-ZERO-RUNTIME",
+        "max_input_tokens": 1,
+        "max_output_tokens": 1,
+        "max_duration_seconds": 1
+      },
+      "evidence": {
+        "profile_id": "UNREGISTERED-P1-B000-CONTRACT-EVIDENCE",
+        "config_id": "UNREGISTERED-P1-B000-DETERMINISTIC-STATIC"
+      },
+      "visibility_profile_id": "AIPT_VISIBILITY_STANDARD_V1",
+      "safety_applicable": true,
+      "safety_profile_id": "AIPT_SAFETY_STANDARD_V1",
+      "classification": "DIAGNOSTIC",
+      "qualification_eligible": false,
+      "canonical_sha256": "aeaea04751bb631e80503890d7e4a5b683a92e1b3060a3f7779deaf9e6a2579c"
+    },
+    "binding_chain": [
+      "CAMPAIGN_SUITE_CASE_RUN",
+      "IMMUTABLE_RUN_MANIFEST_ID_AND_CANONICAL_SHA256",
+      "RUN_MANIFEST_SOURCE_GAME_REPOSITORY_COMMIT_TREE",
+      "ADAPTER_INPUT_PACKAGE_BINDING_WITH_EQUAL_REPOSITORY_COMMIT_TREE",
+      "PACKAGE_SOURCE_DIGEST_AND_FILE_DIGESTS"
+    ],
+    "protected_baseline": {
+      "campaign_suite_case_run": true,
+      "attempt_internal_only": true,
+      "attempt_externally_addressable": false,
+      "run_manifest_immutable": true,
+      "second_run_manifest_authority": false,
+      "postgresql_queue_authority": true,
+      "formal_wip": 1,
+      "deterministic_selection": true,
+      "lease": true,
+      "heartbeat": true,
+      "expiry": true,
+      "recovery": true,
+      "attempt_history_append_only": true,
+      "migration_path": "internal/storage/postgres/migrations/000002_playtest_queue.sql",
+      "migration_sha256": "47f02a5a2129473caa0db5e359a0b294a01b2a96329d9f6fa08ac87cc429c997"
+    }
+  },
+  "visibility_proof": {
+    "player_visible_source_ids": [
+      "UNR-SCENE-T000-PLAYER-HANDOUTS"
+    ],
+    "gm_only_source_ids": [
+      "UNR-GUIDE-T000-STAGE3",
+      "UNR-REFERENCE-SESSION0-REDLINES"
+    ],
+    "system_internal_source_ids": [
+      "UNR-ASSET-P0-B003-GAME-ADAPTER",
+      "UNR-RULE-P0-B002-MACHINE-RULES"
+    ],
+    "player_visible_gm_only_intersection": [],
+    "result": "PASS"
+  },
+  "runtime_boundaries": {
+    "run_core_implemented": false,
+    "agent_orchestration_implemented": false,
+    "real_model_gateway_implemented": false,
+    "real_model_calls": 0,
+    "real_playtest_executed": false
+  }
+}

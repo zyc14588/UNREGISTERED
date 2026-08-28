@@ -1,0 +1,201 @@
+{
+  "schema": "aipt.playtest-package/v1",
+  "schema_version": "1.0.0",
+  "mapping_version": "1.0.0",
+  "package_id": "zyc14588/agent-sim",
+  "package_version": "1.0.0",
+  "game_id": "UNREGISTERED",
+  "game_version": "0.0.0-prototype.0",
+  "package_root": ".",
+  "source_repository": "zyc14588/UNREGISTERED",
+  "source_commit": "358d6d9d08a86818e34fd0c0d9a62bfe66e73abe",
+  "source_tree": "5585271c78d1fe5cd8357c7b36a501bee34f0240",
+  "source_digest": "605b4a72dda8348fc51245f0d0947d69cc47b174346bb9f14b378fb703ff594d",
+  "digest_scope": {
+    "algorithm": "SHA-256",
+    "manifest_canonicalization": "RFC8785-JCS",
+    "file_content_mode": "GIT_BLOB_EXACT_BYTES_NO_NEWLINE_NORMALIZATION",
+    "path_order": "UTF8_BYTE_LEX_ASC",
+    "symlink_policy": "REJECT",
+    "unexpected_file_policy": "UNREFERENCED_OUT_OF_SCOPE_REFERENCED_UNLISTED_REJECT",
+    "entries": [
+      {
+        "source_path": "aipt/p0-b002/machine-rules.json",
+        "content_sha256": "139d095fe54926e1599edf208b65f7a89061f1cda6d8b492f83b5e47c0693c78"
+      },
+      {
+        "source_path": "aipt/p0-b003/game-adapter.json",
+        "content_sha256": "5ddef252e1b93a4b9348fb71e9490f106c02e9e0b8b11fa9a11a589bbc3effc5"
+      },
+      {
+        "source_path": "campaign/playtest/stage3-run-guide-v1.md",
+        "content_sha256": "c1ccd8a77d917e05f86f0604731344b22c8902c508858ef71a39ed9da3cce17f"
+      },
+      {
+        "source_path": "campaign/playtest/task0-handouts-v1.md",
+        "content_sha256": "56f1a9fba799f5c281162290c27b39db9bbbaa9d83cdaa83dd235506f3d68288"
+      },
+      {
+        "source_path": "campaign/session0-redlines.md",
+        "content_sha256": "d5d9246e07b2d4c9de9ce602835ec763ac33f5dd01a8b5e83c9b2318f9b6e630"
+      }
+    ]
+  },
+  "adapter_contract_version": "1.0.0",
+  "entrypoints": [
+    {
+      "test_unit_id": "UNREGISTERED-T000-VERTICAL-SLICE",
+      "scene_ids": [
+        "UNR-SCENE-T000-PLAYER-HANDOUTS"
+      ],
+      "guide_ids": [
+        "UNR-GUIDE-T000-STAGE3"
+      ],
+      "rule_ids": [
+        "UNR-RULE-P0-B002-MACHINE-RULES"
+      ],
+      "asset_ids": [
+        "UNR-ASSET-P0-B003-GAME-ADAPTER"
+      ],
+      "reference_ids": [
+        "UNR-REFERENCE-SESSION0-REDLINES"
+      ],
+      "player_visible_ids": [
+        "UNR-SCENE-T000-PLAYER-HANDOUTS"
+      ],
+      "gm_only_ids": [
+        "UNR-GUIDE-T000-STAGE3",
+        "UNR-REFERENCE-SESSION0-REDLINES"
+      ],
+      "system_internal_ids": [
+        "UNR-ASSET-P0-B003-GAME-ADAPTER",
+        "UNR-RULE-P0-B002-MACHINE-RULES"
+      ],
+      "required_capabilities": [
+        "playtest-package/v1",
+        "runtime-adapter-input/v1",
+        "source-mapping/v1",
+        "visibility-isolation/v1"
+      ]
+    }
+  ],
+  "mappings": [
+    {
+      "logical_id": "UNR-ASSET-P0-B003-GAME-ADAPTER",
+      "source_kind": "ASSET",
+      "source_path": "aipt/p0-b003/game-adapter.json",
+      "content_sha256": "5ddef252e1b93a4b9348fb71e9490f106c02e9e0b8b11fa9a11a589bbc3effc5",
+      "visibility_class": "SYSTEM_INTERNAL",
+      "depends_on": [
+        "UNR-RULE-P0-B002-MACHINE-RULES"
+      ]
+    },
+    {
+      "logical_id": "UNR-GUIDE-T000-STAGE3",
+      "source_kind": "GUIDE",
+      "source_path": "campaign/playtest/stage3-run-guide-v1.md",
+      "content_sha256": "c1ccd8a77d917e05f86f0604731344b22c8902c508858ef71a39ed9da3cce17f",
+      "visibility_class": "GM_ONLY",
+      "depends_on": [
+        "UNR-SCENE-T000-PLAYER-HANDOUTS"
+      ]
+    },
+    {
+      "logical_id": "UNR-RULE-P0-B002-MACHINE-RULES",
+      "source_kind": "RULE",
+      "source_path": "aipt/p0-b002/machine-rules.json",
+      "content_sha256": "139d095fe54926e1599edf208b65f7a89061f1cda6d8b492f83b5e47c0693c78",
+      "visibility_class": "SYSTEM_INTERNAL",
+      "depends_on": []
+    },
+    {
+      "logical_id": "UNR-SCENE-T000-PLAYER-HANDOUTS",
+      "source_kind": "SCENE",
+      "source_path": "campaign/playtest/task0-handouts-v1.md",
+      "content_sha256": "56f1a9fba799f5c281162290c27b39db9bbbaa9d83cdaa83dd235506f3d68288",
+      "visibility_class": "PLAYER_VISIBLE",
+      "depends_on": []
+    }
+  ],
+  "visibility_declarations": [
+    {
+      "logical_id": "UNR-ASSET-P0-B003-GAME-ADAPTER",
+      "visibility_class": "SYSTEM_INTERNAL",
+      "allowed_surfaces": [
+        "HARNESS_CONTROL",
+        "TEST_CONTROL",
+        "BOOKKEEPING"
+      ]
+    },
+    {
+      "logical_id": "UNR-GUIDE-T000-STAGE3",
+      "visibility_class": "GM_ONLY",
+      "allowed_surfaces": [
+        "GM_CONTEXT",
+        "ADJUDICATION",
+        "AUTHORIZED_EVIDENCE"
+      ]
+    },
+    {
+      "logical_id": "UNR-REFERENCE-SESSION0-REDLINES",
+      "visibility_class": "GM_ONLY",
+      "allowed_surfaces": [
+        "GM_CONTEXT",
+        "ADJUDICATION",
+        "AUTHORIZED_EVIDENCE"
+      ]
+    },
+    {
+      "logical_id": "UNR-RULE-P0-B002-MACHINE-RULES",
+      "visibility_class": "SYSTEM_INTERNAL",
+      "allowed_surfaces": [
+        "HARNESS_CONTROL",
+        "TEST_CONTROL",
+        "BOOKKEEPING"
+      ]
+    },
+    {
+      "logical_id": "UNR-SCENE-T000-PLAYER-HANDOUTS",
+      "visibility_class": "PLAYER_VISIBLE",
+      "allowed_surfaces": [
+        "PLAYER_AGENT_CONTEXT",
+        "PLAYER_VISIBLE_EVIDENCE",
+        "GM_CONTEXT",
+        "AUTHORIZED_EVIDENCE"
+      ]
+    }
+  ],
+  "declared_capabilities": [
+    "playtest-package/v1",
+    "runtime-adapter-input/v1",
+    "source-mapping/v1",
+    "visibility-isolation/v1"
+  ],
+  "references": [
+    {
+      "reference_id": "UNR-REFERENCE-SESSION0-REDLINES",
+      "source_path": "campaign/session0-redlines.md",
+      "content_sha256": "d5d9246e07b2d4c9de9ce602835ec763ac33f5dd01a8b5e83c9b2318f9b6e630",
+      "visibility_class": "GM_ONLY",
+      "media_type": "text/markdown",
+      "required_by": [
+        "UNR-GUIDE-T000-STAGE3"
+      ]
+    }
+  ],
+  "compatibility": {
+    "test_plan_schema": "aipt.test-plan/v1",
+    "run_manifest_schema": "aipt.run-manifest/v1",
+    "campaign_hierarchy": "CAMPAIGN_SUITE_CASE_RUN",
+    "attempt_internal_only": true,
+    "manifest_binding_model": "B001_GAME_SOURCE_PLUS_ADAPTER_BINDING_V1",
+    "aipt_ancestry_commit": "eede815e818d87362605f55d5bfd2a0460e6e130",
+    "aipt_ancestry_tree": "d2668f0ea9d3b72969199c7cd8afc5edb94c2a6b",
+    "authority_task_id": "UNREGISTERED-AIPT-P1-B000-AUTHORITY-001",
+    "authority_version": "1.0.0",
+    "authority_commit": "c9f7729f666d11716c04d7682da16044ca965236",
+    "authority_tree": "9cf551e7bc70d4354ca21d62a2bd456ed6f401bb",
+    "authority_registry_sha256": "a9845bb74dac409ee243b7024e23aae271ab13c75e18116ae2513853cc02eed6",
+    "authority_artifact_manifest_sha256": "3e7d5ee752ac01ae4034fdaf2ec71231bb4f58eca9174e99619d0a13b200cd4f"
+  }
+}

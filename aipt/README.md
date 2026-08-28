@@ -1,6 +1,15 @@
-# AIPT — Identity, Policy, Registry, Rule Metadata, and Adapter Contract
+# AIPT — P1 Playtest Package and Historical P0 Contracts
 
-本目录保存《未登记》AIPT 机器可读交付。当前仓库批次 `UNREGISTERED-AIPT-P0-B003` 已 `MERGED_CLOSED`、`global_wip: 0`；直接仓库前序 `UNREGISTERED-AIPT-P0-B002` 的 immutable identity 保持不变，外部历史祖先 `AIPT-M0-B006` 的 provenance 继续保留。下一批 `AIPT-M0-B007` 为 `AUTHORIZED_TO_PREPARE`、`next_batch_authorized: true`、`started: false`，且未在本仓库开始 implementation。
+本目录保存《未登记》AIPT 机器可读交付。当前唯一 active WIP 是 `UNREGISTERED-AIPT-P1-B000` implementation candidate；固定 historical predecessor 为 `UNREGISTERED@358d6d9d08a86818e34fd0c0d9a62bfe66e73abe`（tree `5585271c78d1fe5cd8357c7b36a501bee34f0240`）。P0-B000…P0-B003 资产与 validators 保持 byte-exact，不在 P1 candidate 上改写或扩展。
+
+## P1-B000 工件
+
+- [`p1-b000/playtest-package.json`](p1-b000/playtest-package.json) — versioned Playtest Package；绑定 immutable source commit/tree、闭合 source digest inventory、scene/guide/rule/asset/reference mapping 与三类 visibility。
+- [`p1-b000/runtime-adapter-input.json`](p1-b000/runtime-adapter-input.json) — data-only Runtime Adapter Input；绑定 package、selected test unit、resolved mapping、visibility proof 与现有 B001 immutable Run Manifest。
+- [`p1-b000/compatibility-evidence.json`](p1-b000/compatibility-evidence.json) — predecessor/candidate target separation、Authority provenance 与 Campaign → Suite → Case → Run compatibility evidence。
+- [`../scripts/aipt/validate-p1-b000.mjs`](../scripts/aipt/validate-p1-b000.mjs) — dependency-free、provider-independent concrete validator，执行 N01–N39 与额外 path/hidden-information probes。
+
+P1-B000 只定义 package/input contract；不实现 Run Core、agent orchestration、model gateway 或真实桌测。`merge_authorized`、`closeout_authorized` 与 `next_batch_authorized` 均为 `false`。
 
 ## 工件索引
 
@@ -29,7 +38,13 @@
 
 ## 校验
 
-使用 Node.js `v24.19.0`，无需依赖、安装、网络或模型调用：
+使用 Node.js `v24.19.0`，无需依赖、安装、模型或 provider 调用：
+
+```sh
+node scripts/aipt/validate-p1-b000.mjs
+```
+
+Historical P0 gates 只能在 exact detached historical predecessor checkout 上运行：
 
 ```sh
 node scripts/aipt/validate-p0-b000.mjs
@@ -38,8 +53,4 @@ node scripts/aipt/validate-p0-b002.mjs
 node scripts/aipt/validate-p0-b003.mjs
 ```
 
-- B000 门：仓库 JSON/相对链接、身份、许可、状态、交付面与 workflow 静态约束。
-- B001 门：冻结输入、稳定 ID、可见性、安全配置、最终工件表面与 100 个负向探针。
-- B002 门：冻结哈希、Rule ID、机器规则、语义图、安全表面与 35 个负向探针。
-- B003 门：兼容性、clean fixture、三个受限 overlay/detector、Human Guide、game adapter、严格表面与 30 个负向探针。
-- CI：[`AIPT Content Gate`](../.github/workflows/aipt-content-gate.yml) 在 `ubuntu-24.04` / Node.js `24.19.0` 上以四个独立步骤运行以上命令。
+P0-B000…P0-B003 是 predecessor gates，不得把其 closed-set validator 直接当作 P1 successor gate。CI 的 [`AIPT Content Gate`](../.github/workflows/aipt-content-gate.yml) 分离 exact predecessor checkout 与 clean detached candidate checkout，再由 accepted Amendment-002 semantics 组合 P0 preservation、controlled P1 delta、P1 validation 与 B001 compatibility。

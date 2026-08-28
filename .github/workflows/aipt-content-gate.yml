@@ -15,6 +15,7 @@ jobs:
       - name: Check out the repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Set up Node.js 24.19.0
@@ -26,14 +27,50 @@ jobs:
         run: |
           [ "$(node --version)" = "v24.19.0" ] || { echo "expected Node.js v24.19.0, got $(node --version)"; exit 1; }
 
-      - name: Validate AIPT P0-B000 delivery
-        run: node scripts/aipt/validate-p0-b000.mjs
+      - name: Validate exact frozen predecessor and P1 B000 candidate
+        shell: bash
+        run: |
+          set -euo pipefail
 
-      - name: Validate AIPT P0-B001 delivery
-        run: node scripts/aipt/validate-p0-b001.mjs
+          AIPT_AUTHORITY_TARGET="${RUNNER_TEMP}/aipt-authority"
+          AIPT_SEMANTIC_TARGET="${RUNNER_TEMP}/aipt-amendment-002-semantic"
+          P0_PREDECESSOR_TARGET="${RUNNER_TEMP}/unregistered-p0-predecessor"
+          P1_CANDIDATE_TARGET="${RUNNER_TEMP}/unregistered-p1-candidate"
 
-      - name: Validate AIPT P0-B002 delivery
-        run: node scripts/aipt/validate-p0-b002.mjs
+          git clone --no-checkout https://github.com/zyc14588/AIPT.git "${AIPT_AUTHORITY_TARGET}"
+          git -C "${AIPT_AUTHORITY_TARGET}" checkout --detach "97085cb48ea3c20fc60a049c0e145d2ecc37dc3f"
+          test "$(git -C "${AIPT_AUTHORITY_TARGET}" rev-parse HEAD)" = "97085cb48ea3c20fc60a049c0e145d2ecc37dc3f"
+          test "$(git -C "${AIPT_AUTHORITY_TARGET}" rev-parse 'HEAD^{tree}')" = "8ddba4d876d047f95b48987926d11bef9c4895d8"
+          test -z "$(git -C "${AIPT_AUTHORITY_TARGET}" status --porcelain=v1 --untracked-files=all)"
 
-      - name: Validate AIPT P0-B003 delivery
-        run: node scripts/aipt/validate-p0-b003.mjs
+          git clone --no-local --no-checkout . "${P0_PREDECESSOR_TARGET}"
+          git -C "${P0_PREDECESSOR_TARGET}" checkout --detach "358d6d9d08a86818e34fd0c0d9a62bfe66e73abe"
+          test "$(git -C "${P0_PREDECESSOR_TARGET}" rev-parse HEAD)" = "358d6d9d08a86818e34fd0c0d9a62bfe66e73abe"
+          test "$(git -C "${P0_PREDECESSOR_TARGET}" rev-parse 'HEAD^{tree}')" = "5585271c78d1fe5cd8357c7b36a501bee34f0240"
+          test -z "$(git -C "${P0_PREDECESSOR_TARGET}" status --porcelain=v1 --untracked-files=all)"
+
+          git clone --no-local --no-checkout . "${P1_CANDIDATE_TARGET}"
+          git -C "${P1_CANDIDATE_TARGET}" checkout --detach "${GITHUB_SHA}"
+          test "$(git -C "${P1_CANDIDATE_TARGET}" rev-parse HEAD)" = "${GITHUB_SHA}"
+          test -z "$(git -C "${P1_CANDIDATE_TARGET}" status --porcelain=v1 --untracked-files=all)"
+
+          node "${AIPT_AUTHORITY_TARGET}/scripts/ci/validate/p1-b000-authority-amendment-003.mjs" \
+            --repo "${AIPT_AUTHORITY_TARGET}"
+          node "${AIPT_AUTHORITY_TARGET}/scripts/ci/validate/p1-b000-authority.mjs" \
+            --repo "${AIPT_AUTHORITY_TARGET}"
+          node "${AIPT_AUTHORITY_TARGET}/scripts/ci/validate/mvp-b001.mjs" \
+            --repo "${AIPT_AUTHORITY_TARGET}"
+
+          git clone --no-local --no-checkout "${AIPT_AUTHORITY_TARGET}" "${AIPT_SEMANTIC_TARGET}"
+          git -C "${AIPT_SEMANTIC_TARGET}" checkout --detach "005ec002e7d8bcccd83d3f3994fddf9da30ff82a"
+          test "$(git -C "${AIPT_SEMANTIC_TARGET}" rev-parse HEAD)" = "005ec002e7d8bcccd83d3f3994fddf9da30ff82a"
+          test "$(git -C "${AIPT_SEMANTIC_TARGET}" rev-parse 'HEAD^{tree}')" = "1b173e129ccb3df1e1a9bc80385f9dc4f530b6ca"
+          test -z "$(git -C "${AIPT_SEMANTIC_TARGET}" status --porcelain=v1 --untracked-files=all)"
+
+          node "${AIPT_SEMANTIC_TARGET}/scripts/ci/validate/p1-b000-authority-amendment-002.mjs" \
+            --repo "${AIPT_SEMANTIC_TARGET}" \
+            --require-predecessor \
+            --predecessor-checkout "${P0_PREDECESSOR_TARGET}" \
+            --candidate-checkout "${P1_CANDIDATE_TARGET}"
+
+          node scripts/aipt/validate-p1-b000.mjs

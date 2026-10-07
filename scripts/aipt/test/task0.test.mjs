@@ -285,27 +285,103 @@ test('a newly triggered pursuit starts at zero and both complete chases stay wit
   assert.equal(h.state.pursuit,false);validateState(pkg,h.state);
   const replay=harness();for(const row of h.transcript)assert.equal(sha256(canonical(replay.step(row.action,row.draws.map((d)=>Number(BigInt('0x'+d.value_hex)))).state)),row.state_sha256);
 });
-test('a failed supported takedown preserves the check and blocks uncovered melee before any further Core draw',()=>{
+test('a failed takedown enters melee, preserves safety, and an own minus20 retry ends the engagement and finishes a replayable mission',()=>{
   const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
   const out=h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'},'exposure'),[0,9,1,0]);
   assert.equal(out.resolutions[0].tier,'FAILURE');assert.equal(h.state.cleared_npcs.includes('front_guard'),false);
-  assert.equal(project(pkg,h.state,p1).situation.unresolved_blocking,1);assert.equal(complete(pkg,h.state),false);
-  for(const action of [intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),intent(p1,'FIRE',{npc_id:'front_guard'}),intent(p2,'WAIT',{minutes:1}),gm('SETTLE_MISSION'),gm('NPC_ATTACK',{npc_id:'front_guard',character_id:p1})]){
-    bad(()=>requiredCoreDrawCount(pkg,h.state,action),'ADJUDICATION_REQUIRED');
-    bad(()=>applyAction(pkg,h.state,action),'ADJUDICATION_REQUIRED');
+  assert.equal(project(pkg,h.state,p1).own_state.melee_target,'front_guard');
+  assert.equal(h.state.unresolved_blocking,0);assert.equal(complete(pkg,h.state),false);
+  for(const action of [intent(p1,'WAIT',{minutes:1}),intent(p1,'MOVE',{to:'outside',group:false}),intent(p1,'WITHDRAW'),intent(p1,'PUSH')]){
+    bad(()=>requiredCoreDrawCount(pkg,h.state,action),'MELEE_FOLLOWUP_REQUIRED');
+    bad(()=>applyAction(pkg,h.state,action),'MELEE_FOLLOWUP_REQUIRED');
   }
+  for(const kind of ['TAKEDOWN','FIRE'])bad(()=>requiredCoreDrawCount(pkg,h.state,intent(p1,kind,{npc_id:'patrol'})),'MELEE_FOLLOWUP_TARGET');
+  h.step(intent(p2,'WAIT',{minutes:1}));
   h.step({actor_id:p3,action_type:'SAFETY_PAUSE',payload:{}});
   for(const id of ids)h.step({actor_id:id,action_type:'SAFETY_CONSENT',payload:{}});
   h.step(gm('SAFETY_RESUME'));assert.equal(h.state.paused,false);
-  bad(()=>requiredCoreDrawCount(pkg,h.state,intent(p1,'PUSH')),'ADJUDICATION_REQUIRED');
-  assert.equal(complete(pkg,h.state),false);
+  assert.equal(h.state.actors[p1].melee_target,'front_guard');
+  bad(()=>requiredCoreDrawCount(pkg,h.state,intent(p1,'PUSH')),'MELEE_FOLLOWUP_REQUIRED');
+  const retry=h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[1,0,9,9]);
+  assert.equal(retry.resolutions[0].target,10,'fixed untrained30 minus the source-required20');
+  assert.equal(h.state.actors[p1].melee_target,null);assert.equal(h.state.cleared_npcs.includes('front_guard'),true);
+  for(const id of ids)h.step(intent(id,'WITHDRAW'));finish(settle(h));assert.equal(complete(pkg,h.state),true);
+  const replay=harness();for(const row of h.transcript)assert.equal(sha256(canonical(replay.step(row.action,row.draws.map((d)=>Number(BigInt('0x'+d.value_hex)))).state)),row.state_sha256);
 });
-test('a takedown opposed loss blocks even when the player percentile tier succeeded, and grants no skill growth',()=>{
+test('a takedown opposed loss starts melee even when the player percentile tier succeeded, and grants no skill growth',()=>{
   const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
   const out=h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'},'exposure'),[0,1,1,0]);
   assert.equal(out.resolutions[0].tier,'SUCCESS');assert.equal(out.resolutions[1].tier,'CRITICAL');
   assert.equal(h.state.actors[p1].used_successful_skills.includes('无声击倒'),false);
-  assert.equal(h.state.unresolved_blocking,1);assert.equal(h.state.combat_active,true);
+  assert.equal(h.state.unresolved_blocking,0);assert.equal(h.state.combat_active,true);
+  assert.equal(h.state.actors[p1].melee_target,'front_guard');assert.equal(h.state.exposure,1);
+});
+test('the fire alternative consumes finite ammunition and only neutralizing the actual opponent ends melee',()=>{
+  const h=harness();h.step(intent(p1,'EQUIP',{items:['pistol','ammo','ammo'],specialty:null}));
+  h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
+  h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
+  const alarm=h.state.alarm;h.step(intent(p1,'FIRE',{npc_id:'front_guard'}),[0,3]);
+  assert.equal(h.state.actors[p1].equipment.filter((x)=>x==='ammo').length,1);assert.equal(h.state.alarm,alarm+1);
+  assert.equal(h.state.npc_wounds.front_guard,'HEAVY');assert.equal(h.state.actors[p1].melee_target,'front_guard');
+  h.step(intent(p1,'FIRE',{npc_id:'front_guard'}),[1,0]);
+  assert.equal(h.state.actors[p1].equipment.includes('ammo'),false);assert.equal(h.state.actors[p1].melee_target,null);
+  assert.equal(h.state.cleared_npcs.includes('front_guard'),true);
+});
+test('a failed retry keeps the same minus20 rather than granting a free push or accumulating invented penalties',()=>{
+  const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
+  h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
+  for(let i=0;i<2;i++){
+    const out=h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
+    assert.equal(out.resolutions[0].target,10);assert.equal(h.state.actors[p1].melee_target,'front_guard');
+    bad(()=>h.step(intent(p1,'PUSH')),'MELEE_FOLLOWUP_REQUIRED');
+  }
+  const before=canonical(h.state);bad(()=>h.step(intent(p1,'FIRE',{npc_id:'front_guard'}),[1,0]),'WEAPON');
+  assert.equal(canonical(h.state),before);assert.equal(h.state.actors[p1].used_successful_skills.includes('无声击倒'),false);
+});
+test('an ally acts for themselves and clearing the same guard releases another characters melee obligation',()=>{
+  const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
+  h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
+  h.step(intent(p2,'MOVE',{to:'lobby',group:false}),[1,0]);
+  h.step(intent(p2,'TAKEDOWN',{npc_id:'front_guard'}),[1,0,9,9]);
+  assert.equal(h.state.actors[p1].melee_target,null);assert.equal(h.state.actors[p1].last_check.result,'FAILURE');
+  assert.equal(h.state.actors[p1].used_successful_skills.includes('无声击倒'),false);
+  h.step(intent(p1,'MOVE',{to:'outside',group:false}));
+});
+test('prior group-follow permission cannot drag a currently engaged ally out of melee',()=>{
+  const h=harness();h.step(intent(p2,'FOLLOW',{leader_id:p1}));
+  h.step(intent(p1,'MOVE',{to:'lobby',group:true}),[1,0,1,0]);
+  h.step(intent(p2,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
+  const move=intent(p1,'MOVE',{to:'outside',group:true});const before=canonical(h.state);
+  bad(()=>requiredCoreDrawCount(pkg,h.state,move),'MELEE_GROUP_MEMBER_ENGAGED');
+  bad(()=>applyAction(pkg,h.state,move),'MELEE_GROUP_MEMBER_ENGAGED');assert.equal(canonical(h.state),before);
+  h.step(intent(p1,'MOVE',{to:'outside',group:false}));assert.equal(h.state.actors[p2].position,'lobby');
+});
+test('the source minus20 retry stacks with an actual heavy wound instead of being capped with ordinary modifiers',()=>{
+  const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
+  h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
+  h.step(gm('NPC_ATTACK',{npc_id:'front_guard',character_id:p1}),[1,0]);
+  assert.equal(h.state.actors[p1].wound,'HEAVY');
+  const out=h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,1,9,9]);
+  assert.equal(out.resolutions[0].target,0,'untrained30 minus retry20 minus heavy-wound20, clamped at0');
+  assert.equal(out.resolutions[0].tier,'COSTLY');assert.equal(h.state.actors[p1].melee_target,null);
+  assert.equal(h.state.actors[p1].wound,'HEAVY');
+});
+test('the separate B4 catastrophe keeps its wound and alarm consequence rather than inventing a normal failure followup',()=>{
+  const h=harness();h.step(intent(p1,'EQUIP',{items:['pistol','ammo'],specialty:null}));
+  h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);h.step(intent(p1,'FIRE',{npc_id:'front_guard'}),[0,3]);
+  h.step(gm('NPC_ATTACK',{npc_id:'front_guard',character_id:p1}),[1,0]);assert.equal(h.state.alarm,2);
+  const out=h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,0,1,0]);
+  assert.equal(out.resolutions[0].tier,'CATASTROPHE');assert.equal(h.state.actors[p1].wound,'HEAVY');
+  assert.equal(h.state.alarm,3);assert.equal(h.state.actors[p1].melee_target,null);
+});
+test('melee state rejects stale or forged opponents and each role sees only their own engagement',()=>{
+  const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
+  h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
+  assert.equal(project(pkg,h.state,p1).own_state.melee_target,'front_guard');
+  for(const id of ids.slice(1)){const view=project(pkg,h.state,id);assert.equal(view.own_state.melee_target,null);assert.equal(Object.hasOwn(view,'domain_state'),false);}
+  for(const change of [(s)=>s.actors[p1].melee_target='unknown',(s)=>s.cleared_npcs.push('front_guard'),(s)=>s.combat_active=false,(s)=>s.actors[p1].position='outside']){
+    const s=clone(h.state);change(s);bad(()=>validateState(pkg,s),'MELEE_STATE');
+  }
 });
 test('both Q003 rule-binding metadata files are explicitly held and their raw schemas never enter role text',()=>{
   assert.equal(checked.entries,45);

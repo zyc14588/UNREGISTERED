@@ -8,6 +8,7 @@ export const BASE_TREE = '34597e79c586fb034256daa32d67640692ec589d';
 const CHARS = ['UNR-CHAR-0001', 'UNR-CHAR-0002', 'UNR-CHAR-0003', 'UNR-CHAR-0004'];
 const TIERS = ['CATASTROPHE', 'FAILURE', 'COSTLY', 'SUCCESS', 'CRITICAL'];
 const REST_KINDS = ['SOOTHE', 'TREAT_WOUND', 'REPLENISH', 'ARCHIVE', 'CONTACT', 'DECLINE_REST'];
+const TAKEDOWN_RETRY_PENALTY = 20;
 const PARAM_KEYS = {
   OBSERVE: [], ELECTRONIC_RECON: [], SOCIAL_RECON: [], PLAN: [], WAIT: ['minutes'],
   EQUIP: ['items', 'specialty'], FOLLOW: ['leader_id'], ASSIST: ['character_id', 'skill'], MOVE: ['to', 'group'], AVOID: [],
@@ -58,6 +59,9 @@ export function loadPrototype(root, expectedManifestDigest) {
   requireContent(sha256(held.get('aipt/p0-b002/machine-rules.json')) === '139d095fe54926e1599edf208b65f7a89061f1cda6d8b492f83b5e47c0693c78', 'RULE_SOURCE_CHANGED');
   const rules = parseStrict(held.get('aipt/p0-b002/machine-rules.json')).rules;
   requireContent(canonical(pkg.parameters.base_rule_ids) === canonical(rules.map((r) => r.rule_id)), 'RULE_IDS');
+  requireContent(rules.find((r) => r.rule_id === 'UNR-RULE-0030').resolution.some((row) =>
+    row.kind === 'tier_effects' && row.effects.some((effect) => effect.tier === 'failure_with_progress' &&
+      effect.effect === 'melee_next_round_must_fire_or_retry_at_-20')), 'TAKEDOWN_FOLLOWUP_SOURCE');
   const mappings = rules.find((r) => r.rule_id === 'UNR-RULE-0002').resolution.find((r) => r.kind === 'untrained_mapping').skills;
   requireContent(canonical(pkg.parameters.core.skill_attributes) === canonical(Object.fromEntries(mappings.map((m) => [m.skill,m.attribute]))), 'UNTRAINED_MAPPING');
   const fixed = {die_sides:100,normal_draws:2,advantage_draws:3,modifier_min:-20,modifier_max:20,critical_divisor:5,cost_offset:15,cost_max:95,catastrophe_min:96,warning_pressure:7,warning_pollution:1,warning_alarm:2,pressure_cap:10,fatigue_cap:10,pollution_cap:10,untrained_divisor:2};
@@ -86,7 +90,7 @@ export function initialState(pkg) {
     position: 'outside', pressure: c.skills['异常学'] >= 70 ? 1 : 0, fatigue: 0, pollution: 0, wound: 'NONE', bleeding: false,
     collapse: 'NONE', plan_points: 2, rest_points: 0, signed: false, follower_of: null,
     specialty: null, equipment: [], equipment_issued: false, used_successful_skills: [], bond_damaged: false,
-    exited: false, growth_done: false, skill_overrides: {}, last_check: null, follow_cost: null,
+    exited: false, growth_done: false, skill_overrides: {}, last_check: null, follow_cost: null, melee_target: null,
     knowledge: [], knowledge_growth_done: false, pollution_notes: [], pollution_note_count: 0,
   }]));
   return { schema: 'unregistered.task0-state/v2', actors, minute: pkg.parameters.clock.start_minute,
@@ -121,6 +125,9 @@ export function validateState(pkg, state) {
       (s.follow_cost === null || ['time', 'pressure', 'resource', 'exposure'].includes(s.follow_cost)) &&
       (s.follower_of === null || CHARS.includes(s.follower_of) && s.follower_of !== c), 'CHARACTER_STATE_RANGE');
     requireContent(!s.exited || s.position === 'safehouse', 'EXIT_POSITION');
+    requireContent(s.melee_target === null || typeof s.melee_target === 'string' &&
+      Object.hasOwn(pkg.gm.npcs, s.melee_target) && !state.cleared_npcs.includes(s.melee_target) &&
+      pkg.gm.npcs[s.melee_target].areas.includes(s.position) && !s.exited && state.combat_active, 'MELEE_STATE');
     requireContent(s.follower_of === null || !state.actors[s.follower_of].follower_of && s.follow_cost !== null, 'FOLLOW_GRAPH');
     requireContent(object(s.skill_overrides) && Object.entries(s.skill_overrides).every(([skill, value]) => Object.hasOwn(pkg.parameters.core.skill_attributes, skill) && Number.isInteger(value) && value >= 0 && value <= 100), 'SKILL_OVERRIDE');
     const uniqueSkills = s.used_successful_skills;
@@ -306,6 +313,24 @@ function addKnowledge(pkg, state, id, fact) {
     text: pkg.gm.knowledge_facts[fact].observation, minute: state.minute, verdict: null});
 }
 
+function clearNPC(state, npc) {
+  if (!state.cleared_npcs.includes(npc)) state.cleared_npcs.push(npc);
+  // Another character's own successful action can end this actual engagement.
+  for (const c of Object.values(state.actors)) if (c.melee_target === npc) c.melee_target = null;
+}
+function requireMeleeIntent(state, id, kind, parameters) {
+  const c = state.actors[id];
+  if (c.melee_target !== null) {
+    requireContent(['FIRE','TAKEDOWN'].includes(kind), 'MELEE_FOLLOWUP_REQUIRED');
+    requireContent(parameters.npc_id === c.melee_target, 'MELEE_FOLLOWUP_TARGET');
+  }
+  if (kind === 'MOVE' && parameters.group === true) {
+    const members = CHARS.filter((other) => other === id || state.actors[other].follower_of === id &&
+      state.actors[other].position === c.position);
+    requireContent(members.every((other) => state.actors[other].melee_target === null), 'MELEE_GROUP_MEMBER_ENGAGED');
+  }
+}
+
 // A request count is derived from game-owned state, never from a provider's
 // roll or count. Apply checks the same draw arity before returning any state.
 export function requiredCoreDrawCount(pkg, state, action) {
@@ -325,6 +350,7 @@ export function requiredCoreDrawCount(pkg, state, action) {
   exactKeys(action.payload, ['kind', 'parameters', 'cost_choice', 'text']);
   let { kind, parameters } = action.payload; const c = state.actors[action.actor_id];
   requireContent(Object.hasOwn(PARAM_KEYS, kind), 'INTENT'); exactKeys(parameters, PARAM_KEYS[kind], 'INTENT_PARAMETERS');
+  requireMeleeIntent(state, action.actor_id, kind, parameters);
   const pushed = kind === 'PUSH';
   if (pushed) { requireContent(c.last_check, 'PUSH_PRECONDITION'); ({kind, parameters} = c.last_check); if (kind === 'MOVE') parameters = {...parameters,group:false}; }
   const count = (id, skill) => advantageFor(state.actors[id], skill) ? 3 : 2;
@@ -413,6 +439,7 @@ export function applyAction(pkg, previous, action, draws = []) {
       typeof text === 'string' && text.isWellFormed() && Buffer.byteLength(text) <= 320, 'INTENT'); exactKeys(parameters, PARAM_KEYS[kind], 'INTENT_PARAMETERS');
     requireContent(kind !== 'OTHER', 'ADJUDICATION_REQUIRED');
     const id = action.actor_id, c = state.actors[id]; let pushed = false;
+    requireMeleeIntent(state, id, kind, parameters);
     if (kind === 'PUSH') {
       requireContent(c.last_check && !c.last_check.pushed && c.last_check.result === 'FAILURE' && c.collapse !== 'ACTIVE' && !state.ledger, 'PUSH_PRECONDITION');
       requireContent(requiredCoreDrawCount(pkg, previous, action) >= 2, 'PUSH_NO_CHECK');
@@ -525,18 +552,20 @@ export function applyAction(pkg, previous, action, draws = []) {
       requireContent((['TAKEDOWN','FIRE'].includes(kind) ? ['lobby','office','machine','shaft'] : ['office','machine']).includes(c.position), 'LOCATION');
       if (['DOOR_ELECTRONIC','DOOR_SOCIAL'].includes(kind)) requireContent(c.position === 'office' && !state.door_clear, 'DOOR_PRECONDITION');
       if (['LOCKPICK', 'LOCK_ELECTRONIC'].includes(kind)) requireContent(c.position === 'machine' && !state.target_acquired, 'TARGET_PRECONDITION');
-      const result = check(pkg, state, id, pkg.parameters.mission.skills[kind], rng); resolutions.push(result); if (!pushed) clock(pkg, state, 10);
+      const result = check(pkg, state, id, pkg.parameters.mission.skills[kind], rng, 0,
+        kind === 'TAKEDOWN' && c.melee_target !== null ? TAKEDOWN_RETRY_PENALTY : 0);
+      resolutions.push(result); if (!pushed) clock(pkg, state, 10);
       let achieved = success(result);
       if (['DOOR_SOCIAL', 'TAKEDOWN'].includes(kind)) {
         const npc = kind === 'TAKEDOWN' ? parameters.npc_id : 'machine_guard'; requireContent(Object.hasOwn(pkg.gm.npcs, npc) && !state.cleared_npcs.includes(npc) &&
           (kind === 'DOOR_SOCIAL' ? c.position === 'office' : pkg.gm.npcs[npc].areas.includes(c.position)), 'NPC');
         const target = pkg.gm.npcs[npc].observation, roll = rng.d100(), defended = { target, roll, tier: tier(target, roll, state.alarm >= 2) }; resolutions.push(defended);
         achieved = TIERS.indexOf(result.tier) > 1 && (TIERS.indexOf(result.tier) > TIERS.indexOf(defended.tier) || result.tier === defended.tier && result.target > target);
-        if (achieved) state.cleared_npcs.push(npc);
-        else if (kind === 'TAKEDOWN') {
-          // UNR-RULE-0030 requires melee and a -20 follow-up. That transition
-          // is outside this prototype; preserve the failed check and block.
-          state.combat_active = true; state.unresolved_blocking = 1;
+        if (achieved) clearNPC(state, npc);
+        else if (kind === 'TAKEDOWN' && result.tier !== 'CATASTROPHE') {
+          // B4 / UNR-RULE-0030: the next own primary action must address this
+          // opponent by FIRE or a retry at -20; no automatic player choice.
+          state.combat_active = true; c.melee_target = npc;
         }
       }
       if (kind === 'FIRE') {
@@ -546,14 +575,15 @@ export function applyAction(pkg, previous, action, draws = []) {
         if (state.alarm === 3) startPursuit(state);
         if (achieved) {
           state.npc_wounds[parameters.npc_id] = result.tier === 'CRITICAL' ? 'LETHAL' : 'HEAVY';
-          if (result.tier === 'CRITICAL') state.cleared_npcs.push(parameters.npc_id);
+          if (result.tier === 'CRITICAL') clearNPC(state, parameters.npc_id);
         }
       }
       if (kind === 'FIRE' && result.tier === 'COSTLY') {
         if (cost === 'resource') c.equipment.splice(c.equipment.indexOf('ammo'),1); else expose(state,1,c.position);
-      } else consequences(pkg, state, id, result, cost);
+      } else consequences(pkg, state, id,
+        kind === 'TAKEDOWN' && !achieved && success(result) ? {...result,tier:'FAILURE'} : result, cost);
       if (!achieved && !previousSuccessful[id].includes(result.skill)) c.used_successful_skills = c.used_successful_skills.filter((skill) => skill !== result.skill);
-      if (achieved && ['DOOR_ELECTRONIC', 'DOOR_SOCIAL'].includes(kind)) { state.door_clear = true; if (!state.cleared_npcs.includes('machine_guard')) state.cleared_npcs.push('machine_guard'); }
+      if (achieved && ['DOOR_ELECTRONIC', 'DOOR_SOCIAL'].includes(kind)) { state.door_clear = true; clearNPC(state, 'machine_guard'); }
       if (achieved && ['LOCKPICK', 'LOCK_ELECTRONIC'].includes(kind)) { state.target_acquired = true; state.target_holder = id; }
       if (achieved && kind === 'SEARCH' && result.tier === 'CRITICAL') addKnowledge(pkg, state, id, 'T0-K-MONITOR-EMPTY');
       if (!achieved && c.position === 'machine' && !state.cleared_npcs.includes('machine_guard')) expose(state, 1, c.position);
@@ -571,6 +601,6 @@ export function applyAction(pkg, previous, action, draws = []) {
 export function complete(pkg, state) {
   validateState(pkg, state);
   return state.mission !== 'OPEN' && state.ledger !== null && Object.keys(state.ledger).length === 5 &&
-    CHARS.every((id) => state.actors[id].signed && state.actors[id].rest_points === 0) && state.rest_event !== null &&
+    CHARS.every((id) => state.actors[id].signed && state.actors[id].rest_points === 0 && state.actors[id].melee_target === null) && state.rest_event !== null &&
     state.risk_queue.length === 0 && CHARS.every((id) => state.actors[id].pollution_notes.every((note) => note.text !== null)) && state.pending_intent === null && !state.paused && state.unresolved_blocking === 0;
 }

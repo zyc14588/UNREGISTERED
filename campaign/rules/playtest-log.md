@@ -72,3 +72,33 @@
 | Problem | Suspected Cause | Smallest Change | Regression Risk | Status |
 |---|---|---|---|---|
 | | | | | PROPOSAL |
+
+## 自动参考与接口回归（非桌测、非CANON、非真实模型游戏）
+
+### Reference 2026-10-07 — UNREGISTERED Task0 AIPT 原型 v2
+
+**Build / Rules Version:** fe096597 原17项来源与40条规则原字节保留；新增 `aipt/task0-v2` 为PROTOTYPE。
+审批对象的精确提交、树与外部摘要由冻结验收材料提供。本记录不自绑定包含自己的提交。
+
+**Players / Characters:** 游隼、短波、静水、底片。动作是显式NON_CANON样例，不是玩家已经作出的决定；没有真人或模型代玩。
+
+**Primary Questions (max 5):**
+
+| Hypothesis | Observation | Pass Signal | Fail Signal | Result |
+|---|---|---|---|---|
+| 受支持Task0循环可结束并回放 | 按时、迟交、主动撤离三路均经结算/休整/本人签收；逐步摘要重放一致 | 三路均完整 | 漏段/伪造交付 | PASS（样例范围） |
+| 角色自主与秘密边界闭合 | 跟随与个人加压分别声明；本人撤離；四份安全恢复同意；Own/GM投影 | 零越权 | 改别人的行动/泄漏 | PASS（29项参考检查内） |
+| 规则边界和资源不能套利 | 五档与00=100、优势93.5%枚举、重试/归档/报酬/弹药/休整、队伍余额 | 无重复领取或免费重试 | 状态异常/负余额 | PASS（自动边界） |
+| AIPT契约可接受新数据 | 固定5f3f6353 SDK的3种请求、5角色投影及7项拒绝 | 正例全接受、泄漏拒绝 | 字段/身份/权限错配 | PASS（契约） |
+| 现有Core能使用其随机数并恢复 | 正常分支15动作/16事件；风险分支22动作/23事件，均回放及恢复；篡改/伪造身份拒绝 | 两路完整、同一最终摘要 | 回放漂移/接受篡改 | PASS（内存账本样例） |
+
+**Observed Data:** 最终参考检查29/29 PASS，失败/跳过/取消均0。测试内容的43项闭合清单摘要为
+`05c1164a2c2b7a04aaa555a7646cf5fd520b14ef92364a1093be8a953c91f7cc`。
+真实游戏0、模型请求0、QUAL0、PostgreSQL使用0、公开发布0。
+
+**Minimum Changes / Regression Risks:** 4/2/0报酬、补给价格、休整风险效果、有限教学战斗与操作映射均显式PROTOTYPE。
+原型范围外的完整先手/反应/压制、致命逆转、战役羁绊、无双成就与后续任务仍未验证；实际触及时须阻断记录。
+计算结果不能证明玩家体验、GM负担、计划时长或经济平衡。未改变规则CANON、世界状态或真实session记录。
+
+**Adoption Gate:** Owner决定见 `aipt/task0-v2/adoption-proposal.md`。活动CI未改；旧P1门禁后继仅有可审提案。
+后续真实使用仍需来源版本接受、独立复审、精确CI与AIPT完整运行/隐私门禁。所有前版失败与环境限制另存私有验收目录。

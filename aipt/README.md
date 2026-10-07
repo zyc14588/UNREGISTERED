@@ -54,3 +54,9 @@ node scripts/aipt/validate-p0-b003.mjs
 ```
 
 P0-B000…P0-B003 是 predecessor gates，不得把其 closed-set validator 直接当作 P1 successor gate。CI 的 [`AIPT Content Gate`](../.github/workflows/aipt-content-gate.yml) 分离 exact predecessor checkout 与 clean detached candidate checkout，再由 accepted Amendment-002 semantics 组合 P0 preservation、controlled P1 delta、P1 validation 与 B001 compatibility。
+
+## Task0 衔接测试版（待采纳）
+
+新增准备见 [task0-v2/README.md](task0-v2/README.md)。状态PROTOTYPE，原17项来源与40条规则原字节保留。
+现有P0/P1关闭记录保持原文；本版不自动成为新的权威输入，也不授权AIPT模型调用。
+版本、范围和CI后继须按 [采纳提案](task0-v2/adoption-proposal.md) 单独决定。

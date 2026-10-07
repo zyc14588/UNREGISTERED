@@ -394,6 +394,32 @@ test('the separate B4 catastrophe keeps its wound and alarm consequence rather t
   assert.equal(out.resolutions[0].tier,'CATASTROPHE');assert.equal(h.state.actors[p1].wound,'HEAVY');
   assert.equal(h.state.alarm,3);assert.equal(h.state.actors[p1].melee_target,null);
 });
+test('a legal warned retry catastrophe fulfils the old B4 obligation and permits withdrawal with an uncleared opponent',()=>{
+  const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
+  h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
+  for(let i=0;i<2;i++)h.step(gm('NPC_ATTACK',{npc_id:'front_guard',character_id:p1}),[1,0]);
+  assert.equal(h.state.alarm,2);assert.equal(h.state.actors[p1].wound,'HEAVY');
+  const out=h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,0,1,0]);
+  assert.equal(out.resolutions[0].tier,'CATASTROPHE');assert.equal(out.resolutions[0].target,0);
+  assert.equal(h.state.actors[p1].melee_target,null);assert.equal(h.state.actors[p1].wound,'HEAVY');
+  assert.equal(h.state.alarm,3);assert.equal(h.state.pursuit,false);assert.equal(h.state.combat_active,true);
+  assert.equal(h.state.cleared_npcs.includes('front_guard'),false);
+  const retreat=intent(p1,'WITHDRAW');assert.equal(requiredCoreDrawCount(pkg,h.state,retreat),0);h.step(retreat);
+  for(const id of ids.slice(1))h.step(intent(id,'WITHDRAW'));finish(settle(h));assert.equal(complete(pkg,h.state),true);
+  const replay=harness();for(const row of h.transcript)assert.equal(sha256(canonical(replay.step(row.action,row.draws.map((d)=>BigInt('0x'+d.value_hex))).state)),row.state_sha256);
+});
+test('a rejected retry cannot consume an obligation and a valid retry catastrophe leaves another actors obligation intact',()=>{
+  const h=harness();
+  for(const id of [p1,p2]){h.step(intent(id,'MOVE',{to:'lobby',group:false}),[1,0]);h.step(intent(id,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);}
+  for(let i=0;i<2;i++)h.step(gm('NPC_ATTACK',{npc_id:'front_guard',character_id:p1}),[1,0]);
+  const retry=intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),before=canonical(h.state);
+  bad(()=>applyAction(pkg,h.state,retry,draws([0,0])),'CORE_DRAW_COUNT');assert.equal(canonical(h.state),before);
+  bad(()=>h.step(intent(p1,'TAKEDOWN',{npc_id:'patrol'}),[0,0,1,0]),'MELEE_FOLLOWUP_TARGET');assert.equal(canonical(h.state),before);
+  const out=h.step(retry,[0,0,1,0]);assert.equal(out.resolutions[0].tier,'CATASTROPHE');
+  assert.equal(h.state.actors[p1].melee_target,null);assert.equal(h.state.actors[p2].melee_target,'front_guard');
+  assert.equal(h.state.cleared_npcs.includes('front_guard'),false);assert.equal(h.state.combat_active,true);
+  bad(()=>requiredCoreDrawCount(pkg,h.state,intent(p2,'WITHDRAW')),'MELEE_FOLLOWUP_REQUIRED');
+});
 test('melee state rejects stale or forged opponents and each role sees only their own engagement',()=>{
   const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
   h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);

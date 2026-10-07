@@ -559,6 +559,10 @@ export function applyAction(pkg, previous, action, draws = []) {
       if (['DOOR_SOCIAL', 'TAKEDOWN'].includes(kind)) {
         const npc = kind === 'TAKEDOWN' ? parameters.npc_id : 'machine_guard'; requireContent(Object.hasOwn(pkg.gm.npcs, npc) && !state.cleared_npcs.includes(npc) &&
           (kind === 'DOOR_SOCIAL' ? c.position === 'office' : pkg.gm.npcs[npc].areas.includes(c.position)), 'NPC');
+        // A legal retry fulfils the old B4 next-action obligation. Only a
+        // fresh ordinary opposed loss below creates another; catastrophe
+        // follows its separate wound/alarm branch without retaining the old one.
+        if (kind === 'TAKEDOWN') c.melee_target = null;
         const target = pkg.gm.npcs[npc].observation, roll = rng.d100(), defended = { target, roll, tier: tier(target, roll, state.alarm >= 2) }; resolutions.push(defended);
         achieved = TIERS.indexOf(result.tier) > 1 && (TIERS.indexOf(result.tier) > TIERS.indexOf(defended.tier) || result.tier === defended.tier && result.target > target);
         if (achieved) clearNPC(state, npc);

@@ -4,7 +4,7 @@
   "owner_instruction": "先推进UNREGISTERED建设，直到可配合AIPT继续推进",
   "base_commit": "fe0965977447caf8cd7b6e58252bc1b991b7cc6f",
   "base_tree": "34597e79c586fb034256daa32d67640692ec589d",
-  "working_branch": "codex/unregistered-task0-melee-fire-repair",
+  "working_branch": "codex/unregistered-task0-retry-catastrophe-repair",
   "historical_records_rewritten": false,
   "existing_aipt_frozen_source_rebound": false,
   "canon_promoted": false,

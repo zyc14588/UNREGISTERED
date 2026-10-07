@@ -48,6 +48,10 @@ export function loadPrototype(root, expectedManifestDigest) {
     pkg.parameters.lifecycle === 'PROTOTYPE' && pkg.parameters.base_rule_ids.length === 40 &&
     pkg.parameters.core.skill_attributes['抵抗污染'] === '意志', 'LIFECYCLE');
   requireContent(held.has('aipt/input-manifest.json') && held.has('aipt/p0-b002/machine-rules.json') && held.has('aipt/p0-b000/premades-v2.json'), 'MISSING_PREDECESSOR');
+  for (const [name, digest] of [
+    ['aipt/p0-b002/rule-id-map.json', '321550a1bb91066c263e5857c8095878d708af3f296430bc00011d70f5bb242c'],
+    ['aipt/p0-b002/semantic-graph.json', '8c9ad9ade247ac6195019b7225725c70cd26b55270979d31c7b3701d02092562'],
+  ]) requireContent(held.has(name) && sha256(held.get(name)) === digest, 'RULE_BINDING_METADATA');
   const original = parseStrict(held.get('aipt/input-manifest.json'));
   const oldSources = [...original.source_files,...original.registry_refs];
   requireContent(oldSources.length === 17 && oldSources.every((item) => held.has(item.path) && sha256(held.get(item.path)) === item.sha256), 'PREDECESSOR_SOURCE_BYTES');
@@ -81,7 +85,7 @@ export function initialState(pkg) {
   const actors = Object.fromEntries(pkg.characters.characters.map((c) => [c.character_id, {
     position: 'outside', pressure: c.skills['异常学'] >= 70 ? 1 : 0, fatigue: 0, pollution: 0, wound: 'NONE', bleeding: false,
     collapse: 'NONE', plan_points: 2, rest_points: 0, signed: false, follower_of: null,
-    specialty: null, equipment: [], used_successful_skills: [], bond_damaged: false,
+    specialty: null, equipment: [], equipment_issued: false, used_successful_skills: [], bond_damaged: false,
     exited: false, growth_done: false, skill_overrides: {}, last_check: null, follow_cost: null,
     knowledge: [], knowledge_growth_done: false, pollution_notes: [], pollution_note_count: 0,
   }]));
@@ -110,7 +114,7 @@ export function validateState(pkg, state) {
       ['NONE', 'PENDING', 'ACTIVE'].includes(s.collapse) && [s.pressure, s.fatigue, s.pollution].every((x) => Number.isInteger(x) && x >= 0 && x <= 10) &&
       Number.isInteger(s.rest_points) && s.rest_points >= 0 && s.rest_points <= 2 &&
       Number.isInteger(s.plan_points) && s.plan_points >= 0 && s.plan_points <= 2 &&
-      ['signed', 'bleeding', 'bond_damaged', 'exited', 'growth_done', 'knowledge_growth_done'].every((key) => typeof s[key] === 'boolean') &&
+      ['signed', 'bleeding', 'bond_damaged', 'exited', 'growth_done', 'knowledge_growth_done', 'equipment_issued'].every((key) => typeof s[key] === 'boolean') &&
       Array.isArray(s.equipment) && s.equipment.length <= 9 && s.equipment.every((id) => pkg.parameters.inventory.shop.some((item) => item.item_id === id)) &&
       s.equipment.every((id) => s.equipment.filter((x) => x === id).length <= 3) &&
       (s.specialty === null || Object.hasOwn(pkg.parameters.core.skill_attributes, s.specialty)) &&
@@ -176,7 +180,7 @@ export function project(pkg, state, principal) {
   const common = { schema: 'unregistered.task0-role-projection/v2', principal,
     public_characters: pkg.characters.characters, player_reference: pkg.publicText, world_text_is_data: true,
     situation: { minute: state.minute, alarm: state.alarm, mission: state.mission, supplies: state.supplies, paused: state.paused,
-      target_delivered: state.target_delivered, intel: state.intel },
+      target_delivered: state.target_delivered, intel: state.intel, unresolved_blocking: state.unresolved_blocking },
     handouts: Object.fromEntries(state.released_handouts.map((id) => [id, pkg.handouts.handouts[id]])) };
   if (principal === 'GM') return deepFreeze(clone({ ...common, gm: pkg.gm, gm_reference: pkg.gmText, gm_safety_reference: pkg.gmSafetyText,
     character_private: pkg.private.characters, all_handouts: pkg.handouts.handouts, domain_state: state }));
@@ -252,11 +256,15 @@ function patrolAdvance(state, region, points = 1) {
   state.patrol[region] = Math.min(4, state.patrol[region] + points);
   if (state.patrol[region] === 4 && !state.encountered.includes(region)) state.encountered.push(region);
 }
+function startPursuit(state) {
+  // A new pursuit starts at zero; the active pursuit keeps its earned distance.
+  if (!state.pursuit) { state.pursuit = true; state.distance = 0; }
+}
 function expose(state, points = 1, region = null) {
   state.exposure += points;
   patrolAdvance(state, region, points);
   state.alarm = Math.max(state.alarm, state.exposure >= 8 ? 3 : state.exposure >= 5 ? 2 : state.exposure >= 2 ? 1 : 0);
-  if (state.alarm === 3) state.pursuit = true;
+  if (state.alarm === 3) startPursuit(state);
 }
 function clock(pkg, state, minutes) {
   const before = state.minute; state.minute += minutes;
@@ -273,7 +281,7 @@ function clock(pkg, state, minutes) {
     // World pressure advances in its own area, even if PCs skip the scene.
     state.patrol.office = 4; if (!state.encountered.includes('office')) state.encountered.push('office');
   }
-  if (state.minute > pkg.parameters.clock.deadline_minute && state.mission === 'OPEN') { state.alarm = 3; state.pursuit = true; }
+  if (state.minute > pkg.parameters.clock.deadline_minute && state.mission === 'OPEN') { state.alarm = 3; startPursuit(state); }
 }
 function success(result) { return ['CRITICAL', 'SUCCESS', 'COSTLY'].includes(result.tier); }
 function consequences(pkg, state, id, result, cost) {
@@ -305,6 +313,7 @@ export function requiredCoreDrawCount(pkg, state, action) {
   const t = action.action_type;
   requireContent(action.actor_id === 'GM' || CHARS.includes(action.actor_id), 'ACTOR');
   requireContent(Object.hasOwn(pkg.contract.action_types, t), 'ACTION_TYPE');
+  requireContent(state.unresolved_blocking === 0 || ['SAFETY_PAUSE','SAFETY_CONSENT','SAFETY_RESUME'].includes(t), 'ADJUDICATION_REQUIRED');
   if (t !== 'SAFETY_PAUSE') requireContent(action.actor_id === 'GM' ? !['PLAYER_INTENT','SIGN_LEDGER','SAFETY_CONSENT'].includes(t) : ['PLAYER_INTENT','SIGN_LEDGER','SAFETY_CONSENT'].includes(t), 'ACTOR_ROLE');
   if (t === 'NPC_ATTACK' || t === 'ROLL_REST_EVENT') return 2;
   if (t === 'RESOLVE_REST_RISK') {
@@ -336,6 +345,7 @@ export function applyAction(pkg, previous, action, draws = []) {
   validateState(pkg, previous); exactKeys(action, ['actor_id', 'action_type', 'payload'], 'ACTION_FIELDS');
   requireContent(action.actor_id === 'GM' || CHARS.includes(action.actor_id), 'ACTOR');
   requireContent(Object.hasOwn(pkg.contract.action_types, action.action_type), 'ACTION_TYPE');
+  requireContent(previous.unresolved_blocking === 0 || ['SAFETY_PAUSE','SAFETY_CONSENT','SAFETY_RESUME'].includes(action.action_type), 'ADJUDICATION_REQUIRED');
   requireContent(Array.isArray(draws) && draws.length <= 32 && Buffer.byteLength(canonical(action.payload)) <= 1024, 'ACTION_LIMIT');
   const state = clone(previous), rng = consume(draws), resolutions = [];
   const previousSuccessful = Object.fromEntries(CHARS.map((id) => [id,[...state.actors[id].used_successful_skills]]));
@@ -364,7 +374,7 @@ export function applyAction(pkg, previous, action, draws = []) {
     const roll = rng.d100(), result = { npc_id: npc, target: value, roll, tier: tier(value, roll, state.alarm >= 2) }; resolutions.push(result);
     state.npc_ammo[npc]--; state.alarm = Math.min(3, state.alarm + 1);
     if (success(result)) { c.wound = pkg.parameters.combat_prototype.teaching_npc_attack_harm_cap === 2 ? 'HEAVY' : 'LIGHT'; c.bleeding = c.wound === 'HEAVY'; } else pressure(c, 1);
-    if (state.alarm === 3) state.pursuit = true;
+    if (state.alarm === 3) startPursuit(state);
   } else if (action.action_type === 'VERIFY_KNOWLEDGE') {
     requireContent(gm && !state.ledger, 'KNOWLEDGE_VERIFICATION_PHASE'); exactKeys(action.payload, ['character_id','fact_id']);
     const c = state.actors[action.payload.character_id], fact = pkg.gm.knowledge_facts[action.payload.fact_id];
@@ -423,11 +433,12 @@ export function applyAction(pkg, previous, action, draws = []) {
         !state.actors[parameters.leader_id].exited && !CHARS.some((other) => state.actors[other].follower_of === id), 'FOLLOW_TARGET');
       requireContent(parameters.leader_id === null || state.actors[parameters.leader_id].position === c.position, 'FOLLOW_LOCATION'); c.follower_of = parameters.leader_id; c.follow_cost = parameters.leader_id === null ? null : cost;
     } else if (kind === 'EQUIP') {
+      requireContent(!c.equipment_issued, 'EQUIPMENT_ALREADY_ISSUED');
       requireContent(c.position === 'outside', 'LOCATION'); requireContent(Array.isArray(parameters.items) && parameters.items.length <= 9 &&
         parameters.items.every((item) => pkg.parameters.inventory.shop.some((x) => x.item_id === item)), 'EQUIPMENT');
       for (const item of parameters.items) requireContent(parameters.items.filter((x) => x === item).length <= 3, 'EQUIPMENT_QUANTITY');
       requireContent(parameters.specialty === null || Object.hasOwn(pkg.parameters.core.skill_attributes, parameters.specialty) && stat(pkg, id, parameters.specialty) >= 55, 'SPECIALTY');
-      requireContent(c.specialty === null || c.specialty === parameters.specialty, 'SPECIALTY_RESET'); c.equipment = [...parameters.items]; c.specialty = parameters.specialty;
+      requireContent(c.specialty === null || c.specialty === parameters.specialty, 'SPECIALTY_RESET'); c.equipment = [...parameters.items]; c.specialty = parameters.specialty; c.equipment_issued = true;
     } else if (kind === 'ASSIST') {
       requireContent(CHARS.includes(parameters.character_id) && parameters.character_id !== id &&
         Object.hasOwn(pkg.parameters.core.skill_attributes, parameters.skill) && stat(pkg, id, parameters.skill) >= 40 &&
@@ -522,12 +533,17 @@ export function applyAction(pkg, previous, action, draws = []) {
         const target = pkg.gm.npcs[npc].observation, roll = rng.d100(), defended = { target, roll, tier: tier(target, roll, state.alarm >= 2) }; resolutions.push(defended);
         achieved = TIERS.indexOf(result.tier) > 1 && (TIERS.indexOf(result.tier) > TIERS.indexOf(defended.tier) || result.tier === defended.tier && result.target > target);
         if (achieved) state.cleared_npcs.push(npc);
+        else if (kind === 'TAKEDOWN') {
+          // UNR-RULE-0030 requires melee and a -20 follow-up. That transition
+          // is outside this prototype; preserve the failed check and block.
+          state.combat_active = true; state.unresolved_blocking = 1;
+        }
       }
       if (kind === 'FIRE') {
         requireContent(c.equipment.includes('pistol') && c.equipment.includes('ammo') && Object.hasOwn(pkg.gm.npcs, parameters.npc_id) &&
           pkg.gm.npcs[parameters.npc_id].areas.includes(c.position) && !state.cleared_npcs.includes(parameters.npc_id), 'WEAPON');
         c.equipment.splice(c.equipment.indexOf('ammo'), 1); state.alarm = Math.min(3, state.alarm + 1); state.combat_active = true;
-        if (state.alarm === 3) state.pursuit = true;
+        if (state.alarm === 3) startPursuit(state);
         if (achieved) {
           state.npc_wounds[parameters.npc_id] = result.tier === 'CRITICAL' ? 'LETHAL' : 'HEAVY';
           if (result.tier === 'CRITICAL') state.cleared_npcs.push(parameters.npc_id);

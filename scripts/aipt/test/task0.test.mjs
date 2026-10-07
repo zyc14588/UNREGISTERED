@@ -264,6 +264,57 @@ test('teaching combat consumes actual ammunition and blocks attack without activ
   assert.equal(h.state.npc_ammo.front_guard,before-1);assert.equal(h.state.actors[p1].wound,'HEAVY');
   bad(()=>h.step(gm('NPC_ATTACK',{npc_id:'front_guard',character_id:p2}),[1,0]),'NPC_ATTACK_TARGET');
 });
+test('an initial mission loan cannot be minted again after consuming an item and returning outside',()=>{
+  const h=harness();h.step(intent(p1,'EQUIP',{items:['supplies'],specialty:null}));
+  h.step(intent(p1,'MOVE',{to:'lobby',group:false},'resource'),[5,7]);
+  assert.equal(h.state.actors[p1].equipment.length,0);
+  h.step(intent(p1,'MOVE',{to:'outside',group:false}));
+  const before=canonical(h.state);
+  bad(()=>h.step(intent(p1,'EQUIP',{items:['supplies'],specialty:null})),'EQUIPMENT_ALREADY_ISSUED');
+  assert.equal(canonical(h.state),before);assert.equal(h.state.supplies,0);
+  h.step(intent(p2,'EQUIP',{items:['ammo'],specialty:null}));
+  bad(()=>h.step(intent(p2,'EQUIP',{items:['pistol','ammo'],specialty:null})),'EQUIPMENT_ALREADY_ISSUED');
+});
+test('a newly triggered pursuit starts at zero and both complete chases stay within the three-region bound',()=>{
+  const h=harness();for(let i=0;i<9;i++)h.step(intent(p1,'WAIT',{minutes:30}));
+  assert.equal(h.state.pursuit,true);assert.equal(h.state.distance,0);
+  for(let i=0;i<3;i++){h.step(intent(p2,'CHASE',{skill:'反侦察'}),[1,0,9,9]);assert.equal(h.state.distance,i+1);}
+  assert.equal(h.state.pursuit,false);
+  h.step(intent(p1,'WAIT',{minutes:1}));assert.equal(h.state.pursuit,true);assert.equal(h.state.distance,0);
+  for(let i=0;i<3;i++){h.step(intent(p2,'CHASE',{skill:'反侦察'}),[1,0,9,9]);assert.equal(h.state.distance,i+1);}
+  assert.equal(h.state.pursuit,false);validateState(pkg,h.state);
+  const replay=harness();for(const row of h.transcript)assert.equal(sha256(canonical(replay.step(row.action,row.draws.map((d)=>Number(BigInt('0x'+d.value_hex)))).state)),row.state_sha256);
+});
+test('a failed supported takedown preserves the check and blocks uncovered melee before any further Core draw',()=>{
+  const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
+  const out=h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'},'exposure'),[0,9,1,0]);
+  assert.equal(out.resolutions[0].tier,'FAILURE');assert.equal(h.state.cleared_npcs.includes('front_guard'),false);
+  assert.equal(project(pkg,h.state,p1).situation.unresolved_blocking,1);assert.equal(complete(pkg,h.state),false);
+  for(const action of [intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),intent(p1,'FIRE',{npc_id:'front_guard'}),intent(p2,'WAIT',{minutes:1}),gm('SETTLE_MISSION'),gm('NPC_ATTACK',{npc_id:'front_guard',character_id:p1})]){
+    bad(()=>requiredCoreDrawCount(pkg,h.state,action),'ADJUDICATION_REQUIRED');
+    bad(()=>applyAction(pkg,h.state,action),'ADJUDICATION_REQUIRED');
+  }
+  h.step({actor_id:p3,action_type:'SAFETY_PAUSE',payload:{}});
+  for(const id of ids)h.step({actor_id:id,action_type:'SAFETY_CONSENT',payload:{}});
+  h.step(gm('SAFETY_RESUME'));assert.equal(h.state.paused,false);
+  bad(()=>requiredCoreDrawCount(pkg,h.state,intent(p1,'PUSH')),'ADJUDICATION_REQUIRED');
+  assert.equal(complete(pkg,h.state),false);
+});
+test('a takedown opposed loss blocks even when the player percentile tier succeeded, and grants no skill growth',()=>{
+  const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
+  const out=h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'},'exposure'),[0,1,1,0]);
+  assert.equal(out.resolutions[0].tier,'SUCCESS');assert.equal(out.resolutions[1].tier,'CRITICAL');
+  assert.equal(h.state.actors[p1].used_successful_skills.includes('无声击倒'),false);
+  assert.equal(h.state.unresolved_blocking,1);assert.equal(h.state.combat_active,true);
+});
+test('both Q003 rule-binding metadata files are explicitly held and their raw schemas never enter role text',()=>{
+  assert.equal(checked.entries,45);
+  for(const name of ['aipt/p0-b002/rule-id-map.json','aipt/p0-b002/semantic-graph.json']){
+    assert.ok(pkg.manifest.entries.some((entry)=>entry.path===name));
+    const schema=parseStrict(readHeld(root,name)).schema;
+    for(const principal of ['GM',...ids])assert.equal(canonical(project(pkg,initialState(pkg),principal)).includes(schema),false);
+  }
+});
 test('all event table boundaries are fixed and a second event cannot reroll the campaign risk',()=>{
   for(const [roll,expected] of [[90,'NORMAL'],[91,'MINOR'],[95,'MINOR'],[96,'RISK'],[100,'RISK']]){
     const h=withdrew();for(const id of ids)h.step(intent(id,'DECLINE_REST'));

@@ -56,6 +56,16 @@
       "sha256": "139d095fe54926e1599edf208b65f7a89061f1cda6d8b492f83b5e47c0693c78"
     },
     {
+      "path": "aipt/p0-b002/rule-id-map.json",
+      "bytes": 49777,
+      "sha256": "321550a1bb91066c263e5857c8095878d708af3f296430bc00011d70f5bb242c"
+    },
+    {
+      "path": "aipt/p0-b002/semantic-graph.json",
+      "bytes": 30928,
+      "sha256": "8c9ad9ade247ac6195019b7225725c70cd26b55270979d31c7b3701d02092562"
+    },
+    {
       "path": "aipt/p0-b003/game-adapter.json",
       "bytes": 3589,
       "sha256": "5ddef252e1b93a4b9348fb71e9490f106c02e9e0b8b11fa9a11a589bbc3effc5"
@@ -82,8 +92,8 @@
     },
     {
       "path": "aipt/task0-v2/adoption-proposal.md",
-      "bytes": 5842,
-      "sha256": "a3040756b650999db073212819fede76d21f67adbec99611cb9d690b6b1ddf13"
+      "bytes": 6873,
+      "sha256": "1b41d8311f4e26c48d6ba83f3ae68c5b9de4828bc55745646a86eabac0273fa8"
     },
     {
       "path": "aipt/task0-v2/character-private.json",
@@ -107,8 +117,8 @@
     },
     {
       "path": "aipt/task0-v2/gm-runbook.md",
-      "bytes": 6170,
-      "sha256": "1f1df5c9c0a946626cff5b80cf61a11b9ba4f5211bd47a3097b94ae3ab350a44"
+      "bytes": 6646,
+      "sha256": "72e80f3963de3b69c00274a6e0f18dd0b89985c54b6b51ca17176364700d3de7"
     },
     {
       "path": "aipt/task0-v2/handouts.json",
@@ -122,8 +132,8 @@
     },
     {
       "path": "aipt/task0-v2/player-reference.md",
-      "bytes": 3856,
-      "sha256": "07c76e32bd3f5933c664054d9d7b18ac59eff9bf8da928d95b013b48cf5cb962"
+      "bytes": 4173,
+      "sha256": "03220a18e5ad37f5d62da703aedce9327e683331550b42f894cfb994391c90a5"
     },
     {
       "path": "aipt/task0-v2/readiness.json",
@@ -187,8 +197,8 @@
     },
     {
       "path": "scripts/aipt/build-task0-package.mjs",
-      "bytes": 3599,
-      "sha256": "23ac8d8bf9854d6a605b59dac4ee4a0927b2657855eabb15024b610c0157a52b"
+      "bytes": 3671,
+      "sha256": "7f63541ce3285af9b939f59698a562f38a44059bc213afb38f144a874bbfdff1"
     },
     {
       "path": "scripts/aipt/task0-aipt-bridge.mjs",
@@ -202,8 +212,8 @@
     },
     {
       "path": "scripts/aipt/task0-prototype.mjs",
-      "bytes": 51369,
-      "sha256": "838f6fd3180b44608aa503c5fe724e6afadd2107fe6ac743e334d11985bc9b37"
+      "bytes": 52664,
+      "sha256": "d90de325ab0387753f2bb0aa13122ed630e11d0d9969b9254491536c297e4e98"
     },
     {
       "path": "scripts/aipt/task0-reference-cli.mjs",
@@ -217,8 +227,8 @@
     },
     {
       "path": "scripts/aipt/test/task0.test.mjs",
-      "bytes": 22267,
-      "sha256": "dde02203995853bc03bfed24017d93a0ed9f38b0009be618e74ec01d685d31b4"
+      "bytes": 26244,
+      "sha256": "9d396d11b59de1568d9dd9fb027d8d89b97ba04865a19c8a4fbd6a17b73e378f"
     },
     {
       "path": "scripts/aipt/validate-task0-v2.mjs",

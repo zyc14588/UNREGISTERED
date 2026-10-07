@@ -24,6 +24,7 @@ export function inventory(root) {
   for (const item of sources) requireContent(sha256(readHeld(root,item.path)) === item.sha256, 'OLD_SOURCE_CHANGED');
   const historical = [...sources.map((item) => item.path), 'aipt/input-manifest.json',
     'aipt/p0-b001/visibility.json','aipt/p0-b001/safety-profile.json','aipt/p0-b002/machine-rules.json',
+    'aipt/p0-b002/rule-id-map.json','aipt/p0-b002/semantic-graph.json',
     'aipt/p0-b003/game-adapter.json','aipt/p1-b000/runtime-adapter-input.json','aipt/p1-b000/playtest-package.json'];
   requireContent(sha256(readHeld(root,'aipt/p0-b002/machine-rules.json')) === '139d095fe54926e1599edf208b65f7a89061f1cda6d8b492f83b5e47c0693c78', 'RULE_SOURCE_CHANGED');
   const files = [...new Set([...historical,...ADDITIONS])].sort();

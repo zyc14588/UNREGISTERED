@@ -1,0 +1,120 @@
+{
+  "schema": "unregistered.task0-gm-content/v2",
+  "npcs": {
+    "front_guard": {
+      "observation": 45,
+      "pistol": 30,
+      "areas": [
+        "lobby"
+      ],
+      "goal": "查验来访者并保留来访记录",
+      "if_ignored": "未经处理进入时按隐匿及暴露规则回应"
+    },
+    "patrol": {
+      "observation": 45,
+      "pistol": 30,
+      "areas": [
+        "office",
+        "shaft"
+      ],
+      "goal": "依实际班次巡查并响应已发生的暴露",
+      "if_ignored": "该区时钟满4才出现巡逻；角色已离开则巡逻留在原区域，不重摆遭遇"
+    },
+    "machine_guard": {
+      "observation": 40,
+      "pistol": null,
+      "areas": [
+        "machine"
+      ],
+      "goal": "值守冷通道并查验机房授权",
+      "if_ignored": "未处理值守而强开目标时暴露+1，随后按该区时钟推进"
+    }
+  },
+  "pursuer_binding": "patrol",
+  "situations": [
+    {
+      "id": "T0-S1",
+      "source_fragment": "stage3-scene-S1",
+      "optional": true,
+      "source_text": "### S1 据点接单（Strong Start）\n- **What Is True:** 伪装安全屋，管理方派单处；六人被各自把柄招来的小队第一次全员见面（premades §组队缘由）。\n- **Actors & Wants:** 管理方（只见文本）要\"今晚 24:00 前完成入职测试\"；各 PC 各有私人目标（秘密卡，**玩家不看别人的**）。\n- **Immediate Pressure:** 派单角落小字\"测试员须知见背面\"，背面空白。\n- **Mechanic:** 无判定；发三件道具；每人把派单记入 `rule-knowledge-sheet-v1.md`（见闻）。\n- **If Engaged:** 玩家追问小字→官方口径\"模拟环境，无真实危险\"。**不解释。**\n- **If Ignored:** 渗漏留到结算回收条目再戳一次。\n- **Leads:** 前往 ██大厦（模拟环境）。\n",
+      "if_ignored": "渗漏留到结算回收条目再戳一次。"
+    },
+    {
+      "id": "T0-S2",
+      "source_fragment": "stage3-scene-S2",
+      "optional": true,
+      "source_text": "### S2 侦查（三渠道，各 30min）\n- **What Is True:** 楼外可观察、可接触前台/离岗保安、可查公开信息；巡逻表/访客须知/楼层图可入手。\n- **Mechanic:** 每渠道 1 检定（D1）：人力观察／电子（短波 电子对抗 70）／社交（静水 话术 65）。卓越=全量+暗层 1 条；成功=公开+半公开；带代价=公开+暴露+1；失败推进=公开+该区巡逻时钟+1。\n- **Immediate Pressure:** 24:00 提交（时间=资源）；侦查越多，潜入余量越少。\n- **If Ignored:** 玩家跳过侦查直接进楼→只有公开层情报，巡逻盲区/夹层门一无所知（世界照常推进）。\n- **Leads:** 楼层图（无 B2/无 13 层）、巡逻表、监控盲区、被撕的第 14 条。\n",
+      "if_ignored": "玩家跳过侦查直接进楼→只有公开层情报，巡逻盲区/夹层门一无所知（世界照常推进）。"
+    },
+    {
+      "id": "T0-S3",
+      "source_fragment": "stage3-scene-S3",
+      "optional": true,
+      "source_text": "### S3 计划（主内容，GM 只答问不催）\n- **What Is True:** 装备可自选（负载上限=3+体能/10）；路线 5 区（大堂→办公层→机房→电梯井→天台）；预案每人 2 点。\n- **Mechanic:** 无判定。确认：负载点数、预案内容（合理性 GM 判）、路线、分工、时间预算。\n- **Immediate Pressure:** 23:00 交接模式 5 分钟窗口（单通道全开）＝一个可能的撤离窗口；22:00 巡逻班次。\n- **If Ignored:** 不做计划直接进→GM 不拦，但潜入中所有\"早知道\"都是预案点才准补。\n- **Leads:** 进入大堂。\n",
+      "if_ignored": "不做计划直接进→GM 不拦，但潜入中所有\"早知道\"都是预案点才准补。"
+    },
+    {
+      "id": "T0-S4",
+      "source_fragment": "stage3-scene-S4",
+      "optional": true,
+      "source_text": "### S4 潜入·大堂→办公层（含教学预置巡逻遭遇）\n- **What Is True:** 大堂前台 1 保安（观察 45）；22:00 巡逻队 2 人巡至办公层（intel-pack 教学预置）。\n- **Mechanic:** 每区进入＝隐匿检定（游隼 68＋侦查收益+10）；每区巡逻时钟 4 段；避让=隐匿（无对抗）；交战=无声击倒 vs 观察 45（**先教\"避让优先\"**）。\n- **Immediate Pressure:** 巡逻时钟；暴露计数器（2/5/8 暴露→警报 1/2/3）。\n- **If Ignored:** 无视巡逻表硬闯→暴露累积→警报升级（世界反馈，不惩罚性）。\n- **Leads:** 办公层消防通道夹层门（暗层线索，锁死，不深入）；机房。\n",
+      "if_ignored": "无视巡逻表硬闯→暴露累积→警报升级（世界反馈，不惩罚性）。"
+    },
+    {
+      "id": "T0-S5",
+      "source_fragment": "stage3-scene-S5",
+      "optional": true,
+      "source_text": "### S5 机房·值守者\n- **What Is True:** 冷通道 24h 值守（观察 40）；机房=双人授权门禁。\n- **Mechanic:** 菜单三选：无声击倒（vs 观察 40）／电子干扰（短波 电子对抗）／社交引开（话术/读人 vs 观察 40，对抗）。\n- **Immediate Pressure:** 值守者每 30min 巡冷通道一圈。\n- **If Ignored:** 强开保险箱→值守者察觉→暴露+1。\n- **Leads:** 保险箱（S6）。\n",
+      "if_ignored": "强开保险箱→值守者察觉→暴露+1。"
+    },
+    {
+      "id": "T0-S6",
+      "source_fragment": "stage3-scene-S6",
+      "optional": true,
+      "source_text": "### S6 开保险箱\n- **What Is True:** 箱内=测试档案盒（空盒+合格单）；工具=开锁套（+10 修正）。\n- **Mechanic:** 开锁与物理入侵 65；带代价/失败的重试须改条件（时间/暴露+1）；**此处教\"带代价菜单\"和\"加压\"用法**。\n- **Immediate Pressure:** 值守者离岗时限（若用了引开）。\n- **If Ignored:** 换路线（如电子破解）也成立，GM 允许。\n",
+      "if_ignored": "换路线（如电子破解）也成立，GM 允许。"
+    },
+    {
+      "id": "T0-S7",
+      "source_fragment": "stage3-scene-S7",
+      "optional": true,
+      "source_text": "### S7 撤离\n- **What Is True:** 警报 0 且无追兵＝不掷；警报 3（封锁）＝撤离判定 −20 状态减值；被追＝反侦察/驾驶对抗。\n- **Mechanic:** 追兵脱追=反侦察（或驾驶）vs 观察；每轮拉开 1 区，集满 3 区脱身（B6）。\n- **Immediate Pressure:** 24:00 提交；23:00 交接窗口（通过时 0 暴露）。\n- **If Ignored:** 拖到超时→警报升级/任务失败判定/管理方扣减（教学关从宽：扣报酬，不判死）。\n- **Leads:** 天台撤离点→提交。\n",
+      "if_ignored": "拖到超时→警报升级/任务失败判定/管理方扣减（教学关从宽：扣报酬，不判死）。"
+    },
+    {
+      "id": "T0-S8",
+      "source_fragment": "stage3-scene-S8",
+      "optional": true,
+      "source_text": "### S8 结算＋休整\n- **What Is True:** 结算文本五段（交付物/代价/报酬/长线条目/无双成就）。**渗漏**：多出一行「已回收：编号 000 —— 测试员 1 名」——读完停 10 秒，让玩家自己反应，不解释。\n- **Mechanic:** 目睹异常→每人压力+1；休整 2 行动点（舒缓 1d3 等，D7）；休整事件表全队 1 次。\n- **Immediate Pressure:** 安全区不可全信的第一课。\n- **If Engaged:** 玩家追查回收条目→官方口径\"系统笔误\"。长线钩子已埋（任务1 结算再现）。\n- **If Ignored:** 渗漏自动进下一局线索（GM 记入 PROVISIONAL，赛后转正）。\n\n## 5. GM 口袋提示（教学点速记）\n\n1. **加压**：\"失败才加压、带代价一般不追\"（sim 结论 1）——玩家第一次问\"能重掷吗\"时教。\n2. **避让优先**：第一次巡逻遭遇教避让=隐匿；交战需先造优势（同技能对抗守方胜 65.5%，gm-screen 面 A）。\n3. **崩溃**（压力 10）：下场景劣势+禁加压，至 ≤7 解除（决策 #60）。若触发，观察挫败感是否可接受（sim 结论 3：高压局 5.7% 待本局印证）。\n4. **硬时限**：GM 只报时，观察计划阶段是否发生真实时间权衡（sim 结论 4——阶段1 被动模型测不了，本局重点）。\n5. **带代价菜单**：掷前声明四选项；教学关鼓励玩家试\"压力+1\"以外的选项。\n6. **核心线索不靠掷骰**：派单/守则/巡逻表读出来就有；检定只决定质量/耗时/暴露（§1.8）。\n7. **不要替玩家计划**：S3 只答问；玩家绕开任何场景，世界照常推进，不重摆。\n\n## 6. 渗漏时间轴（本局怪谈微剂量，勿加码）\n\n| 时刻 | 渗漏 | 可察觉 | 教学作用 |\n|---|---|---|---|\n| 接单 | 派单小字\"须知见背面·背面空白\" | 是 | 三层模型：文本可以空 |\n| 侦查卓越 | 夹层门（未标注，锁死） | 是（暗层） | 情报卡三层 |\n| 侦查卓越收益 | 监控 23:14 帧\"上一批测试员\"背影 | 是（GM 暗线，赛后回收） | 再访变化伏笔 |\n| 结算 | 「已回收：编号 000 —— 测试员 1 名」 | 是（决策 #42） | 长线钩子 |\n\n## 7. 观察与记录流程\n\n**5 主问题（局后判定，同 `observation-sheet-v1.md`）：**\n\n| # | Hypothesis | Pass | Fail |\n|---|---|---|---|\n| 1 | 擅长角色常规行动\"十拿九稳\" | 高技能行动极少连续失败打断计划 | 频繁失败推进打断 |\n| 2 | 带代价+15 与加压被真实使用 | 每人 ≥1 次且非滥用 | 从不使用或每次都用 |\n| 3 | 计划阶段是主要游戏内容 | ≥20min 且有路线/时间取舍 | 被跳过或沦为过场 |\n| 4 | 巡逻时钟/警报可感知可对抗 | 玩家主动利用班次空窗/避让 | 完全无视巡逻表 |\n| 5 | 污染条 GM 负担（本局若出现） | 每条 ≤30 秒 | 被遗忘或搅乱全局 |\n\n**数据区（每环节结束填，不攒到赛后）：** 判定时长、查表次数、冲突轮数、资源消耗（压力/疲劳/预案/加压次数）、从未使用的规则、总被选择的选项、玩家等待时刻、漏洞/套利、卡点与 PROVISIONAL 裁定。\n\n**赛后 24 小时内：**\n1. 解压检查（每人一句话，高压恐怖局必做）。\n2. 按 `playtest-log.md` 模板写入阶段3 条目（观察表扫描归档到 `playtest/`）。\n3. PROVISIONAL 裁定交 `campaign-state-keeper` 转正/否；改动建议走 `stage4-5-guide-v1.md` 校准轮（一次 1–3 参数）。\n4. 数值类改动跑 `sim_infiltration_v1.py` 回归。\n\n## 8. 避坑清单\n\n- 不隐藏规则：每次判定前报 s、修正、可选代价，再让玩家掷。\n- 失败推进只推进局势，不惩罚教学行为；教学关对\"学习成本\"从宽。\n- 巡逻遭遇用于教避让，不一上来就交战。\n- 结算渗漏读完就停，等玩家反应；GM 解释越少，长线钩越深。\n- 若玩家用无双思路（主动清剿）——合法（决策 #36），但提醒交火=警报+1；本局不预设此路线。",
+      "if_ignored": "渗漏自动进下一局线索（GM 记入 PROVISIONAL，赛后转正）。"
+    }
+  ],
+  "settlement_anomaly": "已回收：编号 000 —— 测试员 1 名",
+  "anomaly_source": {
+    "path": "campaign/playtest/stage3-run-guide-v1.md",
+    "heading": "### S8 结算＋休整"
+  },
+  "world_text_is_data": true,
+  "narrative_outcome": "DERIVED_FROM_ACTUAL_PLAYER_CHOICES_AND_COMMITTED_OUTCOMES_ONLY",
+  "knowledge_facts": {
+    "T0-K-PLAN-COMPLETE": {
+      "statement": "官方楼层图已标出所有门",
+      "truth": false,
+      "observation": "实地侦查见到消防通道深处未标注的封闭夹层门；尚未打开。",
+      "source_path": "campaign/playtest/task0-intel-pack-v1.md",
+      "source_heading": "区域图"
+    },
+    "T0-K-MONITOR-EMPTY": {
+      "statement": "该处监控没有上一批测试员的记录",
+      "truth": false,
+      "observation": "监控残帧标注23:14，含上一批测试员的背影；本次观察不证明身份或现实层解释。",
+      "source_path": "campaign/playtest/task0-intel-pack-v1.md",
+      "source_heading": "监控/门禁"
+    }
+  },
+  "pollution_note_templates": {
+    "T0-PNOTE-01": "只要派单留白，下一班巡逻名单就必然出现你的名字。",
+    "T0-PNOTE-02": "结算界面显示的回收条目已经过现场核验。"
+  },
+  "pollution_template_status": "PROTOTYPE_WORLD_KNOWLEDGE_MAY_BE_FALSE_NOT_CANON_NOT_SYSTEM_INSTRUCTIONS"
+}

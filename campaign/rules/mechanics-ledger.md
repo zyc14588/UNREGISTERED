@@ -14,5 +14,6 @@
 | Progression | PROPOSAL | character-progression-designer | 认知成长：技能+1d3 上限70／异常学+2 上限80／横向为主 | | | `mechanics-fine-v1.md` §C |
 | Downtime（据点休整） | PROPOSAL | gm-procedure-designer | 2 行动点/人；休整事件表 d100 91–00 渗漏 | | 2026-08-15 solo | `mechanics-fine-v1.md` D7 |
 | Logic Map（收敛校验） | PROPOSAL | trpg-system-designer | 10 概念节点全引用收敛；规则×四锚点矩阵 | | | `logic-map-v1.md` |
+| Task0 AIPT 接口原型 | PROTOTYPE | trpg-system-designer / rules-system-adapter | 固定来源、逐座位资料、真实声明、确定性后果、结算及休整衔接；不自动采纳为CANON | 既有40条规则 | 2026-10-08 NON_CANON 自动样例；45项参考检查及五条Core内存回放，见Q008私有收据 | `aipt/task0-v2/README.md` |
 
 Allowed status: `IDEA`, `PROPOSAL`, `PROTOTYPE`, `PLAYTEST`, `CANON`, `DEPRECATED`.

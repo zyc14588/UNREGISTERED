@@ -1,0 +1,171 @@
+{
+  "schema": "unregistered.task0-action-contract/v2",
+  "canonical": false,
+  "aipt_action_proposal_schema": "aipt.action-proposal/v1",
+  "aipt_actor_authentication": "EXISTING_B003_AND_RUN_CORE_AUTHORIZER_REQUIRED",
+  "aipt_ledger_rng_queue_ownership": "EXISTING_RUN_CORE_AND_POSTGRESQL_ONLY",
+  "caller_cannot_supply": [
+    "roll",
+    "target_skill_value",
+    "success",
+    "state_patch",
+    "principal",
+    "other_player_secret",
+    "released_information",
+    "source_commit"
+  ],
+  "action_types": {
+    "PLAYER_INTENT": {
+      "actor": "OWN_CHARACTER",
+      "requires": [
+        "kind",
+        "parameters",
+        "cost_choice",
+        "text"
+      ],
+      "intent_kinds": [
+        "OBSERVE",
+        "ELECTRONIC_RECON",
+        "SOCIAL_RECON",
+        "PLAN",
+        "EQUIP",
+        "FOLLOW",
+        "ASSIST",
+        "MOVE",
+        "AVOID",
+        "TAKEDOWN",
+        "DOOR_ELECTRONIC",
+        "DOOR_SOCIAL",
+        "LOCKPICK",
+        "LOCK_ELECTRONIC",
+        "SEARCH",
+        "FIRE",
+        "CHASE",
+        "WITHDRAW",
+        "DELIVER",
+        "SOOTHE",
+        "TREAT_WOUND",
+        "REPLENISH",
+        "ARCHIVE",
+        "CONTACT",
+        "DECLINE_REST",
+        "GROW",
+        "SPEND_PLAN",
+        "DROP_TARGET",
+        "TAKE_TARGET",
+        "PUSH",
+        "OTHER",
+        "WAIT"
+      ],
+      "rng_count": "DERIVED_BY_GAME_KERNEL",
+      "mechanical_resolution": "ATOMIC_EXISTING_RUN_CORE_ACTION_HANDLER_NOT_FABRICATED_GM_DECISION"
+    },
+    "SETTLE_MISSION": {
+      "actor": "GM",
+      "requires": [],
+      "rng_draws": 0,
+      "outcome": "DERIVED_FROM_COMMITTED_DELIVERY_OR_WITHDRAWAL"
+    },
+    "RELEASE_HANDOUTS": {
+      "actor": "GM",
+      "requires": [
+        "handout_ids"
+      ],
+      "rng_draws": 0,
+      "whitelist": [
+        "dispatch",
+        "visitor",
+        "patrol"
+      ]
+    },
+    "NPC_ATTACK": {
+      "actor": "GM",
+      "requires": [
+        "npc_id",
+        "character_id"
+      ],
+      "rng_draws": 2,
+      "precondition": "ACTUAL_COMBAT_ACTIVE_TARGET_AT_SAME_NPC_AREA"
+    },
+    "ROLL_REST_EVENT": {
+      "actor": "GM",
+      "requires": [],
+      "rng_draws": 2,
+      "precondition": "MISSION_SETTLED_AND_ALL_REST_CHOICES_RESOLVED"
+    },
+    "RESOLVE_REST_RISK": {
+      "actor": "GM",
+      "requires": [
+        "character_id"
+      ],
+      "order": "CHARACTER_ID_ASC",
+      "rng_count": "DERIVED_FROM_OWN_STATE_AND_EXISTING_SPECIALTY_COLLAPSE"
+    },
+    "SIGN_LEDGER": {
+      "actor": "OWN_CHARACTER",
+      "requires": [],
+      "rng_draws": 0
+    },
+    "SAFETY_PAUSE": {
+      "actor": "ANY_REGISTERED_SEAT",
+      "requires": [],
+      "rng_draws": 0
+    },
+    "SAFETY_CONSENT": {
+      "actor": "OWN_CHARACTER",
+      "requires": [],
+      "rng_draws": 0
+    },
+    "SAFETY_RESUME": {
+      "actor": "GM_AFTER_ALL_SEATS_RECONSENT",
+      "requires": [],
+      "rng_draws": 0
+    },
+    "VERIFY_KNOWLEDGE": {
+      "actor": "GM",
+      "requires": [
+        "character_id",
+        "fact_id"
+      ],
+      "rng_draws": 0,
+      "precondition": "EXACT_FIXED_FACT_ACTUALLY_OBSERVED_BY_THAT_CHARACTER_BEFORE_SETTLEMENT"
+    },
+    "ISSUE_POLLUTION_NOTE": {
+      "actor": "GM",
+      "requires": [
+        "character_id",
+        "note_id"
+      ],
+      "rng_draws": 0,
+      "precondition": "ONE_FIXED_GM_WORLD_NOTE_PER_ACTUAL_POLLUTION_INCREASE_NO_RAW_PRIVATE_TEXT_OR_OVERWRITE"
+    }
+  },
+  "rng": {
+    "version": "AIPT_RNG_HMAC_SHA256_V1",
+    "bits_per_draw": 64,
+    "normal_d100": "ONES_THEN_TENS_TWO_UNIFORM_D10_DRAWS_00_EQUALS_100",
+    "advantage": "ONES_THEN_TWO_TENS_LOW_OR_HIGH",
+    "provider_supplied_rng_forbidden": true
+  },
+  "text_limit_utf8_bytes": 320,
+  "nested_payload_limit_bytes": 1024,
+  "typed_intent_does_not_authorize_unvalidated_action": true,
+  "group_movement": "ONLY_CHARACTERS_WITH_PRIOR_ACTIVE_FOLLOW_INTENT_AT_THE_SAME_LOCATION",
+  "completion": [
+    "MISSION_OUTCOME_RECORDED",
+    "FIVE_SECTION_LEDGER",
+    "FOUR_PLAYER_SIGNATURES",
+    "FOUR_REST_CHOICES_RESOLVED_OR_EXPLICITLY_DECLINED",
+    "REST_EVENT_AND_ALL_FOLLOWUPS_RESOLVED",
+    "NO_PENDING_INTENT",
+    "NOT_SAFETY_PAUSED",
+    "NO_UNRESOLVED_BLOCKING_MECHANIC",
+    "EVERY_ACTUAL_POLLUTION_INCREASE_HAS_GM_NOTE_WITH_PRIVATE_PROVENANCE"
+  ],
+  "gameplay_mission_outcomes": [
+    "DELIVERED_ON_TIME",
+    "DELIVERED_LATE",
+    "WITHDREW_NOT_DELIVERED"
+  ],
+  "technical_execution_failures_block_acceptance": true
+}

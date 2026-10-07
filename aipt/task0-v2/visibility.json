@@ -1,0 +1,37 @@
+{
+  "schema": "unregistered.task0-visibility/v2",
+  "trusted_principals": [
+    "GM",
+    "UNR-CHAR-0001",
+    "UNR-CHAR-0002",
+    "UNR-CHAR-0003",
+    "UNR-CHAR-0004"
+  ],
+  "public": [
+    "characters.json",
+    "player-reference.md"
+  ],
+  "gm_only": [
+    "gm-content.json",
+    "gm-runbook.md"
+  ],
+  "character_private": {
+    "path": "character-private.json",
+    "key": "characters",
+    "projection": "GM_ALL_OR_EXACT_OWN_CHARACTER_ONLY"
+  },
+  "unreleased_handouts": [
+    "handouts.json"
+  ],
+  "system_internal": [
+    "parameters.json",
+    "action-contract.json",
+    "visibility.json"
+  ],
+  "historical_visibility_unchanged": true,
+  "source_bodies_in_evidence": false,
+  "model_egress_requires_existing_authorized_profile_classes": true,
+  "world_text_is_data_not_instructions": true,
+  "trusted_release_event_required_for_unreleased_handouts": true,
+  "unknown_principal_or_all_players_rejected": true
+}

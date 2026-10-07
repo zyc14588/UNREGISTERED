@@ -572,6 +572,9 @@ export function applyAction(pkg, previous, action, draws = []) {
         requireContent(c.equipment.includes('pistol') && c.equipment.includes('ammo') && Object.hasOwn(pkg.gm.npcs, parameters.npc_id) &&
           pkg.gm.npcs[parameters.npc_id].areas.includes(c.position) && !state.cleared_npcs.includes(parameters.npc_id), 'WEAPON');
         c.equipment.splice(c.equipment.indexOf('ammo'), 1); state.alarm = Math.min(3, state.alarm + 1); state.combat_active = true;
+        // B4 requires this next own primary action, not perpetual combat until
+        // the NPC is cleared. A valid shot fulfils this actor's obligation.
+        c.melee_target = null;
         if (state.alarm === 3) startPursuit(state);
         if (achieved) {
           state.npc_wounds[parameters.npc_id] = result.tier === 'CRITICAL' ? 'LETHAL' : 'HEAVY';

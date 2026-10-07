@@ -316,16 +316,36 @@ test('a takedown opposed loss starts melee even when the player percentile tier 
   assert.equal(h.state.unresolved_blocking,0);assert.equal(h.state.combat_active,true);
   assert.equal(h.state.actors[p1].melee_target,'front_guard');assert.equal(h.state.exposure,1);
 });
-test('the fire alternative consumes finite ammunition and only neutralizing the actual opponent ends melee',()=>{
+test('a valid fire consumes the one-next-action obligation while leaving finite ammunition and the uncleared NPC in the world',()=>{
   const h=harness();h.step(intent(p1,'EQUIP',{items:['pistol','ammo','ammo'],specialty:null}));
   h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
   h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
   const alarm=h.state.alarm;h.step(intent(p1,'FIRE',{npc_id:'front_guard'}),[0,3]);
   assert.equal(h.state.actors[p1].equipment.filter((x)=>x==='ammo').length,1);assert.equal(h.state.alarm,alarm+1);
-  assert.equal(h.state.npc_wounds.front_guard,'HEAVY');assert.equal(h.state.actors[p1].melee_target,'front_guard');
+  assert.equal(h.state.npc_wounds.front_guard,'HEAVY');assert.equal(h.state.actors[p1].melee_target,null);
+  assert.equal(h.state.cleared_npcs.includes('front_guard'),false);assert.equal(h.state.combat_active,true);
   h.step(intent(p1,'FIRE',{npc_id:'front_guard'}),[1,0]);
   assert.equal(h.state.actors[p1].equipment.includes('ammo'),false);assert.equal(h.state.actors[p1].melee_target,null);
   assert.equal(h.state.cleared_npcs.includes('front_guard'),true);
+});
+test('the independent SUCCESS fire with the last bullet permits an own withdrawal without inventing a clear-until-exit rule',()=>{
+  const h=harness();h.step(intent(p1,'EQUIP',{items:['pistol','ammo'],specialty:null}));
+  h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
+  h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
+  const out=h.step(intent(p1,'FIRE',{npc_id:'front_guard'}),[0,2]);assert.equal(out.resolutions[0].tier,'SUCCESS');
+  assert.equal(h.state.actors[p1].equipment.includes('ammo'),false);assert.equal(h.state.cleared_npcs.includes('front_guard'),false);
+  assert.equal(h.state.npc_wounds.front_guard,'HEAVY');assert.equal(h.state.alarm,1);assert.equal(h.state.pursuit,false);
+  h.step(intent(p1,'WITHDRAW'));assert.equal(h.state.actors[p1].exited,true);
+});
+test('a missed valid shot still fulfils B4 once, while an illegal shot cannot consume an actors obligation',()=>{
+  const h=harness();h.step(intent(p1,'EQUIP',{items:['pistol','ammo'],specialty:null}));
+  h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);
+  h.step(intent(p1,'TAKEDOWN',{npc_id:'front_guard'}),[0,9,1,0]);
+  const before=canonical(h.state);
+  bad(()=>h.step(intent(p1,'FIRE',{npc_id:'patrol'}),[1,0]),'MELEE_FOLLOWUP_TARGET');assert.equal(canonical(h.state),before);
+  const out=h.step(intent(p1,'FIRE',{npc_id:'front_guard'}),[0,9]);assert.equal(out.resolutions[0].tier,'FAILURE');
+  assert.equal(h.state.actors[p1].melee_target,null);assert.equal(h.state.cleared_npcs.includes('front_guard'),false);
+  h.step(intent(p1,'MOVE',{to:'outside',group:false}));
 });
 test('a failed retry keeps the same minus20 rather than granting a free push or accumulating invented penalties',()=>{
   const h=harness();h.step(intent(p1,'MOVE',{to:'lobby',group:false}),[1,0]);

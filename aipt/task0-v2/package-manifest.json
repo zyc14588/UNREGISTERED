@@ -82,8 +82,8 @@
     },
     {
       "path": "aipt/task0-v2/README.md",
-      "bytes": 2265,
-      "sha256": "cd95f4af3bb83826fc453074e6715508a8bf496c6b31a967c14b96f74b2bc5df"
+      "bytes": 2362,
+      "sha256": "ed4755786a874b2d611e1384f3594acfceecf80610c9eba1c4ebddb4f45f86a8"
     },
     {
       "path": "aipt/task0-v2/action-contract.json",
@@ -92,8 +92,8 @@
     },
     {
       "path": "aipt/task0-v2/adoption-proposal.md",
-      "bytes": 7742,
-      "sha256": "0ac31b4d9e4481fe6b7d567bec143ba2445b6f7bfd1a550f13c15645b4d0c96b"
+      "bytes": 8127,
+      "sha256": "0ad255d9d8f289f1489117e0720dffce7e72d977c9a164a07f3bf7c80d078ac9"
     },
     {
       "path": "aipt/task0-v2/character-private.json",
@@ -117,8 +117,8 @@
     },
     {
       "path": "aipt/task0-v2/gm-runbook.md",
-      "bytes": 7338,
-      "sha256": "26a4e3f0fa4acf723c29c35193489e108eeadd9430bf6fd6d60d3e976d96f455"
+      "bytes": 7573,
+      "sha256": "3cccb116241f23abb45e5216fa35de08b987d7971a5089118e1a531145b2be52"
     },
     {
       "path": "aipt/task0-v2/handouts.json",
@@ -132,13 +132,13 @@
     },
     {
       "path": "aipt/task0-v2/player-reference.md",
-      "bytes": 4425,
-      "sha256": "9166d8640de1a83f6ebaafb47e157c74b74aa6c5af20541727e0725ce95d8cee"
+      "bytes": 4578,
+      "sha256": "0a03959119c3c3fa68d1cbc9fab6ff6816d73f4f509e56044760f0a0de5fad2f"
     },
     {
       "path": "aipt/task0-v2/readiness.json",
-      "bytes": 1280,
-      "sha256": "7aae8dc38aab86e12d8919befbb05bf1b3bb2e840aa58ae9c69df94da6979239"
+      "bytes": 1287,
+      "sha256": "2a92a41a5983c7b435f3ca8b58e48e3b33e9ea411888dc5053e75462e9922180"
     },
     {
       "path": "aipt/task0-v2/visibility.json",
@@ -212,8 +212,8 @@
     },
     {
       "path": "scripts/aipt/task0-prototype.mjs",
-      "bytes": 54517,
-      "sha256": "cafd51651631a5cf5bdecbb3911e1067fe7780c0570e9ad4078389f7b9ac1ce6"
+      "bytes": 54705,
+      "sha256": "b4137b9387df16054bcbc86d340ced36d3375ce690d838c39f0ae31cdfaabd30"
     },
     {
       "path": "scripts/aipt/task0-reference-cli.mjs",
@@ -227,8 +227,8 @@
     },
     {
       "path": "scripts/aipt/test/task0.test.mjs",
-      "bytes": 32340,
-      "sha256": "8a3aa1b2ba04402c5d1227a259524bb3f66c9af541a1e9bb1979e4439294cede"
+      "bytes": 34044,
+      "sha256": "4bdadb9a934af96559a19ceafe3a38c94d2f1aeff61056b3a04a205c213eb9d1"
     },
     {
       "path": "scripts/aipt/validate-task0-v2.mjs",
